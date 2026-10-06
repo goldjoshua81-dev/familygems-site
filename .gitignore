@@ -1,0 +1,6 @@
+# Internal planning docs stay on the box (public repo)
+LAUNCH-PLAN.md
+SHOP-READY-PLAN.md
+KEYWORDS.md
+__pycache__/
+*.pyc
