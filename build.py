@@ -141,13 +141,13 @@ FEATURE = f"""
       <dt>Stone</dt><dd>Tsavorite (green grossular garnet)</dd>
       <dt>Shape</dt><dd>Heart</dd>
       <dt>Weight</dt><dd>1.19 carats</dd>
-      <dt>Origin</dt><dd>Kenya</dd>
+      <dt>Origin</dt><dd>Stated on the Etsy listing</dd>
     </dl>
     <p>Full photos, measurements and price will be on the Etsy listing when it goes live.</p>
     <a class="btn" href="{E}" rel="noopener">Favorite the shop on Etsy</a>
   </div>
 </div>
-<!-- PLACEHOLDER: swap the illustration for the real SF-001 photo (img/sf-001.webp, with alt text) once Joshua approves it for the web. -->
+<!-- PLACEHOLDER: add origin once confirmed. Swap the illustration for the real SF-001 photo (img/sf-001.webp, with alt text) once Joshua approves it for the web. -->
 """
 
 def page_home():
@@ -203,7 +203,7 @@ def page_shop():
 </div>
 """
     return dict(path="shop/", nav="shop/", title="Shop Loose Gemstones on Etsy | The Family Gem Shop",
-        desc="Browse The Family Gem Shop's loose gemstones on Etsy, including a 1.19 ct heart-shaped tsavorite garnet from Kenya. See how buying works.",
+        desc="Browse The Family Gem Shop's loose gemstones on Etsy, including a 1.19 ct heart-shaped tsavorite garnet. See how buying works.",
         body=body, ld=cld, prio="0.9", freq="weekly")
 
 def page_about():
@@ -361,7 +361,7 @@ def page_tsavorite():
   <h2>Caring for tsavorite</h2>
   <p>At about 7 to 7.5 on the Mohs scale, tsavorite is suitable for everyday jewelry with reasonable care. Clean it with warm soapy water and a soft brush, and skip ultrasonic or steam cleaners unless your jeweler confirms the stone has no fractures.</p>
 
-  <div class="note"><p><strong>Looking for a tsavorite?</strong> Our first stone is a 1.19 ct heart-shaped tsavorite garnet from Kenya. <a href="{{{{root}}}}shop/">See the shop</a> or <a href="{E}" rel="noopener">favorite us on Etsy</a> to see it when it goes live.</p></div>
+  <div class="note"><p><strong>Looking for a tsavorite?</strong> Our first stone is a 1.19 ct heart-shaped tsavorite garnet. <a href="{{{{root}}}}shop/">See the shop</a> or <a href="{E}" rel="noopener">favorite us on Etsy</a> to see it when it goes live.</p></div>
 </article>
 """
     return dict(path=path, nav="guides/", title=title, desc=desc, body=body, ld=cld + art,
