@@ -652,3 +652,4 @@ details{background:#FFFDF7}
 .ths .thv .play{left:6px;top:6px;transform:none;width:22px;height:22px}
 .ths .thv .play:after{border-width:5px 0 5px 8px}
 .ths .vl{background:rgba(8,20,16,.82)}
+.vcard img{position:absolute;inset:0;width:100%!important;height:100%!important;max-width:none;object-fit:cover}
