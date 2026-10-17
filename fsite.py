@@ -44,7 +44,7 @@ HUNT_P='Looking for something specific: a colour no one else seems to stock, a s
 STONE01=dict(no='Stone 01',title='Green Tourmaline, 5.04 ct',short='Green Tourmaline',ct='5.04 ct',shape='Cushion',
   lead='One stone at a time, from my personal collection. A deep green cushion that throws bright green flashes as it moves; loose and ready for a ring or pendant.',
   photos=['stone-01'],glow=G01,alt='Stone 01, green tourmaline, 5.04 ct cushion (seller-identified)')
-STONE02=dict(no='Stone 02',title='Pink Tourmaline, 1.4x ct (to confirm)',short='Pink Tourmaline',ct='1.4x ct (to confirm)',shape='Cushion',photos=['stone-02'],glow=G02,alt='Stone 02, pink tourmaline, cushion (seller-identified)')
+STONE02=dict(no='Stone 02',title='Pink Tourmaline, 1.42 ct',short='Pink Tourmaline',ct='1.42 ct',shape='Cushion',photos=['stone-02'],glow=G02,alt='Stone 02, pink tourmaline, 1.42 ct cushion (seller-identified)')
 
 
 STORY_SHORT=("When I was three or four, my dad bought a crisp apple-green Muzo emerald from Colombia, set in a 14k gold tension ring "
@@ -92,7 +92,7 @@ def cc(c,cls=''):
     extra=''
     if k=='tourmaline':
         extra=(f'<div class="ph2"><div>{framed(STONE01)}<small>Stone 01 · <em>5.04 ct</em></small></div>'
-               f'<div>{framed(STONE02)}<small>Stone 02 · <em>1.4x ct (to confirm)</em></small></div></div>')
+               f'<div>{framed(STONE02)}<small>Stone 02 · <em>1.42 ct</em></small></div></div>')
     strip=f'<div class="chipstrip"><i style="background:{acc}"></i><i style="background:{b}"></i><i style="background:{dark}"></i></div>'
     return (f'<div class="cc {cls}" style="{bg}"><div style="display:flex;justify-content:space-between;align-items:start">{gem_svg()}</div>'
             f'{gem_svg(cls="gemico wm",sw=4)}<div>{extra if cls=="hero2" else ""}<h3 style="margin-top:{18 if cls=="hero2" else 0}px">{n}</h3><span class="cnt">{st}</span>{strip}</div></div>')
