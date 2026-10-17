@@ -94,21 +94,22 @@ def faq_ld(faqs, root_abs):
 # ---------------------------------------------------------------- pages
 FEATURE = f"""
 <div class="card feature">
-  {GEM_SVG.format(n=2)}
+  <img src="{{{{root}}}}img/sf-001-400.jpg" srcset="{{{{root}}}}img/sf-001-400.jpg 400w, {{{{root}}}}img/sf-001-800.jpg 800w" sizes="(max-width:760px) 320px, 160px" width="400" height="400" loading="lazy" decoding="async" style="border-radius:14px;width:100%;max-width:320px;height:auto" alt="SF-001, green tsavorite garnet, 1.19 ct heart, in tweezers (seller-identified)">
   <div>
-    <span class="tag">Coming soon to Etsy</span>
+    <span class="chip" style="--bg:#EEF6F2;--fg:#0F4A3A">Coming soon to Etsy</span>
     <h3>1.19 ct heart-shaped tsavorite garnet</h3>
     <dl class="spec">
-      <dt>Stone</dt><dd>Tsavorite (green grossular garnet)</dd>
-      <dt>Shape</dt><dd>Heart</dd>
-      <dt>Weight</dt><dd>1.19 carats</dd>
-      <dt>Origin</dt><dd>Stated on the Etsy listing</dd>
+      <dt>Stone</dt><dd>Tsavorite (green grossular garnet), seller-identified, not guaranteed</dd>
+      <dt>Shape</dt><dd>Heart, faceted</dd>
+      <dt>Weight</dt><dd>1.19 carats (seller-stated)</dd>
+      <dt>Origin</dt><dd>Kenya (seller-stated, not lab-confirmed)</dd>
+      <dt>Treatment</dt><dd>Not known (no lab report)</dd>
+      <dt>Price</dt><dd>Price TBD</dd>
     </dl>
-    <p>Full photos, measurements and price will be on the Etsy listing when it goes live.</p>
+    <p>Measurements and price will be on the Etsy listing when it goes live. Photographed as it is; inclusions are shown.</p>
     <a class="btn" href="{E}" rel="noopener">Favorite the shop on Etsy</a>
   </div>
 </div>
-<!-- PLACEHOLDER: add origin once confirmed. Swap the illustration for the real SF-001 photo (img/sf-001.webp, with alt text) once Joshua approves it for the web. -->
 """
 
 def page_home():
