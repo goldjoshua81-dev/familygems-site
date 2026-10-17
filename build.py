@@ -56,18 +56,20 @@ def crumbs(items):
         (f'<li><a href="{{{{root}}}}{p}">{html.escape(n)}</a></li>' if i < len(allitems) - 1
          else f'<li aria-current="page">{html.escape(n)}</li>')
         for i, (n, p) in enumerate(allitems))
-    return f'<nav class="crumbs wrap" aria-label="Breadcrumb"><ol>{lis}</ol></nav>', jsonld(ld)
+    return f'<nav class="crumbs" aria-label="Breadcrumb"><ol>{lis}</ol></nav>', jsonld(ld)
 
 # ---------------------------------------------------------------- FAQ data
 FAQS = [
     ("Where do I buy your gemstones?",
      f'All purchases happen through our Etsy shop, <a href="{E}" rel="noopener">TheFamilyGemShop</a>. Etsy handles checkout and payment, so you can pay with the methods Etsy supports.'),
     ("Is the shop open yet?",
-     "We are getting our first listings ready. Favorite the shop on Etsy and you will see new stones as soon as they go live."),
+     f"Almost. {len(fsite.STONES)} stones are photographed and being listed one at a time. Favorite the shop on Etsy to see each stone the day it goes live."),
     ("What is a loose gemstone?",
      "A loose gemstone is a cut and polished stone that is not set in jewelry yet. You or your jeweler choose the setting, metal and design, which makes loose stones popular for custom engagement rings, pendants and heirloom pieces."),
     ("What is tsavorite?",
      'Tsavorite is the green variety of grossular garnet, found in East Africa (Kenya and Tanzania). It rates about 7 to 7.5 on the Mohs hardness scale and is prized for its bright, saturated green. Read our <a href="{{root}}guides/tsavorite-garnet-buying-guide/">tsavorite buying guide</a> to learn more.'),
+    ("What is tourmaline?",
+     "Not one mineral but a whole family of borosilicates; elbaite gives us most gem tourmaline. It has one of the widest color ranges of any gem, and one crystal can grow pink at the core and green at the rim. Iron makes it green to blue; manganese makes it pink. Hardness 7 to 7.5 (GIA). See the tourmalines in the <a href=\"{{root}}shop/\">shop</a>."),
     ("What details will a listing include?",
      "Each listing is meant to show the gemstone type, carat weight, measurements in millimeters, shape, origin when known, and any known treatment, along with clear photos. If something you need is missing, message us on Etsy before you buy."),
     ("How do I know a loose stone will fit my setting?",
@@ -92,60 +94,21 @@ def faq_ld(faqs, root_abs):
         for q, a in faqs]})
 
 # ---------------------------------------------------------------- pages
-FEATURE = f"""
-<div class="card feature">
-  <img src="{{{{root}}}}img/sf-001-400.jpg" srcset="{{{{root}}}}img/sf-001-400.jpg 400w, {{{{root}}}}img/sf-001-800.jpg 800w" sizes="(max-width:760px) 320px, 160px" width="400" height="400" loading="lazy" decoding="async" style="border-radius:14px;width:100%;max-width:320px;height:auto" alt="SF-001, green tsavorite garnet, 1.19 ct heart, in tweezers">
-  <div>
-    <span class="chip" style="--bg:#EEF6F2;--fg:#0F4A3A">Coming soon to Etsy</span>
-    <h3>1.19 ct heart-shaped tsavorite garnet</h3>
-    <dl class="spec">
-      <dt>Gemstone</dt><dd>Tsavorite garnet</dd>
-      <dt>Weight</dt><dd>1.19 ct</dd>
-      <dt>Shape</dt><dd>Heart, faceted</dd>
-      <dt>Measurements</dt><dd>To measure</dd>
-      <dt>Clarity</dt><dd>Not graded, inclusions shown as they are</dd>
-      <dt>Origin</dt><dd>Kenya, per the original seller</dd>
-      <dt>Treatment</dt><dd>Not known</dd>
-      <dt>Price</dt><dd>Price TBD</dd>
-    </dl>
-    <p>{fsite.CLOSE}</p>
-    <h4 style="margin:18px 0 6px">About tsavorite</h4>
-    <p>{fsite.VARIETY['tsavorite']}</p>
-    <a class="btn" href="{E}" rel="noopener">Favorite the shop on Etsy</a>
-  </div>
-</div>
-"""
-
 def page_home():
     # Direction F front page, APPROVED by Joshua Oct 16, 2026, 5:24 PM PT (Stone 01 green tourmaline leading).
     ld = jsonld({"@context": "https://schema.org", "@graph": [ORG, WEBSITE]})
     return dict(path="", nav="", main="f",
         title="The Family Gem Shop | Loose Gemstones, One Stone at a Time",
-        desc="Hand-picked loose gemstones from our family collection, sorted by color. Each stone is photographed as it is and seller-identified, never guaranteed. Sold on Etsy.",
+        desc="Loose gemstones from my personal collection, every color, one stone at a time. GIA-informed descriptions. Photographed honestly, never retouched.",
         body=fsite.home_body(), ld=ld, prio="1.0", freq="weekly")
 
 def page_shop():
+    # Rebuilt to match home (review M3): all photographed stones, color-ordered cards, per-stone sections in each stone's own color.
     c, cld = crumbs([("Shop", "shop/")])
-    body = f"""{c}
-<div class="wrap">
-  <h1>Shop loose gemstones</h1>
-  <p class="lead">Our gemstones are sold on Etsy, where checkout, payment and order tracking are handled for you. New stones appear in the shop as soon as they are listed.</p>
-  <a class="btn" href="{E}" rel="noopener">Open TheFamilyGemShop on Etsy</a>
-  <h2>Featured</h2>
-  {FEATURE}
-  <h2>How buying works</h2>
-  <ol class="prose">
-    <li>Open the listing on Etsy and check the photos, carat weight, measurements, origin and treatment details.</li>
-    <li>Have a question? Message us on Etsy before you buy.</li>
-    <li>Check out on Etsy. Shipping options and the return policy are shown on the listing.</li>
-    <li>Take the stone to your jeweler, or keep it in your collection.</li>
-  </ol>
-  <!-- PLACEHOLDER: add one card per live Etsy listing (photo, title, carat, shape, link) after Joshua says go-live. -->
-</div>
-"""
-    return dict(path="shop/", nav="shop/", title="Shop Loose Gemstones on Etsy | The Family Gem Shop",
-        desc="Browse The Family Gem Shop's loose gemstones on Etsy, including a 1.19 ct heart-shaped tsavorite garnet. See how buying works.",
-        body=body, ld=cld, prio="0.9", freq="weekly")
+    return dict(path="shop/", nav="shop/", main="f inner",
+        title="Shop Loose Gemstones | The Family Gem Shop",
+        desc="Loose gemstones from my personal collection: pink and green tourmaline, tsavorite garnet and more. Plain specs, honest photos. Coming soon to Etsy.",
+        body=fsite.shop_body(c, E), ld=cld, prio="0.9", freq="weekly")
 
 def page_about():
     # Our Story (direction F), text + ring photo APPROVED by Joshua Oct 16, 2026, 5:21 PM PT. URL stays /about/.
@@ -157,11 +120,9 @@ def page_about():
 
 def page_faq():
     c, cld = crumbs([("FAQ", "faq/")])
-    body = f"""{c}
-<div class="wrap prose">
-  <h1>Frequently asked questions</h1>
-  <p class="lead">Answers about buying loose gemstones from our Etsy shop.</p>
-  {faq_html(FAQS)}
+    body = f"""<div class="wrap">
+{fsite.phead("FAQ", "Frequently asked questions", "Straight answers about buying loose gemstones from The Family Gem Shop.", c, lc="#2E6FB0")}
+<div class="sheet prose faqs">{faq_html(FAQS)}</div>
 </div>
 """
     return dict(path="faq/", nav="faq/", title="FAQ: Buying Loose Gemstones | The Family Gem Shop",
@@ -172,10 +133,10 @@ def page_contact():
     c, cld = crumbs([("Contact", "contact/")])
     email = (f'<p>Email: <a href="mailto:{CONFIG["email"]}">{CONFIG["email"]}</a></p>' if CONFIG["email"]
              else "<!-- PLACEHOLDER: set CONFIG['email'] once a business inbox exists -->")
-    body = f"""{c}
-<div class="wrap prose">
-  <h1>Contact us</h1>
-  <p class="lead">The fastest way to reach us is Etsy Messages.</p>
+    body = f"""<div class="wrap">
+{fsite.phead("Contact", "Contact us", "The fastest way to reach me is Etsy Messages.", c, lc="#D08A2E")}
+<div class="duo2"><div class="sheet prose">
+  <h2>Message me on Etsy</h2>
   <ol>
     <li>Open <a href="{E}" rel="noopener">our Etsy shop</a>.</li>
     <li>Choose <strong>Message</strong> (or <strong>Contact shop owner</strong>).</li>
@@ -184,6 +145,8 @@ def page_contact():
   {email}
   <p>Questions about an existing order? Use the message thread on your Etsy order so all the details stay together.</p>
 </div>
+<div class="huntc"><div class="label" style="color:var(--golds)">The Hunt</div><h2>Put me on the hunt.</h2><p>{fsite._us(fsite.HUNT_P)}</p><a class="btn rnd white" href="{E}" rel="noopener">Message me on Etsy</a><div class="rg"></div></div></div>
+</div>
 """
     return dict(path="contact/", nav="contact/", title="Contact | The Family Gem Shop",
         desc="Questions about a loose gemstone, measurements or an order? Reach The Family Gem Shop through Etsy Messages.",
@@ -191,11 +154,10 @@ def page_contact():
 
 def page_privacy():
     c, cld = crumbs([("Privacy", "privacy/")])
-    body = f"""{c}
-<div class="wrap prose">
+    body = f"""<div class="wrap">
   <!-- DRAFT: plain-English privacy notice, needs Joshua's review. Update it before adding analytics, forms or email signup. -->
-  <h1>Privacy policy</h1>
-  <p>Last updated: October 5, 2026</p>
+{fsite.phead("Privacy", "Privacy policy", "No cookies, no analytics, no forms. Last updated October 5, 2026.", c, lc="#6A5ACD")}
+<div class="sheet prose">
   <h2>The short version</h2>
   <p>This website does not use cookies, analytics or advertising trackers, and it has no forms. We do not collect personal information on this site.</p>
   <h2>Hosting</h2>
@@ -209,6 +171,7 @@ def page_privacy():
   <h2>Contact</h2>
   <p>Questions about privacy? Message us through <a href="{E}" rel="noopener">our Etsy shop</a>.</p>
 </div>
+</div>
 """
     return dict(path="privacy/", nav="", title="Privacy Policy | The Family Gem Shop",
         desc="Privacy policy for thefamilygems.com: no cookies, analytics or forms on this site. Purchases and messages happen on Etsy.",
@@ -219,17 +182,19 @@ GUIDES = [("tsavorite-garnet-buying-guide/", "Tsavorite garnet buying guide",
 
 def page_guides():
     c, cld = crumbs([("Guides", "guides/")])
-    cards = "".join(f'<div class="card"><h2><a href="{{{{root}}}}guides/{p}">{html.escape(t)}</a></h2><p>{html.escape(d)}</p></div>'
-                    for p, t, d in GUIDES)
-    body = f"""{c}
-<div class="wrap">
-  <h1>Gemstone buying guides</h1>
-  <p class="lead">Plain-English guides to help you choose a loose gemstone with confidence.</p>
-  <div class="grid c2">{cards}</div>
+    s = fsite.SF001
+    cards = "".join(
+        f'<a class="gcard" href="{{{{root}}}}guides/{p}" style="{fsite.svars(s)}"><div class="gpic">{fsite.framed(s, "fr", 0, "(max-width:820px) 40vw, 200px")}</div>'
+        f'<div><div class="label" style="color:var(--stone-ink)">Buying guide</div><h2>{html.escape(t)}</h2><p>{html.escape(d)}</p><span class="link">Read the guide →</span></div></a>'
+        for p, t, d in GUIDES)
+    body = f"""<div class="wrap">
+{fsite.phead("Guides", "Gemstone buying guides", "Plain-English guides to help you choose a loose gemstone with confidence.", c, lc="#187C45")}
+<div class="glist">{cards}</div>
+<section class="blk"><div class="sh"><div><div class="label" style="color:#C92A61">GIA-informed</div><h2>Variety notes</h2></div><p>The short history and the cool facts, the same notes that sit on every stone.</p></div><div class="vgrid">{fsite.guides_extra()}</div></section>
 </div>
 """
     return dict(path="guides/", nav="guides/", title="Gemstone Buying Guides | The Family Gem Shop",
-        desc="Plain-English guides to buying loose gemstones: tsavorite garnet color and clarity, heart-shaped stones, settings and questions to ask sellers.",
+        desc="Plain-English guides to buying loose gemstones: tsavorite color and clarity, heart shapes, settings and questions to ask, plus variety notes.",
         body=body, ld=cld, prio="0.7", freq="weekly")
 
 def page_tsavorite():
@@ -241,15 +206,13 @@ def page_tsavorite():
         "datePublished": "2026-10-05", "dateModified": CONFIG["updated"],
         "author": {"@id": CONFIG["domain"] + "/#org"}, "publisher": ORG,
         "image": CONFIG["domain"] + "/img/og.png", "mainEntityOfPage": CONFIG["domain"] + "/" + path, "inLanguage": "en-US"})
-    body = f"""{c}
-<article class="wrap prose">
-  <h1>Tsavorite garnet buying guide</h1>
-  <p class="lead">Tsavorite is one of the brightest green gemstones in the world, and one of the easiest to fall for. Here is what to look for before you buy a loose tsavorite, especially a heart-shaped one.</p>
-  <p><small>Published October 5, 2026 by The Family Gem Shop</small></p>
+    s = fsite.SF001
+    body = f"""<div class="wrap">
+{fsite.phead("Buying guide", "Tsavorite garnet buying guide", "Tsavorite is a bright green garnet and an easy one to fall for. Here is what to look for before you buy a loose tsavorite, especially a heart-shaped one.", c, '<p class="pub">Published October 5, 2026 · updated October 16, 2026 · The Family Gem Shop</p>', lc="#187C45")}
+<article class="sheet prose guide" style="{fsite.svars(s)}">
 
   <h2>What is tsavorite?</h2>
-  <p>Tsavorite is the green variety of <strong>grossular garnet</strong>. Its color comes from trace amounts of vanadium and chromium. It was discovered in northeastern Tanzania in 1967 and found soon after in southern Kenya, near Tsavo National Park, which gave the stone its name. Tiffany &amp; Co. helped introduce it to jewelry buyers in the 1970s.</p>
-  <p>Because tsavorite is a garnet, it also works as a <strong>January birthstone</strong> for anyone who wants something other than the classic red.</p>
+  <p>Tsavorite is the green variety of <strong>grossular garnet</strong>. Its color comes from trace amounts of vanadium and chromium. Geologist Campbell Bridges found it in Tanzania in 1967 and in Kenya in 1970, near Tsavo National Park, which gave the stone its name. It was <strong>named tsavorite in 1973</strong> and <strong>reached jewelry buyers in 1974</strong>.</p>
 
   <h2>Color matters most</h2>
   <p>The most valued tsavorites are a vivid, saturated green, often with a slightly bluish undertone. Stones that lean yellowish look closer to peridot, and stones that are too dark can look almost black in dim light. When you compare photos, look for:</p>
@@ -260,16 +223,16 @@ def page_tsavorite():
   </ul>
 
   <h2>Clarity</h2>
-  <p>Tsavorite is usually cleaner than emerald. Many good stones are <em>eye-clean</em>, meaning you cannot see inclusions without magnification. Tiny needles or crystals under a loupe are normal for a natural stone and can even help confirm it is natural.</p>
+  <p>Tsavorite is usually cleaner than emerald. Many good stones are <em>eye-clean</em>, meaning you cannot see inclusions without magnification. Tiny needles or crystals under a loupe are normal for tsavorite, and honest photos should show them.</p>
 
   <h2>Cut and size</h2>
   <p>A well-cut stone returns light evenly instead of showing a dark or washed-out center. Tsavorite usually forms as small crystals, so clean stones above a carat or two are scarce and cost noticeably more per carat. A stone around one carat is already a substantial size for this gem.</p>
 
   <h2>Treatments</h2>
-  <p>Tsavorite is rarely treated, which is part of its appeal. Still, ask the seller to state the treatment status in writing. For higher-value stones, a report from an independent gemological lab adds confidence.</p>
+  <p>As a species, tsavorite generally isn't treated, which is part of its appeal. That's a fact about the variety, not a promise about any one stone. Still, ask the seller to state the treatment status in writing. For higher-value stones, a report from an independent gemological lab adds confidence.</p>
 
   <h2>Buying a heart-shaped tsavorite</h2>
-  <p>Heart shapes are a natural fit for engagement rings, anniversary pieces and pendants. A few extra checks help:</p>
+  <p>Heart shapes are a classic fit for engagement rings, anniversary pieces and pendants. A few extra checks help:</p>
   <ul>
     <li><strong>Symmetry:</strong> both lobes should be the same size, with a clear, centered cleft.</li>
     <li><strong>Proportions:</strong> length and width close to equal give the classic heart outline. Longer or wider hearts are a matter of taste.</li>
@@ -282,28 +245,28 @@ def page_tsavorite():
     <li>What is the exact carat weight and the measurements in millimeters?</li>
     <li>Where is the stone from?</li>
     <li>Has it been treated in any way?</li>
-    <li>Can I see a video in natural light?</li>
+    <li>Can I see a video in daylight?</li>
     <li>Is there a lab report, and what is the return policy?</li>
   </ol>
 
   <h2>Caring for tsavorite</h2>
   <p>At about 7 to 7.5 on the Mohs scale, tsavorite is suitable for everyday jewelry with reasonable care. Clean it with warm soapy water and a soft brush, and skip ultrasonic or steam cleaners unless your jeweler confirms the stone has no fractures.</p>
 
-  <div class="note"><p><strong>Looking for a tsavorite?</strong> Our first stone is a 1.19 ct heart-shaped tsavorite garnet. <a href="{{{{root}}}}shop/">See the shop</a> or <a href="{E}" rel="noopener">favorite us on Etsy</a> to see it when it goes live.</p></div>
+  <div class="note"><p><strong>Looking for a tsavorite?</strong> See the <a href="{{{{root}}}}shop/#sf-001">1.19 ct tsavorite heart</a> in the shop, or <a href="{E}" rel="noopener">favorite us on Etsy</a> to see it when it goes live.</p></div>
 </article>
+</div>
 """
     return dict(path=path, nav="guides/", title=title, desc=desc, body=body, ld=cld + art,
                 prio="0.8", freq="monthly", ogtype="article")
 
 def page_404():
-    body = f"""
-<div class="wrap prose">
-  <h1>Page not found</h1>
-  <p class="lead">Sorry, that page does not exist or has moved.</p>
-  <p><a class="btn" href="{{{{root}}}}">Go to the home page</a> <a class="btn alt" href="{E}" rel="noopener">Visit our Etsy shop</a></p>
+    picks = fsite.spread_pick(fsite.STONES, 3)
+    body = f"""<div class="wrap">
+{fsite.phead("404", "Page not found", "Sorry, that page does not exist or has moved. Try one of these stones instead.", "", '<div class="ctas"><a class="btn pri rnd" href="{{root}}">Go to the home page</a><a class="btn out rnd" href="{{root}}shop/">Shop the collection</a></div>', lc="#C92A61")}
+<div class="pg pg3">{"".join(fsite.pcard(s) for s in picks)}</div>
 </div>
 """
-    return dict(path="404.html", nav="", title="Page Not Found | The Family Gem Shop",
+    return dict(path="404.html", nav="", main="f inner", title="Page Not Found | The Family Gem Shop",
         desc="This page could not be found. Visit The Family Gem Shop home page or our Etsy shop.",
         body=body, ld="", noindex=True)
 
@@ -344,7 +307,7 @@ def render(p):
 <meta property="og:image" content="{og_img}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="The Family Gem Shop">
+<meta property="og:image:alt" content="The Family Gem Shop crest with four stones from the collection">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{t}">

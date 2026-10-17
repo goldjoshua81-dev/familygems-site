@@ -3,21 +3,47 @@ Ported from the approved designs-5 F mockups (front page approved Oct 16, 2026, 
 Our Story approved 5:21 PM PT). Images live in img/, fonts in fonts/, styles in f.css.
 Links use the {{root}} token, which build.py replaces per page.
 Rules: Price TBD on stones; Muzo/Colombia only in the personal story; US spelling."""
-import math
+import math, json, pathlib, itertools
 A='{{root}}img/'
-G01='rgba(104,150,34,.24)'   # Stone 01 own color (green), <=25% alpha
-G02='rgba(224,72,128,.22)'   # Stone 02 own color (pink)
+# Per-stone color (review fix M1, Joshua Oct 16, 2026 7:23 PM PT: "Full rainbow of collection").
+# Each stone has ONE `hue` word -> data/palette.json (built + AA-checked by tools/palette.py) -> CSS variables.
+# Emerald/gold/cream stay the brand frame; stone colors drive only glow, bands, tints, chips and panels.
+PAL=json.loads((pathlib.Path(__file__).resolve().parent/'data'/'palette.json').read_text())
+def svars(s):
+    t=PAL[s['hue']]
+    return f"--stone:{t['stone']};--stone-ink:{t['ink']};--stone-soft:{t['soft']};--stone-line:{t['line']};--stone-glow:{t['glow']}"
+def _de(a,b): return sum((x-y)**2 for x,y in zip(PAL[a['hue']]['lab'],PAL[b['hue']]['lab']))**.5
+def color_order(stones):
+    """Order so neighbors never share a color family and look as different as possible.
+    <=8 stones: best permutation (max of the smallest neighbor gap, then the total). More: greedy farthest-next,
+    which scales to ~200 stones (O(n^2)) and keeps the newest stone first."""
+    st=list(stones)
+    if len(st)<=1: return st
+    if len(st)<=8:
+        best=None
+        for perm in itertools.permutations(st[1:]):
+            seq=[st[0],*perm]
+            if any(seq[i]['hue']==seq[i+1]['hue'] for i in range(len(seq)-1)): continue
+            gaps=[_de(seq[i],seq[i+1]) for i in range(len(seq)-1)]
+            key=(min(gaps),sum(gaps))
+            if best is None or key>best[0]: best=(key,seq)
+        if best: return best[1]
+    seq=[st.pop(0)]
+    while st:
+        cand=[s for s in st if s['hue']!=seq[-1]['hue']] or st
+        nxt=max(cand,key=lambda s:_de(s,seq[-1])); st.remove(nxt); seq.append(nxt)
+    return seq
 
 COLL=[
- ('showcase','Showcase','#8E1B2C','#C98A95','#8E1B2C','#FBF8F1','#4A0D17','Photos coming'),
+ ('showcase','Showcase','#8E1B2C','#C98A95','#8E1B2C','#FBF8F1','#4A0D17','Coming soon'),
  ('collection','The Collection','#0F4A3A','#1C6650','#0F4A3A','#FBF8F1','#082E24','5 stones photographed'),
- ('spinel','Spinel','#B8476A','#A99BD1','#B8476A','#FBF8F1','#5E1F35','Photos coming'),
- ('sapphire','Sapphire','#1F3A7A','#4B4A9E','#1F3A7A','#FBF8F1','#0E1C40','Photos coming'),
+ ('spinel','Spinel','#B8476A','#A99BD1','#B8476A','#FBF8F1','#5E1F35','Coming soon'),
+ ('sapphire','Sapphire','#1F3A7A','#4B4A9E','#1F3A7A','#FBF8F1','#0E1C40','Coming soon'),
  ('garnet','Garnet','#B34528','#0F4A3A','#B34528','#FBF8F1','#5A1F10','1 stone photographed'),
  ('tourmaline','Tourmaline','#3FD0C9','#9FD3C1','#267C78','#1E2A24','#134A47','4 stones photographed'),
- ('aquamarine','Aquamarine','#23708A','#9FD3C1','#23708A','#FBF8F1','#0F3746','Photos coming'),
- ('topaz','Topaz','#D08A2E','#23708A','#996622','#1E2A24','#4A300C','Photos coming'),
- ('other','Other gems','#B8955A','#D9BE87','#886E42','#1E2A24','#3F321C','Photos coming'),
+ ('aquamarine','Aquamarine','#23708A','#9FD3C1','#23708A','#FBF8F1','#0F3746','Coming soon'),
+ ('topaz','Topaz','#D08A2E','#23708A','#996622','#1E2A24','#4A300C','Coming soon'),
+ ('other','Other gems','#B8955A','#D9BE87','#886E42','#1E2A24','#3F321C','Coming soon'),
 ]
 CD={c[0]:c for c in COLL}
 
@@ -28,10 +54,12 @@ def gem_svg(stroke='currentColor',sw=2.2,cls='gemico'):
             '<path d="M18 18L32 32M82 18L68 32M18 82L32 68M82 82L68 68M50 12V30M50 70V88M12 50H30M70 50H88"/></svg>')
 
 
+# Trust wording APPROVED by Joshua Oct 16, 2026, 7:23 PM PT (replaces "Seller-identified, not guaranteed").
+TRUST_LINE=['From my personal collection','GIA-informed descriptions','Photographed honestly, never retouched']
 TRUST=[
- ('Seller-identified','Not guaranteed. Every stone is identified by us and described from our collection labels.'),
- ('GIA-informed','Descriptions follow GIA-informed language. Lab reports are shown only when one exists.'),
- ('Photographed as it is','Inclusions stay visible. Glow is added to the background only, never to the stone.'),
+ ('From my personal collection','Species, weight and origin come from the original seller. Lab reports are shown only when one exists.'),
+ ('GIA-informed descriptions','Plain words, checked against GIA-informed facts about each variety.'),
+ ('Photographed honestly','Never retouched. Inclusions stay visible; any glow sits behind the photo frame, never on the stone.'),
  ('Unknown says “unknown”','No invented origins, treatments or value claims. Missing facts are marked plainly.'),
 ]
 LORE=[
@@ -41,18 +69,44 @@ LORE=[
 ]
 HUNT_P='Looking for something specific: a colour no one else seems to stock, a shape you’ve only imagined, a stone for a piece that will outlast you? Put me on the hunt. I’ll do my best to find it and deliver.'
 
-STONE01=dict(no='Stone 01',title='Green Tourmaline, 5.04 ct',short='Green Tourmaline',ct='5.04 ct',shape='Cushion',
+def _specs(gem,wt,shape,origin,treat):
+    return [('Gemstone',gem),('Weight',wt),('Shape',shape),('Measurements','To measure'),
+            ('Clarity','Not graded, inclusions shown as they are'),('Origin',origin),('Treatment',treat)]
+def spread_pick(stones,n):
+    """Pick n stones that look as different as possible (newest first, then farthest color), then color-order them."""
+    st=list(stones); pick=[st.pop(0)]
+    while st and len(pick)<n:
+        nxt=max(st,key=lambda s:min(_de(s,q) for q in pick)); st.remove(nxt); pick.append(nxt)
+    return color_order(pick)
+
+# Facts = listing drafts in familygem/listings/ (approved wording, 7:01 PM PT). hue = palette family (internal word).
+STONE01=dict(sku='SF-202',anchor='sf-202',no='Stone 01',title='Green Tourmaline, 5.04 ct',short='Green Tourmaline',ct='5.04 ct',shape='Cushion',hue='forest',coll='tourmaline',
   lead='One stone at a time, from my personal collection. A deep green cushion that throws bright green flashes as it moves; loose and ready for a ring or pendant.',
-  photos=['stone-01'],glow=G01,alt='Stone 01, green tourmaline, 5.04 ct cushion')
-SF001=dict(no='SF-001',title='Tsavorite Garnet, 1.19 ct',short='Tsavorite Garnet',ct='1.19 ct',shape='Heart',photos=['sf-001'],glow=G01,alt='SF-001, green tsavorite garnet, 1.19 ct heart, in tweezers')
-STONE02=dict(no='Stone 02',title='Pink Tourmaline, 1.42 ct',short='Pink Tourmaline',ct='1.42 ct',shape='Cushion',photos=['stone-02'],glow=G02,alt='Stone 02, pink tourmaline, 1.42 ct cushion')
-STONE03=dict(no='Stone 03',title='Green Tourmaline, 1.26 ct',short='Green Tourmaline',ct='1.26 ct',shape='Cushion',photos=['stone-03'],glow='rgba(70,150,110,.22)',alt='Stone 03, crisp green tourmaline, 1.26 ct elongated cushion')
-STONE04=dict(no='Stone 04',title='Light Green Tourmaline, 1.02 ct',short='Light Green Tourmaline',ct='1.02 ct',shape='Emerald cut',photos=['stone-04'],glow='rgba(120,190,170,.22)',alt='Stone 04, light bluish green tourmaline, 1.02 ct emerald cut')
+  photos=['stone-01'],alt='Stone 01, green tourmaline, 5.04 ct cushion',variety='tourmaline-green',
+  specs=_specs('Green tourmaline','5.04 ct','Cushion, faceted','Madagascar, per the original seller','No heat, per the original seller'))
+SF001=dict(sku='SF-001',anchor='sf-001',no='SF-001',title='Tsavorite Garnet, 1.19 ct',short='Tsavorite Garnet',ct='1.19 ct',shape='Heart',hue='green-vivid',coll='garnet',
+  photos=['sf-001'],alt='SF-001, green tsavorite garnet, 1.19 ct heart, in tweezers',variety='tsavorite',
+  specs=_specs('Tsavorite garnet','1.19 ct','Heart, faceted','Kenya, per the original seller','Not known'))
+STONE02=dict(sku='SF-203',anchor='sf-203',no='Stone 02',title='Pink Tourmaline, 1.42 ct',short='Pink Tourmaline',ct='1.42 ct',shape='Cushion',hue='pink',coll='tourmaline',
+  photos=['stone-02'],alt='Stone 02, pink tourmaline, 1.42 ct cushion',variety='tourmaline-pink',
+  specs=_specs('Pink tourmaline','1.42 ct','Cushion, faceted','Afghanistan, per the original seller','No heat, per the original seller'))
+STONE03=dict(sku='SF-204',anchor='sf-204',no='Stone 03',title='Green Tourmaline, 1.26 ct',short='Green Tourmaline',ct='1.26 ct',shape='Cushion',hue='green',coll='tourmaline',
+  photos=['stone-03'],alt='Stone 03, crisp green tourmaline, 1.26 ct elongated cushion',variety='tourmaline-green',
+  specs=_specs('Green tourmaline','1.26 ct','Elongated cushion, faceted','Afghanistan, per the original seller','No heat, per the original seller'))
+STONE04=dict(sku='SF-205',anchor='sf-205',no='Stone 04',title='Light Bluish Green Tourmaline, 1.02 ct',short='Light Bluish Green Tourmaline',ct='1.02 ct',shape='Emerald cut',hue='mint',coll='tourmaline',
+  photos=['stone-04'],alt='Stone 04, light bluish green tourmaline, 1.02 ct emerald cut',variety='tourmaline-bluegreen',
+  specs=_specs('Light bluish green tourmaline','1.02 ct','Emerald cut, faceted','Afghanistan, per the original seller','No heat, per the original seller'))
+STONES=[STONE04,STONE03,SF001,STONE02,STONE01]   # newest first; every photographed stone on the site
+for _s in STONES:
+    assert _s['hue'] in PAL, f"{_s['sku']}: hue '{_s['hue']}' not in data/palette.json"
+    assert _s['sku'] in _s['alt'] or _s['no'] in _s['alt'], _s['sku']
+    assert _s['ct'] in _s['alt'], f"{_s['sku']}: alt must name the weight"
 
 # Approved wording (Joshua, Oct 16, 2026, 7:01 PM PT). Variety text copied from familygem/listings/variety-blurbs/ (KB-cited there).
 CLOSE='From my personal collection. Species, weight and origin come from the original seller. No lab report. What you see is the real stone, photographed honestly and never retouched.'
 VARIETY={'tsavorite':"Green grossular garnet, colored by vanadium and chromium. Campbell Bridges found it in Tanzania in 1967 and in Kenya in 1970; it was named tsavorite in 1973 and reached jewelry buyers in 1974. Rarer than red garnet, because it needs unusual rock chemistry, and most stones are small. Singly refractive, often red through a Chelsea filter, hardness 7 to 7.5. As a species it generally isn't treated; that's about the variety, not any one stone.",
  'tourmaline-green':'Not one mineral but a whole family of borosilicates; elbaite gives us most gem tourmaline, and liddicoatite is named for Richard T. Liddicoat. One of the widest color ranges of any gem: one pegmatite pocket can turn up several colors, and one crystal can grow pink at the core and green at the rim. Iron is what makes it green. Doubly refractive and strongly pleochroic, so the color shifts as you turn it. Hardness 7 to 7.5; mined worldwide, from Brazil to Namibia and Russia (GIA).',
+ 'tourmaline-bluegreen':'Not one mineral but a whole family of borosilicates; elbaite gives us most gem tourmaline, and liddicoatite is named for Richard T. Liddicoat. One of the widest color ranges of any gem: one pegmatite pocket can turn up several colors, and one crystal can grow pink at the core and green at the rim. Iron is what makes it blue to green. Doubly refractive and strongly pleochroic, so the color shifts as you turn it. Hardness 7 to 7.5; mined worldwide, from Brazil to Namibia and Russia (GIA).',
  'tourmaline-pink':'Not one mineral but a whole family of borosilicates; elbaite gives us most gem tourmaline, and liddicoatite is named for Richard T. Liddicoat. One of the widest color ranges of any gem: one pegmatite pocket can turn up several colors, and one crystal can grow pink at the core and green at the rim. Manganese is what makes it pink. Doubly refractive and strongly pleochroic, so the color shifts as you turn it. Hardness 7 to 7.5; mined worldwide, from Brazil to Namibia and Russia (GIA).'}
 
 STORY_SHORT=("When I was three or four, my dad bought a crisp apple-green Muzo emerald from Colombia, set in a 14k gold tension ring "
@@ -79,7 +133,7 @@ SPEC='linear-gradient(90deg,#0F4A3A,#3FD0C9,#23708A,#1F3A7A,#4B4A9E,#A99BD1,#B84
 
 
 def chip(c,txt=None):
-    return f'<span class="chip" style="--bg:{c[3]}33;--fg:{c[4]}"><i style="background:{c[2]}"></i>{txt or c[1]}</span>'
+    return f'<span class="chip" style="--bg:{c[2]}1c;--fg:{c[4]}"><i style="background:{c[2]}"></i>{txt or c[1]}</span>'
 
 def dots():
     out=''
@@ -90,8 +144,8 @@ def dots():
         out+=f'<div class="dot" style="left:calc({x:.2f}% - 12px);top:calc({y:.2f}% - 12px);background:{c[2]}"><span style="{side};color:{c[4]}">{c[1]}</span></div>'
     return out
 
-def framed(s,cls='fr',i=0):
-    return f'<div class="glow" style="--g:{s["glow"]}"><div class="{cls}"><div class="photo"><img src="{A}{s["photos"][i]}-400.jpg" srcset="{A}{s["photos"][i]}-400.jpg 400w, {A}{s["photos"][i]}-800.jpg 800w" sizes="(max-width:820px) 45vw, 300px" width="400" height="400" loading="lazy" decoding="async" alt="{s["alt"]}"></div></div></div>'
+def framed(s,cls='fr',i=0,sizes='(max-width:820px) 45vw, 300px'):
+    return f'<div class="glow" style="{svars(s)}"><div class="{cls}"><div class="photo"><img src="{A}{s["photos"][i]}-400.jpg" srcset="{A}{s["photos"][i]}-400.jpg 400w, {A}{s["photos"][i]}-800.jpg 800w" sizes="{sizes}" width="400" height="400" loading="lazy" decoding="async" alt="{s["alt"]}"></div></div></div>'
 
 def cc(c,cls=''):
     k,n,b,acc,txt,lab,dark,st=c
@@ -103,17 +157,17 @@ def cc(c,cls=''):
                f'<div>{framed(STONE02)}<small>Stone 02 · <em>1.42 ct</em></small></div></div>')
     strip=f'<div class="chipstrip"><i style="background:{acc}"></i><i style="background:{b}"></i><i style="background:{dark}"></i></div>'
     return (f'<div class="cc {cls}" style="{bg}"><div style="display:flex;justify-content:space-between;align-items:start">{gem_svg()}</div>'
-            f'{gem_svg(cls="gemico wm",sw=4)}<div>{extra if cls=="hero2" else ""}<h3 style="margin-top:{18 if cls=="hero2" else 0}px">{n}</h3><span class="cnt">{st}</span>{strip}</div></div>')
+            f'{gem_svg(cls="gemico wm",sw=4)}<div>{extra if cls=="hero2" else ""}<h3 style="margin-top:{18 if cls=="hero2" else 0}px">{n}</h3><span class="cnt{" soon" if st=="Coming soon" else ""}">{st}</span>{strip}</div></div>')
 
-def pcard(s=None,coll='tourmaline'):
-    c=CD[coll]
-    if s:
-        pic=f'<div class="pic" style="--tint:radial-gradient(circle at 50% 45%,{c[3]}44,{c[3]}14 70%)">{framed(s)}</div>'
-        meta=f'<div class="row">{chip(c)}<span class="no">{s["no"]}</span></div><h3>{s["short"]}</h3><div class="sub">{s["ct"]} · {s["shape"]}</div><div class="row" style="margin-top:10px"><span class="pr">Price TBD</span></div>'
-    else:
-        pic=f'<div class="pic" style="--tint:linear-gradient(160deg,{c[3]}55,{c[2]}2a)"><div class="ph" style="color:{c[4]}">{gem_svg()}<span>Photos coming</span></div></div>'
-        meta=f'<div class="row">{chip(c)}</div><h3>Photos coming</h3><div class="sub">Next stone from the collection</div><div class="row" style="margin-top:10px"><span class="pr" style="color:var(--muted)">Price TBD</span></div>'
-    return f'<div class="pc"><div class="band" style="background:linear-gradient(90deg,{c[2]},{c[3]})"></div>{pic}<div class="meta">{meta}</div></div>'
+def pcard(s,href=None):
+    """Stone card. Color = the stone's own palette family (CSS vars); chip = its collection.
+    Links to the stone's section on /shop/ (no /stones/ URLs until Joshua says yes)."""
+    c=CD[s['coll']]
+    href=href or f'{{{{root}}}}shop/#{s["anchor"]}'
+    pic=f'<div class="pic">{framed(s)}</div>'
+    meta=(f'<div class="row">{chip(c)}<span class="no">{s["no"]}</span></div><h3>{s["short"]}</h3><div class="sub">{s["ct"]} · {s["shape"]}</div>'
+          f'<div class="row" style="margin-top:10px"><span class="soonchip">Coming soon · Price TBD</span><span class="go" aria-hidden="true">→</span></div>')
+    return f'<a class="pc" href="{href}" style="{svars(s)}"><div class="band"></div>{pic}<div class="meta">{meta}</div></a>'
 
 LEGEND='<div class="legend"><span><i class="gem-e"></i><b>Emerald</b> · where it started</span><span><i class="gem-d"></i><b>Diamond</b> · the whole family</span></div>'
 
@@ -125,19 +179,19 @@ def home_body():
     tcol=[('#0F4A3A','#EEF6F2'),('#1F3A7A','#EEF1FA'),('#B34528','#FBF0EA'),('#4B4A9E','#F3F1FA')]
     lcol=[('#1F3A7A','#EEF1FA'),('#267C78','#EAF7F6'),('#8E1B2C','#FBEDEF')]
     body=f'''<div class="wrap">
-<section class="hero"><div class="in"><div><span class="pill" style="--c:#3FD0C9"><i></i>New: two tourmalines photographed</span>
+<section class="hero"><div class="in"><div><span class="pill" style="--c:#D9487A"><i></i>New: {len(STONES)} stones photographed</span>
 <h1>Every colour, <span class="sw">one stone</span> at a time.</h1>
-<p class="lede">Hand-picked loose gemstones from our family collection, sorted by colour. Each stone is photographed as it is, described in plain words and seller-identified, never guaranteed.</p>
+<p class="lede">Hand-picked loose gemstones from my personal collection, sorted by colour. Each one is photographed honestly, never retouched, and described in plain words.</p>
 <div class="ctas"><a class="btn pri rnd" href="{{{{root}}}}shop/">Shop the collection</a><a class="btn out rnd" href="{{{{root}}}}contact/">Put me on the hunt</a></div>
-<div class="minitrust"><span>Seller-identified</span><span>Inclusions shown</span><span>Unknowns marked</span></div></div>
+<div class="minitrust"><span>Personal collection</span><span>Inclusions shown</span><span>Never retouched</span></div></div>
 <div class="wheel"><div class="ring"></div><div class="ring2"></div>{dots()}
-<div class="hcard glow" style="--g:{s1['glow']}"><div class="photo"><img src="{A}stone-01-800.jpg" srcset="{A}stone-01-400.jpg 400w, {A}stone-01-800.jpg 800w" sizes="(max-width:820px) 176px, 300px" width="800" height="800" fetchpriority="high" alt="{s1['alt']}"></div><div class="lab"><span class="nm2">Green Tourmaline</span>{chip(CD['tourmaline'],'Stone 01')}</div></div>
+<div class="hcard glow" style="{svars(s1)}"><div class="photo"><img src="{A}stone-01-800.jpg" srcset="{A}stone-01-400.jpg 400w, {A}stone-01-800.jpg 800w" sizes="(max-width:820px) 176px, 300px" width="800" height="800" fetchpriority="high" alt="{s1['alt']}"></div><div class="lab"><span class="nm2">Green Tourmaline</span>{chip(CD['tourmaline'],'Stone 01')}</div></div>
 <div class="tag t1"><b>5.04 ct</b>Cushion · faceted</div>
 <div class="tag t2">Tourmaline colours<div class="dr"><i style="background:#2F6B1E"></i><i style="background:#D9487A"></i><i style="background:#3FD0C9"></i><i style="background:#2E6FB0"></i></div></div>
 <div class="tag t3"><b>Price TBD</b>From my collection</div></div></div>
 <div class="chips">{"".join(chip(c) for c in COLL)}</div></section>
 <section class="blk"><div class="sh"><div><div class="label" style="color:#B34528">Shop by gem</div><h2>Pick a colour</h2></div><p>Nine collections, nine colours. Tourmaline and garnet have real photos today; the rest fill in as each stone is photographed.</p></div><div class="cg">{cards}</div></section>
-<section class="blk"><div class="sh"><div><div class="label" style="color:#B8476A">Just photographed</div><h2>Fresh from the collection</h2></div><a class="more" style="--uc:#B8476A" href="{{{{root}}}}shop/">View the shop →</a></div><div class="pg">{pcard(STONE04)}{pcard(STONE03)}{pcard(SF001,'garnet')}{pcard(STONE02)}</div></section>
+<section class="blk"><div class="sh"><div><div class="label" style="color:#B8476A">Just photographed</div><h2>Fresh from the collection</h2></div><a class="more" style="--uc:#B8476A" href="{{{{root}}}}shop/">View the shop →</a></div><div class="pg">{"".join(pcard(s) for s in color_order([x for x in STONES if x is not STONE01])[:4])}</div></section>
 <section class="blk"><div class="ls"><div class="crest"><img src="{A}crest-280.jpg" width="280" height="280" loading="lazy" alt="The Family Gem Shop crest: FG with an emerald above and a diamond below"></div>
 <div class="txt"><div class="halo"></div><div class="label" style="color:#1C6650">Our crest</div><h2>The emerald that <em>started it all</em></h2><p>{STORY_SHORT}</p><div class="ringnote"><div class="rf"><img src="{RING_SM}400.jpg" width="400" height="250" loading="lazy" alt="My dad’s 14k gold tension ring with a green emerald"></div><span>{RING_CAP}</span></div>{LEGEND}<a class="link" href="{{{{root}}}}about/">Read Our Story →</a></div></div></section>
 <section class="blk"><div class="sh"><div><div class="label" style="color:#1F3A7A">How we describe stones</div><h2>No surprises</h2></div><p>The same four promises on every stone page.</p></div>
@@ -163,7 +217,7 @@ def story_body():
     return _us(body)
 
 
-ANN='<div class="ann" role="note"><span style="--c:#3FD0C9">Seller-identified, not guaranteed</span><span style="--c:#D9BE87">GIA-informed descriptions</span><span style="--c:#B8476A">Photographed as it is</span></div>'
+ANN='<div class="ann" role="note">'+''.join(f'<span style="--c:{c}">{w}</span>' for w,c in zip(TRUST_LINE,('#D9487A','#D9BE87','#3FD0C9')))+'</div>'
 NAV=[('shop/','Shop'),('guides/','Guides'),('about/','Our Story'),('faq/','FAQ'),('contact/','Contact')]
 ABOUT_SHORT='The Family Gem Shop: personal-collection gems, listed one stone at a time. Put me on the hunt when you need what no one else can find.'
 
@@ -182,10 +236,62 @@ def footer(etsy):
     links=''.join(f'<a href="{{{{root}}}}{h}">{n}</a>' for h,n in fl)+f'<a href="{etsy}" rel="noopener">Etsy shop</a>'
     return (f'<footer><div class="spec-line"></div><div class="fg"><div>{brand()}<p>{ABOUT_SHORT}</p></div>'
             f'<nav class="fl" aria-label="Footer">{links}</nav></div>'
-            f'<div class="copy">&copy; 2026 The Family Gem Shop · Seller-identified stones, described honestly. Loose gemstones, sold on Etsy.</div></footer>')
+            f'<div class="copy">&copy; 2026 The Family Gem Shop · {" · ".join(TRUST_LINE)}. Loose gemstones, sold on Etsy.</div></footer>')
 
 # US spelling (Joshua, Oct 16)
 _US=[('Colourless','Colorless'),('colourless','colorless'),('Colour','Color'),('colour','color')]
 def _us(h):
     for a,b in _US: h=h.replace(a,b)
     return h
+
+
+# ---------------------------------------------------------------- shop + inner pages (review fixes, Oct 16, 2026 7:23 PM PT)
+VNAME={'tsavorite':'tsavorite','tourmaline-green':'tourmaline','tourmaline-pink':'tourmaline','tourmaline-bluegreen':'tourmaline'}
+
+def chiprow():
+    return f'<div class="chips">{"".join(chip(c) for c in COLL)}</div>'
+
+def phead(label,h1,lead,crumbs='',extra='',lc='#B8476A'):
+    """F page header for inner pages: white stage with multi-color micro-glows + spectrum hairline."""
+    return (f'<section class="phead">{crumbs}<div class="label" style="color:{lc}">{label}</div><h1>{h1}</h1>'
+            f'<p class="lead">{lead}</p>{extra}<div class="sp3"></div></section>')
+
+def stone_detail(s,etsy):
+    c=CD[s['coll']]
+    rows=''.join(f'<dt>{k}</dt><dd{" class=unk" if v in ("To measure","Not known") else ""}>{v}</dd>' for k,v in s['specs'])
+    v=VNAME[s['variety']]
+    return f'''<article class="sd" id="{s['anchor']}" style="{svars(s)}">
+<div class="sdp">{framed(s,'fr',0,'(max-width:820px) 88vw, 400px')}</div>
+<div class="sdt"><div class="row">{chip(c)}<span class="no">{s['no'] if s['no']==s['sku'] else s['no']+' · '+s['sku']}</span></div>
+<h2>{s['title']}</h2>
+<dl class="spec2">{rows}<dt>Price</dt><dd>Price TBD</dd></dl>
+<p class="closenote">{CLOSE}</p>
+<div class="vbox"><h3>About {v}</h3><p>{VARIETY[s['variety']]}</p></div>
+<div class="sdcta"><span class="soonchip">Coming soon to Etsy</span><a class="btn out rnd" href="{etsy}" rel="noopener">Favorite the shop on Etsy</a></div></div>
+</article>'''
+
+def shop_body(crumbs,etsy):
+    order=color_order(STONES)
+    lead=('Every stone here is from my personal collection, photographed honestly and never retouched. '
+          'They list on Etsy one at a time, where checkout, payment and tracking are handled for you.')
+    extra=(f'<div class="ctas"><a class="btn pri rnd" href="{etsy}" rel="noopener">Favorite the shop on Etsy</a>'
+           f'<a class="btn out rnd" href="{{{{root}}}}contact/">Put me on the hunt</a></div>{chiprow()}')
+    cards=''.join(pcard(s,href=f'#{s["anchor"]}') for s in order)
+    details=''.join(stone_detail(s,etsy) for s in order)
+    steps=[('Find your stone','Check the photos, weight, shape and specs. Measurements in mm come before each listing goes live.','#2E6FB0'),
+           ('Ask anything','Message me on Etsy before you buy: more photos, a video, exact size.','#D9487A'),
+           ('Check out on Etsy','Etsy handles payment. Shipping and returns are shown on each listing.','#D08A2E'),
+           ('Set it or keep it','Take it to your jeweler, or keep it in your collection.','#6A5ACD')]
+    how=''.join(f'<div class="tc" style="--bg:{c}14;--c:{c}"><div class="ic">{gem_svg()}</div><h4>{h}</h4><p>{p}</p></div>' for h,p,c in steps)
+    body=f'''<div class="wrap">
+{phead('The shop','Shop loose gemstones',lead,crumbs,extra)}
+<section class="blk"><div class="sh"><div><div class="label" style="color:#2E6FB0">{len(STONES)} stones photographed</div><h2>The collection so far</h2></div><p>Each card jumps to that stone’s specs and story. New colors are added as each stone is photographed.</p></div><div class="pg pg5">{cards}</div></section>
+<section class="blk sds" aria-label="Stone details">{details}</section>
+<section class="blk"><div class="sh"><div><div class="label" style="color:#A95719">How buying works</div><h2>Four easy steps</h2></div><p>Favorite the shop on Etsy to see each stone the day it lists.</p></div><div class="tg">{how}</div></section>
+</div>'''
+    return _us(body)
+
+def guides_extra():
+    """Variety notes for /guides/ (same KB-cited text as the stone sections)."""
+    cards=[(SF001,'Tsavorite','tsavorite'),(STONE02,'Tourmaline','tourmaline-pink')]
+    return ''.join(f'<div class="vcard" style="{svars(s)}"><div class="label" style="color:var(--stone-ink)">Variety notes</div><h3>About {n.lower()}</h3><p>{VARIETY[k]}</p></div>' for s,n,k in cards)
