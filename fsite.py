@@ -79,21 +79,22 @@ def spread_pick(stones,n):
         nxt=max(st,key=lambda s:min(_de(s,q) for q in pick)); st.remove(nxt); pick.append(nxt)
     return color_order(pick)
 
+# Names: Joshua's naming rule (7:58 PM PT): trade/color name may lead + one positive GIA variety/species note (name_note); see familygem/kb/trade-names.md.
 # Facts = listing drafts in familygem/listings/ (approved wording, 7:01 PM PT). hue = palette family (internal word).
-STONE01=dict(sku='SF-202',anchor='sf-202',no='Stone 01',title='Green Tourmaline, 5.04 ct',short='Green Tourmaline',ct='5.04 ct',shape='Cushion',hue='forest',coll='tourmaline',
+STONE01=dict(sku='SF-202',anchor='sf-202',no='Stone 01',title='Verdelite Green Tourmaline, 5.04 ct',name_note='GIA lists verdelite as the green variety of elbaite, the tourmaline species behind most gems.',short='Green Tourmaline',ct='5.04 ct',shape='Cushion',hue='forest',coll='tourmaline',
   lead='One stone at a time, from my personal collection. A deep green cushion that throws bright green flashes as it moves; loose and ready for a ring or pendant.',
   photos=['stone-01','stone-01-b','stone-01-c','stone-01-d'],views=['face-up','face-up on folded paper','on paper, wider view','close-up'],video='stone-01',vf=[],alt='Stone 01, green tourmaline, 5.04 ct cushion',variety='tourmaline-green',
   specs=_specs('Green tourmaline','5.04 ct','Cushion, faceted','Madagascar, per the original seller','No heat, per the original seller'))
-SF001=dict(sku='SF-001',anchor='sf-001',no='SF-001',title='Tsavorite Garnet, 1.19 ct',short='Tsavorite Garnet',ct='1.19 ct',shape='Heart',hue='green-vivid',coll='garnet',
+SF001=dict(sku='SF-001',anchor='sf-001',no='SF-001',title='Tsavorite Garnet, 1.19 ct',name_note='Known to gemologists as grossular garnet; tsavorite is its green variety, colored by vanadium.',short='Tsavorite Garnet',ct='1.19 ct',shape='Heart',hue='green-vivid',coll='garnet',
   photos=['sf-001','sf-001-b','sf-001-c','sf-001-d'],views=['in tweezers','face-up on a gray stone surface','on a fingertip for scale','in its gem box'],video='sf-001',vf=[],alt='SF-001, green tsavorite garnet, 1.19 ct heart, in tweezers',variety='tsavorite',
   specs=_specs('Tsavorite garnet','1.19 ct','Heart, faceted','Kenya, per the original seller','Not known'))
-STONE02=dict(sku='SF-203',anchor='sf-203',no='Stone 02',title='Pink Tourmaline, 1.42 ct',short='Pink Tourmaline',ct='1.42 ct',shape='Cushion',hue='pink',coll='tourmaline',
+STONE02=dict(sku='SF-203',anchor='sf-203',no='Stone 02',title='Pink Tourmaline, 1.42 ct',name_note="GIA's rubellite range runs from pink to red, but many in the trade save that name for the deeper reds, so we call this one what it is: pink.",short='Pink Tourmaline',ct='1.42 ct',shape='Cushion',hue='pink',coll='tourmaline',
   photos=['stone-02','stone-02-b','stone-02-c','stone-02-d'],views=['face-up','face-up, second view','tilted on folded paper','tilted, closer'],video='stone-02',vf=[],alt='Stone 02, pink tourmaline, 1.42 ct cushion',variety='tourmaline-pink',
   specs=_specs('Pink tourmaline','1.42 ct','Cushion, faceted','Afghanistan, per the original seller','No heat, per the original seller'))
-STONE03=dict(sku='SF-204',anchor='sf-204',no='Stone 03',title='Green Tourmaline, 1.26 ct',short='Green Tourmaline',ct='1.26 ct',shape='Cushion',hue='green',coll='tourmaline',
+STONE03=dict(sku='SF-204',anchor='sf-204',no='Stone 03',title='Verdelite Green Tourmaline, 1.26 ct',name_note='GIA lists verdelite as the green variety of elbaite, the tourmaline species behind most gems.',short='Green Tourmaline',ct='1.26 ct',shape='Cushion',hue='green',coll='tourmaline',
   photos=['stone-03','stone-03-b','stone-03-c','stone-03-d'],views=['face-up','on folded paper','angled','side view'],video='stone-03',vf=[3],alt='Stone 03, crisp green tourmaline, 1.26 ct elongated cushion',variety='tourmaline-green',
   specs=_specs('Green tourmaline','1.26 ct','Elongated cushion, faceted','Afghanistan, per the original seller','No heat, per the original seller'))
-STONE04=dict(sku='SF-205',anchor='sf-205',no='Stone 04',title='Light Bluish Green Tourmaline, 1.02 ct',short='Light Bluish Green Tourmaline',ct='1.02 ct',shape='Emerald cut',hue='mint',coll='tourmaline',
+STONE04=dict(sku='SF-205',anchor='sf-205',no='Stone 04',title='Light Bluish Green Tourmaline, 1.02 ct',name_note='Known to gemologists as tourmaline, the family where one species, elbaite, gives nearly all gems.',short='Light Bluish Green Tourmaline',ct='1.02 ct',shape='Emerald cut',hue='mint',coll='tourmaline',
   photos=['stone-04','stone-04-b','stone-04-c','stone-04-d'],views=['face-up','face-up, second view','face-up on folded paper','angled on folded paper'],video='stone-04',vf=[],alt='Stone 04, light bluish green tourmaline, 1.02 ct emerald cut',variety='tourmaline-bluegreen',
   specs=_specs('Light bluish green tourmaline','1.02 ct','Emerald cut, faceted','Afghanistan, per the original seller','No heat, per the original seller'))
 STONES=[STONE04,STONE03,SF001,STONE02,STONE01]   # newest first; every photographed stone on the site
@@ -291,6 +292,7 @@ def stone_detail(s,etsy):
 <div class="sdp">{framed(s,'fr',0,'(max-width:820px) 88vw, 400px')}{thumbs(s)}</div>
 <div class="sdt"><div class="row">{chip(c)}<span class="no">{s['no'] if s['no']==s['sku'] else s['no']+' · '+s['sku']}</span></div>
 <h2>{s['title']}</h2>
+<p class="namenote">{s['name_note']}</p>
 <dl class="spec2">{rows}<dt>Price</dt><dd>Price TBD</dd></dl>
 <p class="closenote">{CLOSE}</p>
 <div class="vbox"><h3>About {v}</h3><p>{VARIETY[s['variety']]}</p></div>

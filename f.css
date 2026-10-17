@@ -529,3 +529,5 @@ main.std .sh p{margin:0}
 .lb li:before{content:'';position:absolute;left:0;top:.6em;width:6px;height:6px;transform:rotate(45deg);background:var(--stone)}
 @media (max-width:1180px) and (min-width:821px){.sdl{grid-template-columns:220px 1fr;gap:24px}.lbs{grid-template-columns:1fr}}
 @media (max-width:820px){.sdl{grid-template-columns:1fr;gap:20px;padding-top:20px}.vid{max-width:260px;margin:0 auto}.lbs{grid-template-columns:1fr}.ths{padding:0 18px}}
+.namenote{font-size:15px;line-height:1.5;color:var(--stone-ink);margin:-6px 0 16px;padding:8px 14px;border-radius:12px;background:var(--stone-soft);border:1px solid var(--stone-line)}
+.sd h2{overflow-wrap:anywhere}
