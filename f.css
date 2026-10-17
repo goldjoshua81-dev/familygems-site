@@ -623,3 +623,5 @@ details{background:#FFFDF7}
 .cc::after{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:inherit;
  background:linear-gradient(180deg,rgba(6,20,16,0) 22%,rgba(6,20,16,.34) 62%,rgba(6,20,16,.5))}
 .cc>*{position:relative;z-index:1}
+/* crest served via <picture> (webp + jpg, 280/560/840w); keep the original img layout */
+.ls .crest picture,.shero picture{display:contents}
