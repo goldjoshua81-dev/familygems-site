@@ -82,19 +82,19 @@ def spread_pick(stones,n):
 # Facts = listing drafts in familygem/listings/ (approved wording, 7:01 PM PT). hue = palette family (internal word).
 STONE01=dict(sku='SF-202',anchor='sf-202',no='Stone 01',title='Green Tourmaline, 5.04 ct',short='Green Tourmaline',ct='5.04 ct',shape='Cushion',hue='forest',coll='tourmaline',
   lead='One stone at a time, from my personal collection. A deep green cushion that throws bright green flashes as it moves; loose and ready for a ring or pendant.',
-  photos=['stone-01'],alt='Stone 01, green tourmaline, 5.04 ct cushion',variety='tourmaline-green',
+  photos=['stone-01','stone-01-b','stone-01-c','stone-01-d'],views=['face-up','face-up on folded paper','on paper, wider view','close-up'],video='stone-01',vf=[],alt='Stone 01, green tourmaline, 5.04 ct cushion',variety='tourmaline-green',
   specs=_specs('Green tourmaline','5.04 ct','Cushion, faceted','Madagascar, per the original seller','No heat, per the original seller'))
 SF001=dict(sku='SF-001',anchor='sf-001',no='SF-001',title='Tsavorite Garnet, 1.19 ct',short='Tsavorite Garnet',ct='1.19 ct',shape='Heart',hue='green-vivid',coll='garnet',
-  photos=['sf-001'],alt='SF-001, green tsavorite garnet, 1.19 ct heart, in tweezers',variety='tsavorite',
+  photos=['sf-001','sf-001-b','sf-001-c','sf-001-d'],views=['in tweezers','face-up on a gray stone surface','on a fingertip for scale','in its gem box'],video='sf-001',vf=[],alt='SF-001, green tsavorite garnet, 1.19 ct heart, in tweezers',variety='tsavorite',
   specs=_specs('Tsavorite garnet','1.19 ct','Heart, faceted','Kenya, per the original seller','Not known'))
 STONE02=dict(sku='SF-203',anchor='sf-203',no='Stone 02',title='Pink Tourmaline, 1.42 ct',short='Pink Tourmaline',ct='1.42 ct',shape='Cushion',hue='pink',coll='tourmaline',
-  photos=['stone-02'],alt='Stone 02, pink tourmaline, 1.42 ct cushion',variety='tourmaline-pink',
+  photos=['stone-02','stone-02-b','stone-02-c','stone-02-d'],views=['face-up','face-up, second view','tilted on folded paper','tilted, closer'],video='stone-02',vf=[],alt='Stone 02, pink tourmaline, 1.42 ct cushion',variety='tourmaline-pink',
   specs=_specs('Pink tourmaline','1.42 ct','Cushion, faceted','Afghanistan, per the original seller','No heat, per the original seller'))
 STONE03=dict(sku='SF-204',anchor='sf-204',no='Stone 03',title='Green Tourmaline, 1.26 ct',short='Green Tourmaline',ct='1.26 ct',shape='Cushion',hue='green',coll='tourmaline',
-  photos=['stone-03'],alt='Stone 03, crisp green tourmaline, 1.26 ct elongated cushion',variety='tourmaline-green',
+  photos=['stone-03','stone-03-b','stone-03-c','stone-03-d'],views=['face-up','on folded paper','angled','side view'],video='stone-03',vf=[3],alt='Stone 03, crisp green tourmaline, 1.26 ct elongated cushion',variety='tourmaline-green',
   specs=_specs('Green tourmaline','1.26 ct','Elongated cushion, faceted','Afghanistan, per the original seller','No heat, per the original seller'))
 STONE04=dict(sku='SF-205',anchor='sf-205',no='Stone 04',title='Light Bluish Green Tourmaline, 1.02 ct',short='Light Bluish Green Tourmaline',ct='1.02 ct',shape='Emerald cut',hue='mint',coll='tourmaline',
-  photos=['stone-04'],alt='Stone 04, light bluish green tourmaline, 1.02 ct emerald cut',variety='tourmaline-bluegreen',
+  photos=['stone-04','stone-04-b','stone-04-c','stone-04-d'],views=['face-up','face-up, second view','face-up on folded paper','angled on folded paper'],video='stone-04',vf=[],alt='Stone 04, light bluish green tourmaline, 1.02 ct emerald cut',variety='tourmaline-bluegreen',
   specs=_specs('Light bluish green tourmaline','1.02 ct','Emerald cut, faceted','Afghanistan, per the original seller','No heat, per the original seller'))
 STONES=[STONE04,STONE03,SF001,STONE02,STONE01]   # newest first; every photographed stone on the site
 for _s in STONES:
@@ -256,18 +256,46 @@ def phead(label,h1,lead,crumbs='',extra='',lc='#B8476A'):
     return (f'<section class="phead">{crumbs}<div class="label" style="color:{lc}">{label}</div><h1>{h1}</h1>'
             f'<p class="lead">{lead}</p>{extra}<div class="sp3"></div></section>')
 
+# Phase 2 per-stone layer (Joshua 7:38 PM PT): 4 photos + 1 voice-free video with licensed soft music + variety layer.
+LAYERS=json.loads((pathlib.Path(__file__).resolve().parent/'data'/'layers.json').read_text())
+LKEY={'tsavorite':('tsavorite',None),'tourmaline-green':('tourmaline','green'),'tourmaline-pink':('tourmaline','pink'),'tourmaline-bluegreen':('tourmaline','bluegreen')}
+def palt(s,i):
+    a=f"{s['alt']}, {s['views'][i]}"
+    return a+(', still frame from the video' if i in s.get('vf',[]) else '')
+def thumbs(s):
+    out=''
+    for i in range(1,len(s['photos'])):
+        n=s['photos'][i]
+        out+=(f'<a class="th" href="{A}{n}-800.jpg"><img src="{A}{n}-400.jpg" width="400" height="400" loading="lazy" decoding="async" '
+              f'sizes="(max-width:820px) 28vw, 130px" srcset="{A}{n}-400.jpg 400w, {A}{n}-800.jpg 800w" alt="{palt(s,i)}"></a>')
+    return f'<div class="ths">{out}</div>'
+def layer(s):
+    k,col=LKEY[s['variety']]; L=LAYERS[k]; v=VNAME[s['variety']]
+    blocks=''
+    for sec in L['sections']:
+        items=list(sec['items'])
+        # color cause already sits in the approved blurb (vbox) above, so it isn't repeated here
+        blocks+=f'<div class="lb"><h3>{sec["h"]}</h3><ul>'+''.join(f'<li>{x}</li>' for x in items)+'</ul></div>'
+    vid=s['video']
+    return (f'<div class="sdl"><figure class="vid"><video controls playsinline preload="none" width="720" height="1280" '
+            f'poster="{A}{s["photos"][0]}-800.jpg" aria-label="Video of {s["alt"]}, with soft piano music, no voice">'
+            f'<source src="{{{{root}}}}video/{vid}.mp4" type="video/mp4"></video>'
+            f'<figcaption>Real stone, real light. Soft piano, no voice.</figcaption></figure>'
+            f'<div class="lay"><div class="label" style="color:var(--stone-ink)">The {v} story</div><div class="lbs">{blocks}</div></div></div>')
+
 def stone_detail(s,etsy):
     c=CD[s['coll']]
     rows=''.join(f'<dt>{k}</dt><dd{" class=unk" if v in ("To measure","Not known") else ""}>{v}</dd>' for k,v in s['specs'])
     v=VNAME[s['variety']]
     return f'''<article class="sd" id="{s['anchor']}" style="{svars(s)}">
-<div class="sdp">{framed(s,'fr',0,'(max-width:820px) 88vw, 400px')}</div>
+<div class="sdp">{framed(s,'fr',0,'(max-width:820px) 88vw, 400px')}{thumbs(s)}</div>
 <div class="sdt"><div class="row">{chip(c)}<span class="no">{s['no'] if s['no']==s['sku'] else s['no']+' · '+s['sku']}</span></div>
 <h2>{s['title']}</h2>
 <dl class="spec2">{rows}<dt>Price</dt><dd>Price TBD</dd></dl>
 <p class="closenote">{CLOSE}</p>
 <div class="vbox"><h3>About {v}</h3><p>{VARIETY[s['variety']]}</p></div>
 <div class="sdcta"><span class="soonchip">Coming soon to Etsy</span><a class="btn out rnd" href="{etsy}" rel="noopener">Favorite the shop on Etsy</a></div></div>
+{layer(s)}
 </article>'''
 
 def shop_body(crumbs,etsy):

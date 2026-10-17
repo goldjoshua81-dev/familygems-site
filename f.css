@@ -510,3 +510,22 @@ main.f.inner .crumbs a{color:var(--emh)}
 main.std .prose a:not(.btn),main.std .note a,main.std details a{padding:12px 0;margin:-12px 0}
 main.std .sh h2{font-size:clamp(38px,4.2vw,54px);margin:0;line-height:1}
 main.std .sh p{margin:0}
+/* Phase 2 per-stone layer (Oct 16, 2026): thumbs, video, variety layer. All color from the stone's own CSS vars. */
+.ths{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;padding:0 10px}
+.ths .th{display:block;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 0 0 1px var(--stone-line),0 10px 22px -16px rgba(30,42,36,.4);transition:transform .15s}
+.ths .th:hover{transform:translateY(-2px)}
+.ths .th:focus-visible{outline:2px solid var(--stone-ink);outline-offset:3px}
+.ths img{display:block;width:100%;height:auto;aspect-ratio:1}
+.sdl{grid-column:1/-1;display:grid;grid-template-columns:260px 1fr;gap:40px;align-items:start;margin-top:18px;padding-top:30px;border-top:1px solid var(--stone-line)}
+.vid{margin:0}
+.vid video{display:block;width:100%;height:auto;aspect-ratio:9/16;border-radius:20px;background:var(--stone-soft);box-shadow:0 0 0 1px rgba(184,149,90,.55),0 22px 48px -24px rgba(30,42,36,.45)}
+.vid figcaption{font-size:13px;color:var(--muted);margin-top:10px;text-align:center}
+.lay .label{margin:0 0 12px}
+.lbs{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.lb{background:#fff;border:1px solid var(--stone-line);border-top:4px solid var(--stone);border-radius:18px;padding:18px 20px}
+.lb h3{font:600 24px/1.1 Cormorant;color:var(--stone-ink);margin:0 0 10px}
+.lb ul{margin:0;padding:0;list-style:none}
+.lb li{position:relative;padding-left:16px;font-size:14.5px;line-height:1.5;color:#2E3A34;margin:0 0 8px}
+.lb li:before{content:'';position:absolute;left:0;top:.6em;width:6px;height:6px;transform:rotate(45deg);background:var(--stone)}
+@media (max-width:1180px) and (min-width:821px){.sdl{grid-template-columns:220px 1fr;gap:24px}.lbs{grid-template-columns:1fr}}
+@media (max-width:820px){.sdl{grid-template-columns:1fr;gap:20px;padding-top:20px}.vid{max-width:260px;margin:0 auto}.lbs{grid-template-columns:1fr}.ths{padding:0 18px}}

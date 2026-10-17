@@ -1,0 +1,71 @@
+{
+ "tourmaline": {
+  "sections": [
+   {
+    "h": "History",
+    "items": [
+     "Liddicoatite, one of the gem species, is named for Richard T. Liddicoat.",
+     "The Smithsonian counts more than 14 distinct tourmaline minerals today."
+    ]
+   },
+   {
+    "h": "Cool facts",
+    "items": [
+     "Only one of those minerals, elbaite, gives nearly all tourmaline gems.",
+     "Look down through the top: the back facets can show doubled, a telltale sign of strong double refraction.",
+     "Strongly pleochroic. Look down its length, and the color goes darker.",
+     "Pyroelectric and piezoelectric: heat it or squeeze it, and it builds a small electric charge.",
+     "Iron, with or without titanium, makes greens and blues. Manganese makes pinks and reds. Vanadium and chromium make intense greens in the magnesium-rich species."
+    ]
+   },
+   {
+    "h": "Family and species",
+    "items": [
+     "Tourmaline group, a complex borosilicate. Trigonal crystals.",
+     "Elbaite (sodium, lithium, aluminum): most gem tourmaline, from granite pegmatites.",
+     "Liddicoatite (calcium, lithium, aluminum): pegmatites, known for complex color zoning.",
+     "Dravite and uvite (magnesium-rich): form in metamorphosed limestone and marble.",
+     "Schorl: black, rich in iron."
+    ]
+   }
+  ],
+  "colors": {
+   "green": "Green comes from iron, sometimes with titanium.",
+   "pink": "Pink comes from manganese.",
+   "bluegreen": "Its blue-green comes from iron, sometimes with titanium."
+  }
+ },
+ "tsavorite": {
+  "sections": [
+   {
+    "h": "History",
+    "items": [
+     "Geologist Campbell Bridges found it in northern Tanzania in 1967, then in Kenya's Tsavo National Park in 1970.",
+     "He won a permit to mine the Kenyan deposit in 1971.",
+     "The name, given in 1973, honors Tsavo National Park.",
+     "Gem tsavorite still comes mainly from the Kenya–Tanzania border. It has also been documented in Madagascar."
+    ]
+   },
+   {
+    "h": "Cool facts",
+    "items": [
+     "The finest are intense green to blue-green, and can pass for emerald at a glance.",
+     "Refractive index about 1.74, and no facet doubling, so the facet edges stay crisp.",
+     "Look inside and you may see feathers of tiny negative crystals, fluid inclusions or fine fibers.",
+     "It usually comes small, so value climbs fast with size. Cutters favor shapes that save weight from the rough.",
+     "Garnet is the birthstone for January and the gem for the second anniversary."
+    ]
+   },
+   {
+    "h": "Family and species",
+    "items": [
+     "Garnet group → grossular → tsavorite.",
+     "GIA counts more than 20 garnet species. Five matter as gems: pyrope, almandine, spessartine, grossular and andradite. A sixth, uvarovite, is usually too small to cut.",
+     "Grossular may have the widest color range of any garnet, from colorless through yellow and reddish orange to a strong, vibrant green. Tsavorite and hessonite are both grossular.",
+     "Its green cousin demantoid belongs to another species, andradite. Like tsavorite, it's usually found small."
+    ]
+   }
+  ],
+  "colors": {}
+ }
+}
