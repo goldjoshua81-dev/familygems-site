@@ -10,18 +10,20 @@ https://thefamilygems.com/ and at https://<user>.github.io/familygems-site/.
 Only 404.html needs CONFIG["base_path"] (GitHub Pages serves it at any depth).
 """
 import json, html, os, datetime, pathlib
+import fsite  # direction F (Spectrum Boutique) header/footer + home/Our Story bodies; styles in f.css
 
 ROOT = pathlib.Path(__file__).resolve().parent
 
 CONFIG = {
     "site_name": "The Family Gem Shop",
     "domain": "https://thefamilygems.com",
-    # "/" once thefamilygems.com points at the site; "/familygems-site/" on github.io
-    "base_path": os.environ.get("FG_BASE", "/familygems-site/"),
+    # 404.html link base. thefamilygems.com is live (CNAME), so the default is "/".
+    # For a github.io project-page preview use FG_BASE=/familygems-site/
+    "base_path": os.environ.get("FG_BASE", "/"),
     "etsy": "https://www.etsy.com/shop/TheFamilyGemShop",
     "email": "",            # PLACEHOLDER: business email once it exists (shown on /contact/ when set)
-    "updated": "2026-10-05",
-    "theme": "#0f5132",
+    "updated": "2026-10-16",
+    "theme": "#0F4A3A",
 }
 E = CONFIG["etsy"]
 
@@ -32,50 +34,9 @@ GEM_SVG = ('<svg class="gem" viewBox="0 0 100 92" aria-hidden="true" focusable="
   '<path d="M50 28 50 88M24 12 50 46 76 12M12 50 50 46 88 50M50 28 32 34 12 50M50 28 68 34 88 50" '
   'stroke="#ffffff" stroke-opacity=".35" stroke-width="1.2" fill="none"/></svg>')
 
-CSS = """
-:root{--g:#0f5132;--g2:#16794a;--ink:#1d2421;--mut:#55605a;--bg:#fbfaf7;--card:#fff;--line:#e3dfd4;--soft:#eef5f0}
-*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
-body{margin:0;font:17px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg)}
-h1,h2,h3{font-family:Georgia,"Times New Roman",serif;line-height:1.2;color:#14261d;margin:1.6em 0 .5em}
-h1{font-size:clamp(1.9rem,6vw,2.9rem);margin-top:.4em}h2{font-size:1.5rem}h3{font-size:1.15rem}
-a{color:var(--g2)}a:hover{color:var(--g)}
-img,svg{max-width:100%}
-.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
-.skip{position:absolute;left:-999px}.skip:focus{left:12px;top:12px;background:#fff;padding:8px;z-index:9}
-header.site{background:#fff;border-bottom:1px solid var(--line)}
-header.site .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 18px;padding-top:12px;padding-bottom:12px}
-.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#14261d;font:700 1.12rem Georgia,serif}
-.brand .gem{width:30px;height:28px}
-nav.main ul{display:flex;flex-wrap:wrap;gap:4px 16px;list-style:none;margin:0;padding:0}
-nav.main a{display:inline-block;padding:10px 2px;text-decoration:none;color:var(--ink);font-weight:500}
-nav.main a[aria-current=page]{color:var(--g);border-bottom:2px solid var(--g)}
-.hero{background:linear-gradient(160deg,#f3f8f4,#fbfaf7 60%);border-bottom:1px solid var(--line)}
-.hero .wrap{display:grid;gap:24px;padding-top:36px;padding-bottom:40px;align-items:center}
-.hero .gem{width:min(150px,40vw);height:auto;justify-self:center}
-.lead{font-size:1.15rem;color:var(--mut);max-width:38em}
-.btn{display:inline-block;background:var(--g);color:#fff;text-decoration:none;font-weight:600;padding:13px 22px;border-radius:8px;margin:6px 10px 6px 0}
-.btn:hover{background:#0a3a24;color:#fff}.btn.alt{background:#fff;color:var(--g);border:2px solid var(--g)}
-.grid{display:grid;gap:18px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px}
-.card h2,.card h3{margin-top:0}
-.feature{display:grid;gap:18px;align-items:center}
-.feature .gem{width:150px;height:auto;justify-self:center}
-.tag{display:inline-block;background:var(--soft);color:var(--g);font-size:.85rem;font-weight:600;padding:3px 10px;border-radius:99px}
-dl.spec{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;margin:12px 0}dl.spec dt{font-weight:600}dl.spec dd{margin:0}
-main{padding-bottom:48px}
-.crumbs{font-size:.9rem;color:var(--mut);padding-top:16px}.crumbs ol{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:6px}
-.crumbs li+li:before{content:"/";margin-right:6px;color:#9aa39d}
-details{background:#fff;border:1px solid var(--line);border-radius:10px;padding:4px 16px;margin:10px 0}
-summary{cursor:pointer;font-weight:600;padding:10px 0}
-.prose{max-width:44em}
-.note{background:var(--soft);border-left:4px solid var(--g2);padding:12px 16px;border-radius:6px}
-footer.site{background:#14261d;color:#d8e2dc;padding:32px 0;font-size:.95rem}
-footer.site a{color:#fff}footer.site ul{list-style:none;padding:0;margin:0 0 14px;display:flex;flex-wrap:wrap;gap:6px 18px}
-footer.site a{display:inline-block;padding:6px 0}
-@media(min-width:760px){.hero .gem{width:220px}.hero .wrap{grid-template-columns:1.4fr 1fr}.grid.c3{grid-template-columns:repeat(3,1fr)}.grid.c2{grid-template-columns:repeat(2,1fr)}.feature{grid-template-columns:160px 1fr}}
-""".strip()
+# Styles: f.css (direction F). The old inline CSS was retired on Oct 16, 2026 (backup branch backup/pre-F-20261016).
 
-NAV = [("shop/", "Shop"), ("guides/", "Guides"), ("about/", "About"), ("faq/", "FAQ"), ("contact/", "Contact")]
+# Navigation lives in fsite.NAV (Shop, Guides, Our Story -> /about/, FAQ, Contact).
 
 def jsonld(obj):
     return '<script type="application/ld+json">' + json.dumps(obj, ensure_ascii=False, separators=(",", ":")) + "</script>"
@@ -151,37 +112,12 @@ FEATURE = f"""
 """
 
 def page_home():
-    body = f"""
-<section class="hero"><div class="wrap">
-  <div>
-    <h1>Loose gemstones for jewelry that means something</h1>
-    <p class="lead">The Family Gem Shop offers hand-picked loose gemstones, starting with a heart-shaped tsavorite garnet, for custom rings, pendants and heirloom pieces. Every stone is sold through our Etsy shop.</p>
-    <a class="btn" href="{E}" rel="noopener">Visit our Etsy shop</a>
-    <a class="btn alt" href="{{{{root}}}}guides/tsavorite-garnet-buying-guide/">Read the tsavorite guide</a>
-  </div>
-  {GEM_SVG.format(n=1)}
-</div></section>
-<div class="wrap">
-  <h2>Our first stone</h2>
-  {FEATURE}
-  <h2>Why buy a loose gemstone?</h2>
-  <div class="grid c3">
-    <div class="card"><h3>Design it your way</h3><p>Pick the stone first, then choose the setting, metal and style with your jeweler.</p></div>
-    <div class="card"><h3>See exactly what you get</h3><p>A loose stone can be photographed and measured from every angle, with nothing hidden under prongs.</p></div>
-    <div class="card"><h3>Made to be handed down</h3><p>A well-chosen gemstone can be reset again and again as tastes change, and passed through the family.</p></div>
-  </div>
-  <h2>Learn before you buy</h2>
-  <div class="grid c2">
-    <div class="card"><h3><a href="{{{{root}}}}guides/tsavorite-garnet-buying-guide/">Tsavorite garnet buying guide</a></h3><p>Color, clarity, cut, size and the questions to ask any seller before buying a loose tsavorite.</p></div>
-    <div class="card"><h3><a href="{{{{root}}}}faq/">Frequently asked questions</a></h3><p>How buying on Etsy works, fitting a stone to a setting, shipping and returns.</p></div>
-  </div>
-</div>
-"""
+    # Direction F front page, APPROVED by Joshua Oct 16, 2026, 5:24 PM PT (Stone 01 green tourmaline leading).
     ld = jsonld({"@context": "https://schema.org", "@graph": [ORG, WEBSITE]})
-    return dict(path="", nav="",
-        title="The Family Gem Shop | Loose Gemstones & Heart-Cut Tsavorite",
-        desc="Hand-picked loose gemstones for custom rings, pendants and heirloom jewelry, starting with a 1.19 ct heart-shaped tsavorite garnet. Shop on Etsy.",
-        body=body, ld=ld, prio="1.0", freq="weekly")
+    return dict(path="", nav="", main="f",
+        title="The Family Gem Shop | Loose Gemstones, One Stone at a Time",
+        desc="Hand-picked loose gemstones from our family collection, sorted by color. Each stone is photographed as it is and seller-identified, never guaranteed. Sold on Etsy.",
+        body=fsite.home_body(), ld=ld, prio="1.0", freq="weekly")
 
 def page_shop():
     c, cld = crumbs([("Shop", "shop/")])
@@ -207,25 +143,12 @@ def page_shop():
         body=body, ld=cld, prio="0.9", freq="weekly")
 
 def page_about():
-    c, cld = crumbs([("About", "about/")])
-    body = f"""{c}
-<div class="wrap prose">
-  <h1>About The Family Gem Shop</h1>
-  <p class="lead">We are a small shop for loose gemstones, opening on Etsy in fall 2026.</p>
-  <!-- PLACEHOLDER (needs Joshua): 2-4 sentences in his words: who is behind the shop, why "Family Gem", any jewelry or gem background. Do not publish invented history. -->
-  <h2>What we care about</h2>
-  <ul>
-    <li><strong>Clear information.</strong> Each listing is meant to state the stone type, carat weight, measurements, shape, origin when known and any known treatment.</li>
-    <li><strong>Honest photos.</strong> We aim to show each stone as it looks, not as a filter wants it to look.</li>
-    <li><strong>Stones worth keeping.</strong> We choose gemstones that can become a family piece, starting with green tsavorite garnet.</li>
-  </ul>
-  <h2>Where to find us</h2>
-  <p>Our shop lives on Etsy at <a href="{E}" rel="noopener">etsy.com/shop/TheFamilyGemShop</a>. This website is where we share buying guides and news about new stones.</p>
-</div>
-"""
-    return dict(path="about/", nav="about/", title="About Us | The Family Gem Shop",
-        desc="The Family Gem Shop is a small Etsy shop for loose gemstones, opening fall 2026. Learn what we care about and where to find our stones.",
-        body=body, ld=cld, prio="0.6", freq="monthly")
+    # Our Story (direction F), text + ring photo APPROVED by Joshua Oct 16, 2026, 5:21 PM PT. URL stays /about/.
+    c, cld = crumbs([("Our Story", "about/")])
+    return dict(path="about/", nav="about/", main="f",
+        title="Our Story | The Family Gem Shop",
+        desc="How The Family Gem Shop began: an emerald my dad bought when I was three or four, and the family crest it inspired.",
+        body=fsite.story_body(), ld=cld, prio="0.6", freq="monthly")
 
 def page_faq():
     c, cld = crumbs([("FAQ", "faq/")])
@@ -390,9 +313,6 @@ def render(p):
         depth = path.count("/")
         root = "./" if depth == 0 else "../" * depth
     canonical = CONFIG["domain"] + "/" + ("" if path == "404.html" else path)
-    navhtml = "".join(
-        f'<li><a href="{{{{root}}}}{href}"{" aria-current=page" if p.get("nav") == href else ""}>{label}</a></li>'
-        for href, label in NAV)
     og_img = CONFIG["domain"] + "/img/og.png"
     t, d = html.escape(p["title"]), html.escape(p["desc"])
     robots = '<meta name="robots" content="noindex">' if p.get("noindex") else '<meta name="robots" content="index,follow,max-image-preview:large">'
@@ -419,36 +339,23 @@ def render(p):
 <meta property="og:image" content="{og_img}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="The Family Gem Shop: loose gemstones and heart-cut tsavorite">
+<meta property="og:image:alt" content="The Family Gem Shop">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{t}">
 <meta name="twitter:description" content="{d}">
 <meta name="twitter:image" content="{og_img}">
-<style>{CSS}</style>
+<link rel="preload" href="{{{{root}}}}fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{{{root}}}}fonts/cormorant-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{{{{root}}}}f.css">
 {p['ld']}
 </head>
 <body>
-<a class="skip" href="#main">Skip to content</a>
-<header class="site"><div class="wrap">
-  <a class="brand" href="{{{{root}}}}">{GEM_SVG.format(n=0)}<span>The Family Gem Shop</span></a>
-  <nav class="main" aria-label="Main"><ul>{navhtml}</ul></nav>
-</div></header>
-<main id="main">
+{fsite.header(p.get("nav", ""))}
+<main id="main" class="{p.get('main', 'std')}">
 {p['body']}
 </main>
-<footer class="site"><div class="wrap">
-  <ul>
-    <li><a href="{E}" rel="noopener">Etsy shop</a></li>
-    <li><a href="{{{{root}}}}shop/">Shop</a></li>
-    <li><a href="{{{{root}}}}guides/">Guides</a></li>
-    <li><a href="{{{{root}}}}about/">About</a></li>
-    <li><a href="{{{{root}}}}faq/">FAQ</a></li>
-    <li><a href="{{{{root}}}}contact/">Contact</a></li>
-    <li><a href="{{{{root}}}}privacy/">Privacy</a></li>
-  </ul>
-  <p>&copy; 2026 The Family Gem Shop. Loose gemstones, sold on Etsy.</p>
-</div></footer>
+{fsite.footer(E)}
 </body>
 </html>
 """
@@ -469,8 +376,8 @@ def main():
         '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls + "</urlset>\n")
     (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {CONFIG['domain']}/sitemap.xml\n")
     (ROOT / "site.webmanifest").write_text(json.dumps({
-        "name": CONFIG["site_name"], "short_name": "Family Gems", "start_url": ".", "display": "standalone",
-        "background_color": "#fbfaf7", "theme_color": CONFIG["theme"],
+        "name": CONFIG["site_name"], "short_name": "Family Gem Shop", "start_url": ".", "display": "standalone",
+        "background_color": "#FBF8F1", "theme_color": CONFIG["theme"],
         "icons": [{"src": "img/logo-192.png", "sizes": "192x192", "type": "image/png"},
                   {"src": "img/logo-512.png", "sizes": "512x512", "type": "image/png"}]}, indent=1))
     (ROOT / ".nojekyll").write_text("")

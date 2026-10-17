@@ -1,10 +1,10 @@
 {
  "name": "The Family Gem Shop",
- "short_name": "Family Gems",
+ "short_name": "Family Gem Shop",
  "start_url": ".",
  "display": "standalone",
- "background_color": "#fbfaf7",
- "theme_color": "#0f5132",
+ "background_color": "#FBF8F1",
+ "theme_color": "#0F4A3A",
  "icons": [
   {
    "src": "img/logo-192.png",
