@@ -98,6 +98,16 @@ STONE04=dict(sku='SF-205',anchor='sf-205',no='Stone 04',title='Mint Green Tourma
   photos=['stone-04','stone-04-b','stone-04-c','stone-04-d'],views=['face-up','face-up, second view','face-up on folded paper','angled on folded paper'],video='stone-04',vf=[],alt='Stone 04, light bluish green tourmaline, 1.02 ct emerald cut',variety='tourmaline-bluegreen',
   specs=_specs('Light bluish green tourmaline','1.02 ct','Emerald cut, faceted','Afghanistan, per the original seller','No heat, per the original seller'))
 STONES=[STONE04,STONE03,SF001,STONE02,STONE01]   # newest first; every photographed stone on the site
+# Alt text (SEO pass, Oct 17, 2026): the stone's real name, weight and shape, plus the view. No keyword stuffing.
+for _s in STONES:
+    _shape=dict(_s['specs'])['Shape'].split(',')[0].lower()
+    _s['alt']=f"{_s['title'].split(',')[0]}, {_s['ct']} {_shape} ({_s['sku']})"
+def webp_set(n,widths=(200,400,800),ext='webp'):
+    return ', '.join(f'{A}{n}-{w}.{ext} {w}w' for w in widths)
+def pic(n,sizes,alt,attrs='',widths=(200,400,800)):
+    """<picture>: WebP with JPEG fallback, 200/400/800w, fixed width/height to avoid layout shift."""
+    return (f'<picture><source type="image/webp" srcset="{webp_set(n,widths)}" sizes="{sizes}">'
+            f'<img src="{A}{n}-400.jpg" srcset="{webp_set(n,widths,"jpg")}" sizes="{sizes}" width="400" height="400" {attrs}alt="{alt}"></picture>')
 for _s in STONES:
     assert _s['hue'] in PAL, f"{_s['sku']}: hue '{_s['hue']}' not in data/palette.json"
     assert _s['sku'] in _s['alt'] or _s['no'] in _s['alt'], _s['sku']
@@ -145,8 +155,10 @@ def dots():
         out+=f'<div class="dot" style="left:calc({x:.2f}% - 12px);top:calc({y:.2f}% - 12px);background:{c[2]}"><span style="{side};color:{c[4]}">{c[1]}</span></div>'
     return out
 
-def framed(s,cls='fr',i=0,sizes='(max-width:820px) 45vw, 300px'):
-    return f'<div class="glow" style="{svars(s)}"><div class="{cls}"><div class="photo"><img src="{A}{s["photos"][i]}-400.jpg" srcset="{A}{s["photos"][i]}-400.jpg 400w, {A}{s["photos"][i]}-800.jpg 800w" sizes="{sizes}" width="400" height="400" loading="lazy" decoding="async" alt="{s["alt"]}"></div></div></div>'
+def framed(s,cls='fr',i=0,sizes='(max-width:820px) 45vw, 300px',eager=False):
+    alt=f"{s['alt']}, {s['views'][i]}"
+    at='fetchpriority="high" decoding="async" ' if eager else 'loading="lazy" decoding="async" '
+    return f'<div class="glow" style="{svars(s)}"><div class="{cls}"><div class="photo">{pic(s["photos"][i],sizes,alt,at)}</div></div></div>'
 
 def cc(c,cls=''):
     k,n,b,acc,txt,lab,dark,st=c
@@ -187,17 +199,17 @@ def home_body():
 <div class="ctas"><a class="btn pri rnd" href="{{{{root}}}}shop/">Shop the collection</a><a class="btn out rnd" href="{{{{root}}}}contact/">Put me on the hunt</a></div>
 <div class="minitrust"><span>Personal collection</span><span>Inclusions shown</span><span>Never retouched</span></div></div>
 <div class="wheel"><div class="ring"></div><div class="ring2"></div>{dots()}
-<div class="hcard glow" style="{svars(s1)}"><div class="photo"><img src="{A}stone-01-800.jpg" srcset="{A}stone-01-400.jpg 400w, {A}stone-01-800.jpg 800w" sizes="(max-width:820px) 176px, 300px" width="800" height="800" fetchpriority="high" alt="{s1['alt']}"></div><div class="lab"><span class="nm2">Green Tourmaline</span>{chip(CD['tourmaline'],'Stone 01')}</div></div>
+<div class="hcard glow" style="{svars(s1)}"><div class="photo">{pic('stone-01','(max-width:820px) 176px, 300px',s1['alt']+', face-up','fetchpriority="high" decoding="async" ')}</div><div class="lab"><span class="nm2">Green Tourmaline</span>{chip(CD['tourmaline'],'Stone 01')}</div></div>
 <div class="tag t1"><b>5.04 ct</b>Cushion · faceted</div>
 <div class="tag t2">Tourmaline colours<div class="dr"><i style="background:#2F6B1E"></i><i style="background:#D9487A"></i><i style="background:#3FD0C9"></i><i style="background:#2E6FB0"></i></div></div>
 <div class="tag t3"><b>Price TBD</b>From my collection</div></div></div>
 <div class="chips">{"".join(chip(c) for c in COLL)}</div></section>
 <section class="blk"><div class="sh"><div><div class="label" style="color:#B34528">Shop by gem</div><h2>Pick a colour</h2></div><p>Nine collections, nine colours. Tourmaline and garnet have real photos today; the rest fill in as each stone is photographed.</p></div><div class="cg">{cards}</div></section>
 <section class="blk"><div class="sh"><div><div class="label" style="color:#B8476A">Just photographed</div><h2>Fresh from the collection</h2></div><a class="more" style="--uc:#B8476A" href="{{{{root}}}}shop/">View the shop →</a></div><div class="pg">{"".join(pcard(s) for s in color_order([x for x in STONES if x is not STONE01])[:4])}</div></section>
-<section class="blk"><div class="ls"><div class="crest"><picture><source type="image/webp" srcset="{A}crest-280.webp 280w, {A}crest-560.webp 560w, {A}crest-840.webp 840w" sizes="(max-width:820px) 190px, 270px"><img src="{A}crest-280.jpg" srcset="{A}crest-280.jpg 280w, {A}crest-560.jpg 560w, {A}crest-840.jpg 840w" sizes="(max-width:820px) 190px, 270px" width="280" height="280" loading="lazy" alt="The Family Gem Shop crest: FG with an emerald above and a diamond below"></picture></div>
+<section class="blk"><div class="ls"><div class="crest"><picture><source type="image/webp" srcset="{A}crest-280.webp 280w, {A}crest-380.webp 380w, {A}crest-560.webp 560w, {A}crest-840.webp 840w" sizes="(max-width:820px) 190px, 270px"><img src="{A}crest-280.jpg" srcset="{A}crest-280.jpg 280w, {A}crest-380.jpg 380w, {A}crest-560.jpg 560w, {A}crest-840.jpg 840w" sizes="(max-width:820px) 190px, 270px" width="280" height="280" loading="lazy" alt="The Family Gem Shop crest: FG with an emerald above and a diamond below"></picture></div>
 <div class="txt"><div class="halo"></div><div class="label" style="color:#1C6650">Our crest</div><h2>The emerald that <em>started it all</em></h2><p>{STORY_SHORT}</p><div class="ringnote"><div class="rf"><img src="{RING_SM}400.jpg" width="400" height="250" loading="lazy" alt="My dad’s 14k gold tension ring with a green emerald"></div><span>{RING_CAP}</span></div>{LEGEND}<a class="link" href="{{{{root}}}}about/">Read Our Story →</a></div></div></section>
 <section class="blk"><div class="sh"><div><div class="label" style="color:#1F3A7A">How we describe stones</div><h2>No surprises</h2></div><p>The same four promises on every stone page.</p></div>
-<div class="tg">{"".join(f'<div class="tc" style="--bg:{bg};--c:{c}"><div class="ic">{gem_svg()}</div><h4>{h}</h4><p>{p}</p></div>' for (h,p),(c,bg) in zip(TRUST,tcol))}</div></section>
+<div class="tg">{"".join(f'<div class="tc" style="--bg:{bg};--c:{c}"><div class="ic">{gem_svg()}</div><h3>{h}</h3><p>{p}</p></div>' for (h,p),(c,bg) in zip(TRUST,tcol))}</div></section>
 <section class="blk"><div class="duo"><div class="huntc"><div class="label" style="color:var(--golds)">The Hunt</div><h2>Put me on the hunt.</h2><p>{HUNT_P}</p><a class="btn rnd white" href="{{{{root}}}}contact/">Start a hunt</a><div class="rg"></div></div>
 <div class="lg">{"".join(f'<div class="lc" style="--bg:{bg};--c:{c}">{gem_svg()}<div><h3>{t}</h3><p>{p}</p></div></div>' for (t,p,_),(c,bg) in zip(LORE,lcol))}</div></div></section>
 </div>'''
@@ -205,7 +217,7 @@ def home_body():
 
 def story_body():
     body=f'''<div class="wrap">
-<section class="shero"><div class="rg"></div><picture><source type="image/webp" srcset="{A}crest-280.webp 280w, {A}crest-560.webp 560w, {A}crest-840.webp 840w" sizes="(max-width:820px) 140px, 210px"><img class="cr" src="{A}crest-280.jpg" srcset="{A}crest-280.jpg 280w, {A}crest-560.jpg 560w, {A}crest-840.jpg 840w" sizes="(max-width:820px) 140px, 210px" width="210" height="210" alt="The Family Gem Shop crest: FG with an emerald above and a diamond below"></picture>
+<section class="shero"><div class="rg"></div><picture><source type="image/webp" srcset="{A}crest-280.webp 280w, {A}crest-380.webp 380w, {A}crest-560.webp 560w, {A}crest-840.webp 840w" sizes="(max-width:820px) 140px, 210px"><img class="cr" src="{A}crest-280.jpg" srcset="{A}crest-280.jpg 280w, {A}crest-380.jpg 380w, {A}crest-560.jpg 560w, {A}crest-840.jpg 840w" sizes="(max-width:820px) 140px, 210px" width="210" height="210" alt="The Family Gem Shop crest: FG with an emerald above and a diamond below"></picture>
 <div class="ft l"><i class="gem-e"></i><div><b>The emerald</b>Where it started</div></div><div class="ft r"><i class="gem-d"></i><div><b>The diamond</b>The whole family</div></div><span class="pill" style="--c:#46C38A"><i></i>Our Story</span>
 <h1>Gems are in my <em>veins.</em></h1><div class="sub">Where The Family Gem Shop began</div><div class="sp2"></div></section>
 <section class="sbody ed"><div class="side"><figure class="ringfig"><div class="rf"><img src="{RING_IMG}800.jpg" srcset="{RING_IMG}400.jpg 400w, {RING_IMG}800.jpg 800w, {RING_IMG}1600.jpg 1600w" sizes="(max-width:820px) 92vw, 440px" width="800" height="500" loading="lazy" decoding="async" alt="My dad’s 14k gold tension ring: a green emerald held in the tension head, gold nuggets along the sides"></div><figcaption>{RING_CAP}<small>{RING_NOTE}</small></figcaption></figure>
@@ -236,6 +248,7 @@ def header(active=''):
 def footer(etsy):
     fl=[('shop/','Shop'),('about/','Our Story'),('guides/','Guides'),('faq/','FAQ'),('contact/','Contact'),('privacy/','Privacy')]
     links=''.join(f'<a href="{{{{root}}}}{h}">{n}</a>' for h,n in fl)+f'<a href="{etsy}" rel="noopener">Etsy shop</a>'
+    # ETSY SHOP SLOT: the footer "Etsy shop" link above was approved Oct 16. If it must stay hidden until the shop is live, set build.CONFIG["etsy_live"]-style gating here.
     return (f'<footer><div class="spec-line"></div><div class="fg"><div>{brand()}<p>{ABOUT_SHORT}</p></div>'
             f'<nav class="fl" aria-label="Footer">{links}</nav></div>'
             f'<div class="copy">&copy; 2026 The Family Gem Shop · {" · ".join(TRUST_LINE)}. Loose gemstones, sold on Etsy.</div></footer>')
@@ -271,15 +284,14 @@ def thumbs(s):
     for i in range(len(s['photos'])):
         n=s['photos'][i]
         cur=' aria-current="true"' if i==0 else ''
-        out+=(f'<a class="th" href="{A}{n}-800.jpg" data-src="{A}{n}-400.jpg" data-srcset="{A}{n}-400.jpg 400w, {A}{n}-800.jpg 800w" data-alt="{palt(s,i)}"{cur}>'
-              f'<img src="{A}{n}-400.jpg" width="400" height="400" loading="lazy" decoding="async" '
-              f'sizes="(max-width:820px) 18vw, 80px" srcset="{A}{n}-400.jpg 400w, {A}{n}-800.jpg 800w" alt="{palt(s,i)}"></a>')
+        out+=(f'<a class="th" href="{A}{n}-800.jpg" data-src="{A}{n}-400.jpg" data-srcset="{webp_set(n,ext="jpg")}" data-webp="{webp_set(n)}" data-alt="{palt(s,i)}"{cur}>'
+              f'{pic(n,"(max-width:820px) 18vw, 80px",palt(s,i),'loading="lazy" decoding="async" ')}</a>')
     vt=''
     if s.get('video'):
         v=s['video']
         vt=(f'<a class="th thv" href="{{{{root}}}}video/{v}.mp4" data-video="{{{{root}}}}video/{v}.mp4" data-poster="{A}{v}-poster.jpg" '
-              f'data-label="Video of {s["alt"]}, with soft piano music, no voice" aria-label="Play the video of {s["alt"]}">'
-              f'<img src="{A}{v}-vthumb-400.jpg" width="400" height="400" loading="lazy" decoding="async" alt="">'
+              f'data-label="Video of {s["alt"]}, with soft piano music, no voice" aria-label="Video: play the video of {s["alt"]}">'
+              f'{pic(v+"-vthumb","(max-width:820px) 18vw, 80px","",'loading="lazy" decoding="async" ',(200,400))}'
               f'<span class="play" aria-hidden="true"></span><span class="vl">Video</span></a>')
     return f'<div class="ths">{vt}{out}</div>'
 def layer(s):
@@ -290,8 +302,8 @@ def layer(s):
         # color cause already sits in the approved blurb (vbox) above, so it isn't repeated here
         blocks+=f'<div class="lb"><h3>{sec["h"]}</h3><ul>'+''.join(f'<li>{x}</li>' for x in items)+'</ul></div>'
     vid=s['video']
-    return (f'<div class="sdl"><figure class="vid"><a class="vcard" href="{{{{root}}}}video/{vid}.mp4" data-open="{s['anchor']}" aria-label="Play the video of {s['alt']}">'
-            f'<img src="{A}{vid}-poster.jpg" width="540" height="960" loading="lazy" decoding="async" alt="">'
+    return (f'<div class="sdl"><figure class="vid"><a class="vcard" href="{{{{root}}}}video/{vid}.mp4" data-open="{s['anchor']}" aria-label="Watch the video of {s['alt']}">'
+            f'<picture><source type="image/webp" srcset="{A}{vid}-poster.webp"><img src="{A}{vid}-poster.jpg" width="540" height="960" loading="lazy" decoding="async" alt=""></picture>'
             f'<span class="play big" aria-hidden="true"></span><span class="vl">Watch the video</span></a>'
             f'<figcaption>Real stone, real light. Soft piano, no voice.</figcaption></figure>'
             f'<div class="lay"><div class="label" style="color:var(--stone-ink)">The {v} story</div><div class="lbs">{blocks}</div></div></div>')
@@ -310,7 +322,7 @@ VIEWER_JS='''<script>
     }else{
       if(v){v.pause();v.hidden=true;}
       ph.classList.remove('isvid');img.hidden=false;
-      img.srcset=t.dataset.srcset;img.src=t.dataset.src;img.alt=t.dataset.alt;
+      var so=ph.querySelector('source');if(so)so.srcset=t.dataset.webp;img.srcset=t.dataset.srcset;img.src=t.dataset.src;img.alt=t.dataset.alt;
     }
   }
   document.querySelectorAll('.sd').forEach(function(sd){
@@ -331,14 +343,14 @@ def stone_detail(s,etsy):
     rows=''.join(f'<dt>{k}</dt><dd{" class=unk" if v in ("To measure","Not known") else ""}>{v}</dd>' for k,v in s['specs'])
     v=VNAME[s['variety']]
     return f'''<article class="sd" id="{s['anchor']}" style="{svars(s)}">
-<div class="sdp">{framed(s,'fr',0,'(max-width:820px) 88vw, 400px')}{thumbs(s)}</div>
+<div class="sdp">{framed(s,'fr',0,'(max-width:820px) 88vw, 400px',s is STONES[0])}{thumbs(s)}</div>
 <div class="sdt"><div class="row">{chip(c)}<span class="no">{s['no'] if s['no']==s['sku'] else s['no']+' · '+s['sku']}</span></div>
 <h2>{s['title']}</h2>
 <p class="namenote">{s['name_note']}</p>
 <dl class="spec2">{rows}<dt>Price</dt><dd>Price TBD</dd></dl>
 <p class="closenote">{CLOSE}</p>
 <div class="vbox"><h3>About {v}</h3><p>{VARIETY[s['variety']]}</p></div>
-<div class="sdcta"><span class="soonchip">Coming soon to Etsy</span><a class="btn out rnd" href="{etsy}" rel="noopener">Favorite the shop on Etsy</a></div></div>
+<div class="sdcta"><span class="soonchip">Coming soon to Etsy</span><!-- ETSY LISTING SLOT ({s['sku']}): listing URL TBD. When live, add <a class="btn pri rnd" href="LISTING_URL" rel="noopener">See it on Etsy</a> --><a class="btn out rnd" href="{etsy}" rel="noopener">Favorite the shop on Etsy</a></div></div>
 {layer(s)}
 </article>'''
 
@@ -354,7 +366,7 @@ def shop_body(crumbs,etsy):
            ('Ask anything','Message me on Etsy before you buy: more photos, a video, exact size.','#D9487A'),
            ('Check out on Etsy','Etsy handles payment. Shipping and returns are shown on each listing.','#D08A2E'),
            ('Set it or keep it','Take it to your jeweler, or keep it in your collection.','#6A5ACD')]
-    how=''.join(f'<div class="tc" style="--bg:{c}14;--c:{c}"><div class="ic">{gem_svg()}</div><h4>{h}</h4><p>{p}</p></div>' for h,p,c in steps)
+    how=''.join(f'<div class="tc" style="--bg:{c}14;--c:{c}"><div class="ic">{gem_svg()}</div><h3>{h}</h3><p>{p}</p></div>' for h,p,c in steps)
     body=f'''<div class="wrap">
 {phead('The shop','Shop loose gemstones',lead,crumbs,extra)}
 <section class="blk"><div class="sh"><div><div class="label" style="color:#2E6FB0">{len(STONES)} stones photographed</div><h2>The collection so far</h2></div><p>Each card jumps to that stone’s specs and story. New colors are added as each stone is photographed.</p></div><div class="pg pg5">{cards}</div></section>

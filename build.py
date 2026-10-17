@@ -22,7 +22,9 @@ CONFIG = {
     "base_path": os.environ.get("FG_BASE", "/"),
     "etsy": "https://www.etsy.com/shop/TheFamilyGemShop",
     "email": "",            # PLACEHOLDER: business email once it exists (shown on /contact/ when set)
-    "updated": "2026-10-16",
+    "updated": "2026-10-17",   # SEO pass: every page head changed on this date
+    # sameAs placeholder: stays OFF until Joshua confirms the Etsy shop is live. Flip to True to add the shop URL to Organization.sameAs.
+    "etsy_live": False,
     "theme": "#0F4A3A",
 }
 E = CONFIG["etsy"]
@@ -42,7 +44,10 @@ def jsonld(obj):
     return '<script type="application/ld+json">' + json.dumps(obj, ensure_ascii=False, separators=(",", ":")) + "</script>"
 
 ORG = {"@type": "Organization", "@id": CONFIG["domain"] + "/#org", "name": CONFIG["site_name"],
-       "url": CONFIG["domain"] + "/", "logo": CONFIG["domain"] + "/img/logo-512.png", "sameAs": [E]}
+       "url": CONFIG["domain"] + "/", "logo": CONFIG["domain"] + "/img/logo-512.png",
+       "description": "Loose gemstones from one family's personal collection, photographed honestly and listed one stone at a time on Etsy."}
+if CONFIG["etsy_live"]:
+    ORG["sameAs"] = [E]   # placeholder, off until the shop is live
 WEBSITE = {"@type": "WebSite", "@id": CONFIG["domain"] + "/#website", "name": CONFIG["site_name"],
            "url": CONFIG["domain"] + "/", "publisher": {"@id": CONFIG["domain"] + "/#org"}, "inLanguage": "en-US"}
 
@@ -57,6 +62,24 @@ def crumbs(items):
          else f'<li aria-current="page">{html.escape(n)}</li>')
         for i, (n, p) in enumerate(allitems))
     return f'<nav class="crumbs" aria-label="Breadcrumb"><ol>{lis}</ol></nav>', jsonld(ld)
+
+def product_ld():
+    """Product JSON-LD for each stone on /shop/. Honest fields only (Joshua, Oct 17):
+    NO offers/price (prices unconfirmed), NO review/aggregateRating, origin only 'per the original seller'."""
+    d = CONFIG["domain"]
+    items = []
+    for s in fsite.STONES:
+        sp = dict(s["specs"])
+        name = s["title"].split(",")[0]
+        shape = sp["Shape"].split(",")[0].lower()
+        items.append({"@type": "Product", "@id": f"{d}/shop/#{s['anchor']}", "url": f"{d}/shop/#{s['anchor']}",
+            "name": f"{name}, {s['ct']} {shape} loose gemstone", "sku": s["sku"],
+            "image": [f"{d}/img/{n}-800.jpg" for n in s["photos"]],
+            "description": (f"{name} loose gemstone, {s['ct']}, {sp['Shape'].lower()}. "
+                            f"Origin: {sp['Origin']}. Shown in four unretouched photos and a short video. Coming soon to Etsy."),
+            "brand": {"@type": "Brand", "name": CONFIG["site_name"]},
+            "category": "Loose gemstones"})
+    return jsonld({"@context": "https://schema.org", "@graph": items})
 
 # ---------------------------------------------------------------- FAQ data
 FAQS = [
@@ -96,26 +119,29 @@ def faq_ld(faqs, root_abs):
 # ---------------------------------------------------------------- pages
 def page_home():
     # Direction F front page, APPROVED by Joshua Oct 16, 2026, 5:24 PM PT (Stone 01 green tourmaline leading).
-    ld = jsonld({"@context": "https://schema.org", "@graph": [ORG, WEBSITE]})
     return dict(path="", nav="", main="f",
-        title="The Family Gem Shop | Loose Gemstones, One Stone at a Time",
-        desc="Loose gemstones from my personal collection, every color, one stone at a time. GIA-informed descriptions. Photographed honestly, never retouched.",
-        body=fsite.home_body(), ld=ld, prio="1.0", freq="weekly")
+        title="Tsavorite & Tourmaline Loose Gemstones | The Family Gem Shop",
+        desc="Loose Tsavorite Garnet, Verdelite Green, Pink and Mint Green Tourmaline from my family collection. Photographed honestly, never retouched. One at a time.",
+        og="home", ogalt="Five loose gemstones from The Family Gem Shop on a cream background with the family crest",
+        ld="",
+        body=fsite.home_body(), prio="1.0", freq="weekly")
 
 def page_shop():
     # Rebuilt to match home (review M3): all photographed stones, color-ordered cards, per-stone sections in each stone's own color.
     c, cld = crumbs([("Shop", "shop/")])
     return dict(path="shop/", nav="shop/", main="f inner",
-        title="Shop Loose Gemstones | The Family Gem Shop",
-        desc="Loose gemstones from my personal collection: pink and green tourmaline, tsavorite garnet and more. Plain specs, honest photos. Coming soon to Etsy.",
-        body=fsite.shop_body(c, E), ld=cld, prio="0.9", freq="weekly")
+        title="Shop Loose Tourmaline & Tsavorite Gems | The Family Gem Shop",
+        desc="Shop five loose gemstones: Tsavorite Garnet, Verdelite Green Tourmaline, Pink and Mint Green Tourmaline. Plain specs, 4 photos and a video each. Etsy soon.",
+        og="shop", ogalt="Tsavorite Garnet, Verdelite Green, Pink and Mint Green Tourmaline loose gemstones in a row on cream",
+        body=fsite.shop_body(c, E), ld=cld + product_ld(), prio="0.9", freq="weekly")
 
 def page_about():
     # Our Story (direction F), text + ring photo APPROVED by Joshua Oct 16, 2026, 5:21 PM PT. URL stays /about/.
     c, cld = crumbs([("Our Story", "about/")])
     return dict(path="about/", nav="about/", main="f",
-        title="Our Story | The Family Gem Shop",
-        desc="How The Family Gem Shop began: an emerald my dad bought when I was three or four, and the family crest it inspired.",
+        title="Our Story: The Family Emerald Behind The Family Gem Shop",
+        desc="How The Family Gem Shop began: an emerald my dad bought when I was three or four, the ring it became, and the family crest it inspired. Our story, in short.",
+        og="about", ogalt="The Family Gem Shop crest and the family emerald ring on a cream background",
         body=fsite.story_body(), ld=cld, prio="0.6", freq="monthly")
 
 def page_faq():
@@ -125,8 +151,8 @@ def page_faq():
 <div class="sheet prose faqs">{faq_html(FAQS)}</div>
 </div>
 """
-    return dict(path="faq/", nav="faq/", title="FAQ: Buying Loose Gemstones | The Family Gem Shop",
-        desc="How buying loose gemstones from The Family Gem Shop works: Etsy checkout, what tsavorite is, fitting a stone to a setting, shipping and returns.",
+    return dict(path="faq/", nav="faq/", title="FAQ: Buying Loose Gemstones on Etsy | The Family Gem Shop",
+        desc="How buying from The Family Gem Shop works: Etsy checkout, what Tsavorite Garnet and tourmaline are, fitting a loose stone to a setting, shipping and returns.",
         body=body, ld=cld + faq_ld(FAQS, CONFIG["domain"] + "/"), prio="0.7", freq="monthly")
 
 def page_contact():
@@ -148,8 +174,8 @@ def page_contact():
 <div class="huntc"><div class="label" style="color:var(--golds)">The Hunt</div><h2>Put me on the hunt.</h2><p>{fsite._us(fsite.HUNT_P)}</p><a class="btn rnd white" href="{E}" rel="noopener">Message me on Etsy</a><div class="rg"></div></div></div>
 </div>
 """
-    return dict(path="contact/", nav="contact/", title="Contact | The Family Gem Shop",
-        desc="Questions about a loose gemstone, measurements or an order? Reach The Family Gem Shop through Etsy Messages.",
+    return dict(path="contact/", nav="contact/", title="Contact The Family Gem Shop | Questions About a Gemstone",
+        desc="Questions about a loose gemstone, its measurements or an order? Message The Family Gem Shop on Etsy, or put me on the hunt for the stone you have in mind.",
         body=body, ld=cld, prio="0.5", freq="monthly")
 
 def page_privacy():
@@ -173,8 +199,8 @@ def page_privacy():
 </div>
 </div>
 """
-    return dict(path="privacy/", nav="", title="Privacy Policy | The Family Gem Shop",
-        desc="Privacy policy for thefamilygems.com: no cookies, analytics or forms on this site. Purchases and messages happen on Etsy.",
+    return dict(path="privacy/", nav="", title="Privacy Policy: No Cookies or Tracking | The Family Gem Shop",
+        desc="Privacy policy for thefamilygems.com: no cookies, analytics, ad trackers or forms on this site. Purchases and messages happen on Etsy, where its policy applies.",
         body=body, ld=cld, prio="0.3", freq="yearly")
 
 GUIDES = [("tsavorite-garnet-buying-guide/", "Tsavorite garnet buying guide",
@@ -193,19 +219,20 @@ def page_guides():
 <section class="blk"><div class="sh"><div><div class="label" style="color:#C92A61">GIA-informed</div><h2>Variety notes</h2></div><p>The short history and the cool facts, the same notes that sit on every stone.</p></div><div class="vgrid">{fsite.guides_extra()}</div></section>
 </div>
 """
-    return dict(path="guides/", nav="guides/", title="Gemstone Buying Guides | The Family Gem Shop",
-        desc="Plain-English guides to buying loose gemstones: tsavorite color and clarity, heart shapes, settings and questions to ask, plus variety notes.",
+    return dict(path="guides/", nav="guides/", title="Gemstone Buying Guides & Variety Notes | The Family Gem Shop",
+        desc="Plain-English guides to buying loose gemstones: Tsavorite Garnet color, clarity and heart shapes, plus variety notes on pink, green and mint green tourmaline.",
+        og="guides", ogalt="A heart-shaped Tsavorite Garnet and tourmalines on cream, for The Family Gem Shop buying guides",
         body=body, ld=cld, prio="0.7", freq="weekly")
 
 def page_tsavorite():
     path = "guides/tsavorite-garnet-buying-guide/"
     c, cld = crumbs([("Guides", "guides/"), ("Tsavorite garnet buying guide", path)])
     title = "Tsavorite Garnet Buying Guide: Color, Clarity & Heart Cuts"
-    desc = "How to buy a loose tsavorite garnet: what good color looks like, clarity, cut and size, treatments, heart-shape tips and questions to ask a seller."
+    desc = "How to buy a loose Tsavorite Garnet: what good color looks like, clarity, cut and size, treatments, heart-shape tips and the questions to ask any seller first."
     art = jsonld({"@context": "https://schema.org", "@type": "Article", "headline": title, "description": desc,
         "datePublished": "2026-10-05", "dateModified": CONFIG["updated"],
         "author": {"@id": CONFIG["domain"] + "/#org"}, "publisher": ORG,
-        "image": CONFIG["domain"] + "/img/og.png", "mainEntityOfPage": CONFIG["domain"] + "/" + path, "inLanguage": "en-US"})
+        "image": CONFIG["domain"] + "/img/og/og-tsavorite.jpg", "mainEntityOfPage": CONFIG["domain"] + "/" + path, "inLanguage": "en-US"})
     s = fsite.SF001
     body = f"""<div class="wrap">
 {fsite.phead("Buying guide", "Tsavorite garnet buying guide", "Tsavorite is a bright green garnet and an easy one to fall for. Here is what to look for before you buy a loose tsavorite, especially a heart-shaped one.", c, '<p class="pub">Published October 5, 2026 · updated October 16, 2026 · The Family Gem Shop</p>', lc="#187C45")}
@@ -257,17 +284,19 @@ def page_tsavorite():
 </div>
 """
     return dict(path=path, nav="guides/", title=title, desc=desc, body=body, ld=cld + art,
+                og="tsavorite", ogalt="A 1.19 ct heart-shaped Tsavorite Garnet on a cream background",
                 prio="0.8", freq="monthly", ogtype="article")
 
 def page_404():
     picks = fsite.spread_pick(fsite.STONES, 3)
     body = f"""<div class="wrap">
 {fsite.phead("404", "Page not found", "Sorry, that page does not exist or has moved. Try one of these stones instead.", "", '<div class="ctas"><a class="btn pri rnd" href="{{root}}">Go to the home page</a><a class="btn out rnd" href="{{root}}shop/">Shop the collection</a></div>', lc="#C92A61")}
-<div class="pg pg3">{"".join(fsite.pcard(s) for s in picks)}</div>
+<section class="blk"><div class="sh"><div><h2>A few stones from the collection</h2></div></div>
+<div class="pg pg3">{"".join(fsite.pcard(s) for s in picks)}</div></section>
 </div>
 """
     return dict(path="404.html", nav="", main="f inner", title="Page Not Found | The Family Gem Shop",
-        desc="This page could not be found. Visit The Family Gem Shop home page or our Etsy shop.",
+        desc="This page could not be found. Visit The Family Gem Shop home page, or browse the loose Tsavorite Garnet and tourmaline gemstones in the shop instead.",
         body=body, ld="", noindex=True)
 
 PAGES = [page_home(), page_shop(), page_guides(), page_tsavorite(), page_about(), page_faq(), page_contact(), page_privacy(), page_404()]
@@ -281,7 +310,9 @@ def render(p):
         depth = path.count("/")
         root = "./" if depth == 0 else "../" * depth
     canonical = CONFIG["domain"] + "/" + ("" if path == "404.html" else path)
-    og_img = CONFIG["domain"] + "/img/og.png"
+    og_img = CONFIG["domain"] + f"/img/og/og-{p.get('og', 'default')}.jpg"
+    og_alt = html.escape(p.get("ogalt", "The Family Gem Shop crest with loose gemstones from the collection on a cream background"))
+    site_ld = "" if p.get("noindex") else jsonld({"@context": "https://schema.org", "@graph": [ORG, WEBSITE]})
     t, d = html.escape(p["title"]), html.escape(p["desc"])
     robots = '<meta name="robots" content="noindex">' if p.get("noindex") else '<meta name="robots" content="index,follow,max-image-preview:large">'
     canon = "" if p.get("noindex") else f'<link rel="canonical" href="{canonical}">'
@@ -307,16 +338,17 @@ def render(p):
 <meta property="og:image" content="{og_img}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="The Family Gem Shop crest with four stones from the collection">
+<meta property="og:image:alt" content="{og_alt}">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{t}">
 <meta name="twitter:description" content="{d}">
 <meta name="twitter:image" content="{og_img}">
+<meta name="twitter:image:alt" content="{og_alt}">
 <link rel="preload" href="{{{{root}}}}fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="{{{{root}}}}fonts/cormorant-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{{{{root}}}}f.css">
-{p['ld']}
+{site_ld}{p['ld']}
 </head>
 <body>
 {fsite.header(p.get("nav", ""))}
