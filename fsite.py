@@ -10,11 +10,11 @@ G02='rgba(224,72,128,.22)'   # Stone 02 own color (pink)
 
 COLL=[
  ('showcase','Showcase','#8E1B2C','#C98A95','#8E1B2C','#FBF8F1','#4A0D17','Photos coming'),
- ('collection','The Collection','#0F4A3A','#1C6650','#0F4A3A','#FBF8F1','#082E24','4 stones photographed'),
+ ('collection','The Collection','#0F4A3A','#1C6650','#0F4A3A','#FBF8F1','#082E24','5 stones photographed'),
  ('spinel','Spinel','#B8476A','#A99BD1','#B8476A','#FBF8F1','#5E1F35','Photos coming'),
  ('sapphire','Sapphire','#1F3A7A','#4B4A9E','#1F3A7A','#FBF8F1','#0E1C40','Photos coming'),
  ('garnet','Garnet','#B34528','#0F4A3A','#B34528','#FBF8F1','#5A1F10','1 stone photographed'),
- ('tourmaline','Tourmaline','#3FD0C9','#9FD3C1','#267C78','#1E2A24','#134A47','3 stones photographed'),
+ ('tourmaline','Tourmaline','#3FD0C9','#9FD3C1','#267C78','#1E2A24','#134A47','4 stones photographed'),
  ('aquamarine','Aquamarine','#23708A','#9FD3C1','#23708A','#FBF8F1','#0F3746','Photos coming'),
  ('topaz','Topaz','#D08A2E','#23708A','#996622','#1E2A24','#4A300C','Photos coming'),
  ('other','Other gems','#B8955A','#D9BE87','#886E42','#1E2A24','#3F321C','Photos coming'),
@@ -47,6 +47,7 @@ STONE01=dict(no='Stone 01',title='Green Tourmaline, 5.04 ct',short='Green Tourma
 SF001=dict(no='SF-001',title='Tsavorite Garnet, 1.19 ct',short='Tsavorite Garnet',ct='1.19 ct',shape='Heart',photos=['sf-001'],glow=G01,alt='SF-001, green tsavorite garnet, 1.19 ct heart, in tweezers')
 STONE02=dict(no='Stone 02',title='Pink Tourmaline, 1.42 ct',short='Pink Tourmaline',ct='1.42 ct',shape='Cushion',photos=['stone-02'],glow=G02,alt='Stone 02, pink tourmaline, 1.42 ct cushion')
 STONE03=dict(no='Stone 03',title='Green Tourmaline, 1.26 ct',short='Green Tourmaline',ct='1.26 ct',shape='Cushion',photos=['stone-03'],glow='rgba(70,150,110,.22)',alt='Stone 03, crisp green tourmaline, 1.26 ct elongated cushion')
+STONE04=dict(no='Stone 04',title='Light Green Tourmaline, 1.02 ct',short='Light Green Tourmaline',ct='1.02 ct',shape='Emerald cut',photos=['stone-04'],glow='rgba(120,190,170,.22)',alt='Stone 04, light bluish green tourmaline, 1.02 ct emerald cut')
 
 # Approved wording (Joshua, Oct 16, 2026, 7:01 PM PT). Variety text copied from familygem/listings/variety-blurbs/ (KB-cited there).
 CLOSE='From my personal collection. Species, weight and origin come from the original seller. No lab report. What you see is the real stone, photographed honestly and never retouched.'
@@ -136,7 +137,7 @@ def home_body():
 <div class="tag t3"><b>Price TBD</b>From my collection</div></div></div>
 <div class="chips">{"".join(chip(c) for c in COLL)}</div></section>
 <section class="blk"><div class="sh"><div><div class="label" style="color:#B34528">Shop by gem</div><h2>Pick a colour</h2></div><p>Nine collections, nine colours. Tourmaline and garnet have real photos today; the rest fill in as each stone is photographed.</p></div><div class="cg">{cards}</div></section>
-<section class="blk"><div class="sh"><div><div class="label" style="color:#B8476A">Just photographed</div><h2>Fresh from the collection</h2></div><a class="more" style="--uc:#B8476A" href="{{{{root}}}}shop/">View the shop →</a></div><div class="pg">{pcard(s1)}{pcard(STONE02)}{pcard(SF001,'garnet')}{pcard(STONE03)}</div></section>
+<section class="blk"><div class="sh"><div><div class="label" style="color:#B8476A">Just photographed</div><h2>Fresh from the collection</h2></div><a class="more" style="--uc:#B8476A" href="{{{{root}}}}shop/">View the shop →</a></div><div class="pg">{pcard(STONE04)}{pcard(STONE03)}{pcard(SF001,'garnet')}{pcard(STONE02)}</div></section>
 <section class="blk"><div class="ls"><div class="crest"><img src="{A}crest-280.jpg" width="280" height="280" loading="lazy" alt="The Family Gem Shop crest: FG with an emerald above and a diamond below"></div>
 <div class="txt"><div class="halo"></div><div class="label" style="color:#1C6650">Our crest</div><h2>The emerald that <em>started it all</em></h2><p>{STORY_SHORT}</p><div class="ringnote"><div class="rf"><img src="{RING_SM}400.jpg" width="400" height="250" loading="lazy" alt="My dad’s 14k gold tension ring with a green emerald"></div><span>{RING_CAP}</span></div>{LEGEND}<a class="link" href="{{{{root}}}}about/">Read Our Story →</a></div></div></section>
 <section class="blk"><div class="sh"><div><div class="label" style="color:#1F3A7A">How we describe stones</div><h2>No surprises</h2></div><p>The same four promises on every stone page.</p></div>
