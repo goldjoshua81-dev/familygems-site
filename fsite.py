@@ -165,7 +165,8 @@ def pcard(s,href=None):
     Links to the stone's section on /shop/ (no /stones/ URLs until Joshua says yes)."""
     c=CD[s['coll']]
     href=href or f'{{{{root}}}}shop/#{s["anchor"]}'
-    pic=f'<div class="pic">{framed(s)}</div>'
+    vchip='<span class="vchip"><i aria-hidden="true"></i>Video</span>' if s.get('video') else ''
+    pic=f'<div class="pic">{framed(s)}{vchip}</div>'
     meta=(f'<div class="row">{chip(c)}<span class="no">{s["no"]}</span></div><h3>{s["short"]}</h3><div class="sub">{s["ct"]} · {s["shape"]}</div>'
           f'<div class="row" style="margin-top:10px"><span class="soonchip">Coming soon · Price TBD</span><span class="go" aria-hidden="true">→</span></div>')
     return f'<a class="pc" href="{href}" style="{svars(s)}"><div class="band"></div>{pic}<div class="meta">{meta}</div></a>'
@@ -223,7 +224,7 @@ NAV=[('shop/','Shop'),('guides/','Guides'),('about/','Our Story'),('faq/','FAQ')
 ABOUT_SHORT='The Family Gem Shop: personal-collection gems, listed one stone at a time. Put me on the hunt when you need what no one else can find.'
 
 def brand():
-    return '<a class="brand" href="{{root}}"><img src="{{root}}img/crest-128.jpg" width="50" height="50" alt=""><span class="nm">The Family Gem Shop</span></a>'
+    return '<a class="brand" href="{{root}}"><img src="{{root}}img/crest-128.jpg" srcset="{{root}}img/crest-128.jpg 2x, {{root}}img/crest-160.jpg 3x" width="50" height="50" alt=""><span class="nm">The Family Gem Shop</span></a>'
 
 def header(active=''):
     links=''.join(f'<a href="{{{{root}}}}{h}"'+(' class="on" aria-current="page"' if h==active else '')+f'>{n}</a>' for h,n in NAV)
@@ -264,12 +265,23 @@ def palt(s,i):
     a=f"{s['alt']}, {s['views'][i]}"
     return a+(', still frame from the video' if i in s.get('vf',[]) else '')
 def thumbs(s):
+    """Thumbnail row: video tile FIRST (own frame from the video + play badge), then the 4 photos (Joshua 10:10 PM PT). With JS (VIEWER_JS) a tap swaps the main viewer;
+    without JS each tile is a plain link to the full-size photo or the MP4."""
     out=''
-    for i in range(1,len(s['photos'])):
+    for i in range(len(s['photos'])):
         n=s['photos'][i]
-        out+=(f'<a class="th" href="{A}{n}-800.jpg"><img src="{A}{n}-400.jpg" width="400" height="400" loading="lazy" decoding="async" '
-              f'sizes="(max-width:820px) 28vw, 130px" srcset="{A}{n}-400.jpg 400w, {A}{n}-800.jpg 800w" alt="{palt(s,i)}"></a>')
-    return f'<div class="ths">{out}</div>'
+        cur=' aria-current="true"' if i==0 else ''
+        out+=(f'<a class="th" href="{A}{n}-800.jpg" data-src="{A}{n}-400.jpg" data-srcset="{A}{n}-400.jpg 400w, {A}{n}-800.jpg 800w" data-alt="{palt(s,i)}"{cur}>'
+              f'<img src="{A}{n}-400.jpg" width="400" height="400" loading="lazy" decoding="async" '
+              f'sizes="(max-width:820px) 18vw, 80px" srcset="{A}{n}-400.jpg 400w, {A}{n}-800.jpg 800w" alt="{palt(s,i)}"></a>')
+    vt=''
+    if s.get('video'):
+        v=s['video']
+        vt=(f'<a class="th thv" href="{{{{root}}}}video/{v}.mp4" data-video="{{{{root}}}}video/{v}.mp4" data-poster="{A}{v}-poster.jpg" '
+              f'data-label="Video of {s["alt"]}, with soft piano music, no voice" aria-label="Play the video of {s["alt"]}">'
+              f'<img src="{A}{v}-vthumb-400.jpg" width="400" height="400" loading="lazy" decoding="async" alt="">'
+              f'<span class="play" aria-hidden="true"></span><span class="vl">Video</span></a>')
+    return f'<div class="ths">{vt}{out}</div>'
 def layer(s):
     k,col=LKEY[s['variety']]; L=LAYERS[k]; v=VNAME[s['variety']]
     blocks=''
@@ -278,11 +290,41 @@ def layer(s):
         # color cause already sits in the approved blurb (vbox) above, so it isn't repeated here
         blocks+=f'<div class="lb"><h3>{sec["h"]}</h3><ul>'+''.join(f'<li>{x}</li>' for x in items)+'</ul></div>'
     vid=s['video']
-    return (f'<div class="sdl"><figure class="vid"><video controls playsinline preload="none" width="720" height="1280" '
-            f'poster="{A}{s["photos"][0]}-800.jpg" aria-label="Video of {s["alt"]}, with soft piano music, no voice">'
-            f'<source src="{{{{root}}}}video/{vid}.mp4" type="video/mp4"></video>'
+    return (f'<div class="sdl"><figure class="vid"><a class="vcard" href="{{{{root}}}}video/{vid}.mp4" data-open="{s['anchor']}" aria-label="Play the video of {s['alt']}">'
+            f'<img src="{A}{vid}-poster.jpg" width="540" height="960" loading="lazy" decoding="async" alt="">'
+            f'<span class="play big" aria-hidden="true"></span><span class="vl">Watch the video</span></a>'
             f'<figcaption>Real stone, real light. Soft piano, no voice.</figcaption></figure>'
             f'<div class="lay"><div class="label" style="color:var(--stone-ink)">The {v} story</div><div class="lbs">{blocks}</div></div></div>')
+
+VIEWER_JS='''<script>
+(function(){
+  function show(sd,t){
+    var ph=sd.querySelector('.sdp .photo'),img=ph.querySelector('img'),v=ph.querySelector('video');
+    sd.querySelectorAll('.ths .th').forEach(function(x){x.removeAttribute('aria-current')});
+    t.setAttribute('aria-current','true');
+    if(t.dataset.video){
+      if(!v){v=document.createElement('video');v.controls=true;v.playsInline=true;v.setAttribute('playsinline','');
+        v.preload='auto';v.poster=t.dataset.poster;v.setAttribute('aria-label',t.dataset.label);v.src=t.dataset.video;ph.appendChild(v);}
+      ph.classList.add('isvid');img.hidden=true;v.hidden=false;
+      var p=v.play();if(p&&p.catch)p.catch(function(){});
+    }else{
+      if(v){v.pause();v.hidden=true;}
+      ph.classList.remove('isvid');img.hidden=false;
+      img.srcset=t.dataset.srcset;img.src=t.dataset.src;img.alt=t.dataset.alt;
+    }
+  }
+  document.querySelectorAll('.sd').forEach(function(sd){
+    sd.querySelectorAll('.ths .th').forEach(function(t){
+      t.addEventListener('click',function(e){e.preventDefault();show(sd,t);});
+    });
+    var vc=sd.querySelector('.vcard'),vt=sd.querySelector('.ths .thv');
+    if(vc&&vt)vc.addEventListener('click',function(e){
+      e.preventDefault();show(sd,vt);
+      sd.querySelector('.sdp').scrollIntoView({behavior:'smooth',block:'start'});
+    });
+  });
+})();
+</script>'''
 
 def stone_detail(s,etsy):
     c=CD[s['coll']]
@@ -316,7 +358,7 @@ def shop_body(crumbs,etsy):
     body=f'''<div class="wrap">
 {phead('The shop','Shop loose gemstones',lead,crumbs,extra)}
 <section class="blk"><div class="sh"><div><div class="label" style="color:#2E6FB0">{len(STONES)} stones photographed</div><h2>The collection so far</h2></div><p>Each card jumps to that stone’s specs and story. New colors are added as each stone is photographed.</p></div><div class="pg pg5">{cards}</div></section>
-<section class="blk sds" aria-label="Stone details">{details}</section>
+<section class="blk sds" aria-label="Stone details">{details}</section>{VIEWER_JS}
 <section class="blk"><div class="sh"><div><div class="label" style="color:#A95719">How buying works</div><h2>Four easy steps</h2></div><p>Favorite the shop on Etsy to see each stone the day it lists.</p></div><div class="tg">{how}</div></section>
 </div>'''
     return _us(body)

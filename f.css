@@ -625,3 +625,30 @@ details{background:#FFFDF7}
 .cc>*{position:relative;z-index:1}
 /* crest served via <picture> (webp + jpg, 280/560/840w); keep the original img layout */
 .ls .crest picture,.shero picture{display:contents}
+/* ===== stone viewer: 4 photos + 1 video tile, one player (Oct 16, 2026, 10:08 PM PT) ===== */
+.ths{grid-template-columns:repeat(5,1fr);gap:8px}
+.ths .th{position:relative}
+.ths .th[aria-current="true"]{box-shadow:0 0 0 2px var(--stone-ink),0 10px 22px -16px rgba(30,42,36,.4)}
+.ths .thv img{filter:saturate(1.05) brightness(.92)}
+.play{position:absolute;left:50%;top:44%;width:30px;height:30px;transform:translate(-50%,-50%);border-radius:50%;
+ background:rgba(8,20,16,.62);box-shadow:0 0 0 2px rgba(255,255,255,.9),0 6px 16px rgba(0,0,0,.35)}
+.play:after{content:'';position:absolute;left:54%;top:50%;transform:translate(-50%,-50%);border-style:solid;border-width:7px 0 7px 11px;border-color:transparent transparent transparent #fff}
+.ths .vl{position:absolute;left:0;right:0;bottom:0;padding:3px 0 4px;text-align:center;font:600 10.5px/1 Inter;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:linear-gradient(0deg,rgba(8,20,16,.78),rgba(8,20,16,0))}
+.sdp .photo.isvid{background:#0E1512;display:flex;justify-content:center}
+.sdp .photo video{display:block;width:min(100%,calc(min(72vh,620px)*9/16));height:auto;aspect-ratio:9/16;object-fit:contain;background:#0E1512}
+.sdp .photo img[hidden],.sdp .photo video[hidden]{display:none}
+.vcard{position:relative;display:block;border-radius:20px;overflow:hidden;aspect-ratio:9/16;background:var(--stone-soft);box-shadow:0 0 0 1px rgba(184,149,90,.55),0 22px 48px -24px rgba(30,42,36,.45)}
+.vcard img{display:block;width:100%;height:100%;object-fit:cover}
+.play.big{top:46%;width:72px;height:72px;background:rgba(8,20,16,.58);box-shadow:0 0 0 3px rgba(255,255,255,.92),0 10px 30px rgba(0,0,0,.4);transition:transform .15s}
+.play.big:after{border-width:14px 0 14px 22px}
+.vcard:hover .play.big{transform:translate(-50%,-50%) scale(1.06)}
+.vcard .vl{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);white-space:nowrap;padding:8px 14px;border-radius:99px;font:600 13px/1 Inter;color:#fff;background:rgba(8,20,16,.66)}
+.vcard:focus-visible,.ths .th:focus-visible{outline:2px solid var(--stone-ink);outline-offset:3px}
+.pc .pic{position:relative}
+.vchip{position:absolute;left:22px;top:22px;z-index:2;display:inline-flex;align-items:center;gap:5px;padding:4px 9px 4px 7px;border-radius:99px;font:600 10.5px/1 Inter;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:rgba(8,20,16,.72)}
+.vchip i{width:0;height:0;border-style:solid;border-width:4px 0 4px 7px;border-color:transparent transparent transparent #fff}
+@media (max-width:820px){.ths{gap:6px}.ths .vl{font-size:9.5px;padding:2px 0 3px}.play{width:22px;height:22px;top:40%}.play:after{border-width:5px 0 5px 8px}.vchip{left:16px;top:16px;font-size:10px}}
+/* tile badge sits in the corner so the gem in the video frame stays visible */
+.ths .thv .play{left:6px;top:6px;transform:none;width:22px;height:22px}
+.ths .thv .play:after{border-width:5px 0 5px 8px}
+.ths .vl{background:rgba(8,20,16,.82)}
