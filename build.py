@@ -94,19 +94,23 @@ def faq_ld(faqs, root_abs):
 # ---------------------------------------------------------------- pages
 FEATURE = f"""
 <div class="card feature">
-  <img src="{{{{root}}}}img/sf-001-400.jpg" srcset="{{{{root}}}}img/sf-001-400.jpg 400w, {{{{root}}}}img/sf-001-800.jpg 800w" sizes="(max-width:760px) 320px, 160px" width="400" height="400" loading="lazy" decoding="async" style="border-radius:14px;width:100%;max-width:320px;height:auto" alt="SF-001, green tsavorite garnet, 1.19 ct heart, in tweezers (seller-identified)">
+  <img src="{{{{root}}}}img/sf-001-400.jpg" srcset="{{{{root}}}}img/sf-001-400.jpg 400w, {{{{root}}}}img/sf-001-800.jpg 800w" sizes="(max-width:760px) 320px, 160px" width="400" height="400" loading="lazy" decoding="async" style="border-radius:14px;width:100%;max-width:320px;height:auto" alt="SF-001, green tsavorite garnet, 1.19 ct heart, in tweezers">
   <div>
     <span class="chip" style="--bg:#EEF6F2;--fg:#0F4A3A">Coming soon to Etsy</span>
     <h3>1.19 ct heart-shaped tsavorite garnet</h3>
     <dl class="spec">
-      <dt>Stone</dt><dd>Tsavorite (green grossular garnet), seller-identified, not guaranteed</dd>
+      <dt>Gemstone</dt><dd>Tsavorite garnet</dd>
+      <dt>Weight</dt><dd>1.19 ct</dd>
       <dt>Shape</dt><dd>Heart, faceted</dd>
-      <dt>Weight</dt><dd>1.19 carats (seller-stated)</dd>
-      <dt>Origin</dt><dd>Kenya (seller-stated, not lab-confirmed)</dd>
-      <dt>Treatment</dt><dd>Not known (no lab report)</dd>
+      <dt>Measurements</dt><dd>To measure</dd>
+      <dt>Clarity</dt><dd>Not graded, inclusions shown as they are</dd>
+      <dt>Origin</dt><dd>Kenya, per the original seller</dd>
+      <dt>Treatment</dt><dd>Not known</dd>
       <dt>Price</dt><dd>Price TBD</dd>
     </dl>
-    <p>Measurements and price will be on the Etsy listing when it goes live. Photographed as it is; inclusions are shown.</p>
+    <p>{fsite.CLOSE}</p>
+    <h4 style="margin:18px 0 6px">About tsavorite</h4>
+    <p>{fsite.VARIETY['tsavorite']}</p>
     <a class="btn" href="{E}" rel="noopener">Favorite the shop on Etsy</a>
   </div>
 </div>

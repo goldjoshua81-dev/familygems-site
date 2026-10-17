@@ -43,10 +43,15 @@ HUNT_P='Looking for something specific: a colour no one else seems to stock, a s
 
 STONE01=dict(no='Stone 01',title='Green Tourmaline, 5.04 ct',short='Green Tourmaline',ct='5.04 ct',shape='Cushion',
   lead='One stone at a time, from my personal collection. A deep green cushion that throws bright green flashes as it moves; loose and ready for a ring or pendant.',
-  photos=['stone-01'],glow=G01,alt='Stone 01, green tourmaline, 5.04 ct cushion (seller-identified)')
-SF001=dict(no='SF-001',title='Tsavorite Garnet, 1.19 ct',short='Tsavorite Garnet',ct='1.19 ct',shape='Heart',photos=['sf-001'],glow=G01,alt='SF-001, green tsavorite garnet, 1.19 ct heart, in tweezers (seller-identified)')
-STONE02=dict(no='Stone 02',title='Pink Tourmaline, 1.42 ct',short='Pink Tourmaline',ct='1.42 ct',shape='Cushion',photos=['stone-02'],glow=G02,alt='Stone 02, pink tourmaline, 1.42 ct cushion (seller-identified)')
+  photos=['stone-01'],glow=G01,alt='Stone 01, green tourmaline, 5.04 ct cushion')
+SF001=dict(no='SF-001',title='Tsavorite Garnet, 1.19 ct',short='Tsavorite Garnet',ct='1.19 ct',shape='Heart',photos=['sf-001'],glow=G01,alt='SF-001, green tsavorite garnet, 1.19 ct heart, in tweezers')
+STONE02=dict(no='Stone 02',title='Pink Tourmaline, 1.42 ct',short='Pink Tourmaline',ct='1.42 ct',shape='Cushion',photos=['stone-02'],glow=G02,alt='Stone 02, pink tourmaline, 1.42 ct cushion')
 
+# Approved wording (Joshua, Oct 16, 2026, 7:01 PM PT). Variety text copied from familygem/listings/variety-blurbs/ (KB-cited there).
+CLOSE='From my personal collection. Species, weight and origin come from the original seller. No lab report. What you see is the real stone, photographed honestly and never retouched.'
+VARIETY={'tsavorite':"Green grossular garnet, colored by vanadium and chromium. Campbell Bridges found it in Tanzania in 1967 and in Kenya in 1970; it was named tsavorite in 1973 and reached jewelry buyers in 1974. Rarer than red garnet, because it needs unusual rock chemistry, and most stones are small. Singly refractive, often red through a Chelsea filter, hardness 7 to 7.5. As a species it generally isn't treated; that's about the variety, not any one stone.",
+ 'tourmaline-green':'Not one mineral but a whole family of borosilicates; elbaite gives us most gem tourmaline, and liddicoatite is named for Richard T. Liddicoat. One of the widest color ranges of any gem: one pegmatite pocket can turn up several colors, and one crystal can grow pink at the core and green at the rim. Iron is what makes it green. Doubly refractive and strongly pleochroic, so the color shifts as you turn it. Hardness 7 to 7.5; mined worldwide, from Brazil to Namibia and Russia (GIA).',
+ 'tourmaline-pink':'Not one mineral but a whole family of borosilicates; elbaite gives us most gem tourmaline, and liddicoatite is named for Richard T. Liddicoat. One of the widest color ranges of any gem: one pegmatite pocket can turn up several colors, and one crystal can grow pink at the core and green at the rim. Manganese is what makes it pink. Doubly refractive and strongly pleochroic, so the color shifts as you turn it. Hardness 7 to 7.5; mined worldwide, from Brazil to Namibia and Russia (GIA).'}
 
 STORY_SHORT=("When I was three or four, my dad bought a crisp apple-green Muzo emerald from Colombia, set in a 14k gold tension ring "
  "with gold nuggets down the sides. It hooked me for life. That emerald crowns our crest, and the diamond below it stands for the whole family.")
@@ -127,7 +132,7 @@ def home_body():
 <div class="hcard glow" style="--g:{s1['glow']}"><div class="photo"><img src="{A}stone-01-800.jpg" srcset="{A}stone-01-400.jpg 400w, {A}stone-01-800.jpg 800w" sizes="(max-width:820px) 176px, 300px" width="800" height="800" fetchpriority="high" alt="{s1['alt']}"></div><div class="lab"><span class="nm2">Green Tourmaline</span>{chip(CD['tourmaline'],'Stone 01')}</div></div>
 <div class="tag t1"><b>5.04 ct</b>Cushion · faceted</div>
 <div class="tag t2">Tourmaline colours<div class="dr"><i style="background:#2F6B1E"></i><i style="background:#D9487A"></i><i style="background:#3FD0C9"></i><i style="background:#2E6FB0"></i></div></div>
-<div class="tag t3"><b>Price TBD</b>Seller-identified</div></div></div>
+<div class="tag t3"><b>Price TBD</b>From my collection</div></div></div>
 <div class="chips">{"".join(chip(c) for c in COLL)}</div></section>
 <section class="blk"><div class="sh"><div><div class="label" style="color:#B34528">Shop by gem</div><h2>Pick a colour</h2></div><p>Nine collections, nine colours. Tourmaline and garnet have real photos today; the rest fill in as each stone is photographed.</p></div><div class="cg">{cards}</div></section>
 <section class="blk"><div class="sh"><div><div class="label" style="color:#B8476A">Just photographed</div><h2>Fresh from the collection</h2></div><a class="more" style="--uc:#B8476A" href="{{{{root}}}}shop/">View the shop →</a></div><div class="pg">{pcard(s1)}{pcard(STONE02)}{pcard(SF001,'garnet')}{pcard(None,'spinel')}</div></section>
