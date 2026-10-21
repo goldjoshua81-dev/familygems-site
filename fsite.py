@@ -87,7 +87,7 @@ STONE01=dict(sku='SF-202',anchor='sf-202',no='Stone 01',title='Verdelite Green T
   specs=_specs('Green tourmaline','5.04 ct','Cushion, faceted','Madagascar, per the original seller','No heat, per the original seller'))
 SF001=dict(sku='SF-001',anchor='sf-001',no='SF-001',title='Tsavorite Garnet, 1.19 ct',name_note='Known to gemologists as grossular garnet; tsavorite is its green variety, colored by vanadium.',short='Tsavorite Garnet',ct='1.19 ct',shape='Heart',hue='green-vivid',coll='garnet',
   photos=['sf-001','sf-001-b','sf-001-c','sf-001-d'],views=['in tweezers','face-up on a gray stone surface','on a fingertip for scale','in its gem box'],video='sf-001',vf=[],alt='SF-001, green tsavorite garnet, 1.19 ct heart, in tweezers',variety='tsavorite',
-  specs=_specs('Tsavorite garnet','1.19 ct','Heart, faceted','Kenya, per the original seller','Not known'))
+  specs=_specs('Tsavorite garnet','1.19 ct','Heart, faceted','Not known (seller label says Kenya)','Not known'))
 STONE02=dict(sku='SF-203',anchor='sf-203',no='Stone 02',title='Pink Tourmaline, 1.42 ct',name_note="GIA's rubellite range runs from pink to red, but many in the trade save that name for the deeper reds, so we call this one what it is: pink.",short='Pink Tourmaline',ct='1.42 ct',shape='Cushion',hue='pink',coll='tourmaline',
   photos=['stone-02','stone-02-b','stone-02-c','stone-02-d'],views=['face-up','face-up, second view','tilted on folded paper','tilted, closer'],video='stone-02',vf=[],alt='Stone 02, pink tourmaline, 1.42 ct cushion',variety='tourmaline-pink',
   specs=_specs('Pink tourmaline','1.42 ct','Cushion, faceted','Afghanistan, per the original seller','No heat, per the original seller'))
