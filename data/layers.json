@@ -71,5 +71,121 @@
    }
   ],
   "colors": {}
+ },
+ "spinel": {
+  "sections": [
+   {
+    "h": "History",
+    "items": [
+     "For centuries red and pink spinel was mistaken for ruby. The \"Black Prince's Ruby\" in the British Imperial State Crown is actually a red spinel.",
+     "Old mines in Central Asia sent out big crystals known as \"Balas rubies.\"",
+     "In 1783, mineralogist Jean Baptiste Louis Romé de l'Isle showed that spinel is a different mineral from ruby."
+    ]
+   },
+   {
+    "h": "Cool facts",
+    "items": [
+     "Pinks come from traces of chromium; purple tones come from a mix of iron and chromium (GIA).",
+     "Hardness 8, tough enough for everyday rings.",
+     "Singly refractive, so the color looks the same from every direction."
+    ]
+   },
+   {
+    "h": "Family and species",
+    "items": [
+     "Spinel is its own gem species, a magnesium-aluminum oxide, not a ruby or sapphire.",
+     "It gives its name to the spinel group of minerals."
+    ]
+   }
+  ],
+  "colors": {}
+ },
+ "spessartine": {
+  "sections": [
+   {
+    "h": "History",
+    "items": [
+     "The \"mandarin\" name started with vivid orange spessartine found in 1991 near the Kunene River in Namibia.",
+     "The trade now uses it for any spessartine of that bright orange. Later finds include Loliondo, Tanzania (2007).",
+     "These are stories about the variety, not this stone's origin."
+    ]
+   },
+   {
+    "h": "Cool facts",
+    "items": [
+     "Spessartine is the manganese garnet, and manganese is what makes it orange.",
+     "Singly refractive, hardness 7 to 7.5.",
+     "Garnet is the birthstone for January and the gem for the second anniversary."
+    ]
+   },
+   {
+    "h": "Family and species",
+    "items": [
+     "Garnet group → spessartine. Mandarin is a trade name for its vivid orange.",
+     "GIA counts more than 20 garnet species. Five matter as gems: pyrope, almandine, spessartine, grossular and andradite.",
+     "Spessartine belongs to the pyralspite series, with pyrope and almandine."
+    ]
+   }
+  ],
+  "colors": {}
+ },
+ "mali": {
+  "sections": [
+   {
+    "h": "History",
+    "items": [
+     "Mali garnet first came to market in spring 1994 at Idar-Oberstein, from the Kayes Region of western Mali.",
+     "GIA's Gems & Gemology described it in 1995. Labs call it \"grossular-andradite garnet.\"",
+     "The name is a trade name; this stone's mine isn't known."
+    ]
+   },
+   {
+    "h": "Cool facts",
+    "items": [
+     "Colors run mostly yellow-green to brown; the andradite (iron) part of the mix adds warm tones.",
+     "Between crossed polarizers it shows stacked growth planes, a classic ID clue.",
+     "Singly refractive (it can show some anomalous double refraction), hardness about 7."
+    ]
+   },
+   {
+    "h": "Family and species",
+    "items": [
+     "Garnet group → a blend of grossular and andradite, two species of the ugrandite series.",
+     "Grossular gives us tsavorite and hessonite; andradite gives us demantoid."
+    ]
+   }
+  ],
+  "colors": {}
+ },
+ "zircon": {
+  "sections": [
+   {
+    "h": "History",
+    "items": [
+     "Many scholars trace the name to the Arabic \"zarkun\" (cinnabar or vermilion); others to the Persian \"zargun,\" meaning gold colored (GIA).",
+     "Colorless zircon was used as a diamond look-alike in the early 1900s, long before modern simulants.",
+     "Blue zircon was a Victorian favorite. George Kunz, Tiffany's famed gem buyer, championed it and proposed the name \"starlite.\" It never caught on."
+    ]
+   },
+   {
+    "h": "Cool facts",
+    "items": [
+     "Zircon found in Australia is the oldest mineral on Earth: 4.4 billion years old (GIA).",
+     "Very high luster, refractive index and dispersion give it lots of brilliance and flashes of fire.",
+     "Pronounced double refraction: under a loupe you can see the back facets doubled.",
+     "A birthstone for December, along with turquoise and tanzanite.",
+     "Zircon weighs more than most gems of the same size."
+    ]
+   },
+   {
+    "h": "Family and species",
+    "items": [
+     "Zircon is its own mineral, zirconium silicate (ZrSiO4).",
+     "Not cubic zirconia, which is a man-made material.",
+     "Colors include blue, red, yellow, orange, brown and green. Hardness 6 to 7.5 (GIA)."
+    ]
+   }
+  ],
+  "colors": {}
  }
 }

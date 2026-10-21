@@ -22,7 +22,7 @@ CONFIG = {
     "base_path": os.environ.get("FG_BASE", "/"),
     "etsy": "https://www.etsy.com/shop/TheFamilyGemShop",
     "email": "",            # PLACEHOLDER: business email once it exists (shown on /contact/ when set)
-    "updated": "2026-10-17",   # SEO pass: every page head changed on this date
+    "updated": "2026-10-21",   # batch 06-11 added (SEO pass was 2026-10-17)
     # sameAs placeholder: stays OFF until Joshua confirms the Etsy shop is live. Flip to True to add the shop URL to Organization.sameAs.
     "etsy_live": False,
     "theme": "#0F4A3A",
@@ -76,7 +76,7 @@ def product_ld():
             "name": f"{name}, {s['ct']} {shape} loose gemstone", "sku": s["sku"],
             "image": [f"{d}/img/{n}-800.jpg" for n in s["photos"]],
             "description": (f"{name} loose gemstone, {s['ct']}, {sp['Shape'].lower()}. "
-                            f"Origin: {sp['Origin']}. Shown in four unretouched photos and a short video. Coming soon to Etsy."),
+                            f"Origin: {sp['Origin']}. " + ("Shown in four unretouched photos and a short video. " if s.get("video") else "Shown in four unretouched photos. ") + "Coming soon to Etsy."),
             "brand": {"@type": "Brand", "name": CONFIG["site_name"]},
             "category": "Loose gemstones"})
     return jsonld({"@context": "https://schema.org", "@graph": items})
@@ -120,9 +120,9 @@ def faq_ld(faqs, root_abs):
 def page_home():
     # Direction F front page, APPROVED by Joshua Oct 16, 2026, 5:24 PM PT (Stone 01 green tourmaline leading).
     return dict(path="", nav="", main="f",
-        title="Tsavorite & Tourmaline Loose Gemstones | The Family Gem Shop",
-        desc="Loose Tsavorite Garnet, Verdelite Green, Pink and Mint Green Tourmaline from my family collection. Photographed honestly, never retouched. One at a time.",
-        og="home", ogalt="Five loose gemstones from The Family Gem Shop on a cream background with the family crest",
+        title="Loose Gemstones: Tourmaline, Garnet, Spinel | The Family Gem Shop",
+        desc="Loose tourmaline, tsavorite, mandarin and Mali garnet, spinel and zircon from my family collection. Photographed honestly, never retouched. One at a time.",
+        og="home", ogalt="Loose gemstones from The Family Gem Shop on a cream background with the family crest",
         ld="",
         body=fsite.home_body(), prio="1.0", freq="weekly")
 
@@ -130,9 +130,9 @@ def page_shop():
     # Rebuilt to match home (review M3): all photographed stones, color-ordered cards, per-stone sections in each stone's own color.
     c, cld = crumbs([("Shop", "shop/")])
     return dict(path="shop/", nav="shop/", main="f inner",
-        title="Shop Loose Tourmaline & Tsavorite Gems | The Family Gem Shop",
-        desc="Shop five loose gemstones: Tsavorite Garnet, Verdelite Green Tourmaline, Pink and Mint Green Tourmaline. Plain specs, 4 photos and a video each. Etsy soon.",
-        og="shop", ogalt="Tsavorite Garnet, Verdelite Green, Pink and Mint Green Tourmaline loose gemstones in a row on cream",
+        title="Shop Loose Tourmaline, Garnet, Spinel & Zircon | The Family Gem Shop",
+        desc="Shop 11 loose gemstones: tourmaline, tsavorite, mandarin and Mali garnet, spinel and a yellow zircon pair. Plain specs, real photos and video. Etsy soon.",
+        og="shop", ogalt="Loose tourmaline and tsavorite gemstones from The Family Gem Shop in a row on cream",
         body=fsite.shop_body(c, E), ld=cld + product_ld(), prio="0.9", freq="weekly")
 
 def page_about():

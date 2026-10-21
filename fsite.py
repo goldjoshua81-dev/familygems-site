@@ -36,14 +36,14 @@ def color_order(stones):
 
 COLL=[
  ('showcase','Showcase','#8E1B2C','#C98A95','#8E1B2C','#FBF8F1','#4A0D17','Coming soon'),
- ('collection','The Collection','#0F4A3A','#1C6650','#0F4A3A','#FBF8F1','#082E24','5 stones photographed'),
- ('spinel','Spinel','#B8476A','#A99BD1','#B8476A','#FBF8F1','#5E1F35','Coming soon'),
+ ('collection','The Collection','#0F4A3A','#1C6650','#0F4A3A','#FBF8F1','#082E24','11 stones photographed'),
+ ('spinel','Spinel','#B8476A','#A99BD1','#B8476A','#FBF8F1','#5E1F35','2 stones photographed'),
  ('sapphire','Sapphire','#1F3A7A','#4B4A9E','#1F3A7A','#FBF8F1','#0E1C40','Coming soon'),
- ('garnet','Garnet','#B34528','#0F4A3A','#B34528','#FBF8F1','#5A1F10','1 stone photographed'),
+ ('garnet','Garnet','#B34528','#0F4A3A','#B34528','#FBF8F1','#5A1F10','4 stones photographed'),
  ('tourmaline','Tourmaline','#3FD0C9','#9FD3C1','#267C78','#1E2A24','#134A47','4 stones photographed'),
  ('aquamarine','Aquamarine','#23708A','#9FD3C1','#23708A','#FBF8F1','#0F3746','Coming soon'),
  ('topaz','Topaz','#D08A2E','#23708A','#996622','#1E2A24','#4A300C','Coming soon'),
- ('other','Other gems','#B8955A','#D9BE87','#886E42','#1E2A24','#3F321C','Coming soon'),
+ ('other','Other gems','#B8955A','#D9BE87','#886E42','#1E2A24','#3F321C','1 stone photographed'),
 ]
 CD={c[0]:c for c in COLL}
 
@@ -97,7 +97,30 @@ STONE03=dict(sku='SF-204',anchor='sf-204',no='Stone 03',title='Verdelite Green T
 STONE04=dict(sku='SF-205',anchor='sf-205',no='Stone 04',title='Mint Green Tourmaline, 1.02 ct',name_note="Mint is the trade's name for this soft, fresh green-blue. Gemologically it's tourmaline. The name is about color only: not a Paraíba-type or copper-bearing stone, and there's no lab report.",short='Mint Green Tourmaline',ct='1.02 ct',shape='Emerald cut',hue='mint',coll='tourmaline',
   photos=['stone-04','stone-04-b','stone-04-c','stone-04-d'],views=['face-up','face-up, second view','face-up on folded paper','angled on folded paper'],video='stone-04',vf=[],alt='Stone 04, light bluish green tourmaline, 1.02 ct emerald cut',variety='tourmaline-bluegreen',
   specs=_specs('Light bluish green tourmaline','1.02 ct','Emerald cut, faceted','Afghanistan, per the original seller','No heat, per the original seller'))
-STONES=[STONE04,STONE03,SF001,STONE02,STONE01]   # newest first; every photographed stone on the site
+# Batch 06-11 (Joshua, Oct 21, 2026, 8:30 AM PT: "Make the listings for website store active"). Copy: familygem/listings/drafts-batch06-11-2026-10-21.md.
+# Origin and treatment not known (no lab, no confirmation). No price. No Etsy listing links until real URLs exist.
+def _specs2(gem,wt,shape,mm,origin):
+    return [('Gemstone',gem),('Weight',wt),('Shape',shape),('Measurements',mm),
+            ('Clarity','Not graded, inclusions shown as they are'),('Origin',origin),('Treatment','Not known')]
+SF206=dict(sku='SF-206',anchor='sf-206',no='SF-206',title='Tsavorite Garnet, 3.06 ct',name_note='Known to gemologists as grossular garnet; tsavorite is its green variety, colored by vanadium and chromium. A candy-apple green oval, and a big one for tsavorite.',short='Tsavorite Garnet',ct='3.06 ct',shape='Oval',hue='green-vivid',coll='garnet',
+  photos=['sf-206','sf-206-b','sf-206-c','sf-206-d'],views=['face-up on white paper','face-up, second view','angled on paper','angled, closer'],video='sf-206',vf=[],variety='tsavorite',
+  specs=_specs2('Tsavorite garnet','3.06 ct','Oval, faceted','9.63 × 7.72 × 5.28 mm (from the box label)','Not known (seller label says Kenya)'))
+SF207=dict(sku='SF-207',anchor='sf-207',no='SF-207',title='Pink-Purple Spinel, 1.8 ct',name_note="Spinel is its own gem species, not a ruby or sapphire. Pink with a soft purple tint. A small orange-brown spot shows at one edge; it's in the photos, unretouched.",short='Pink-Purple Spinel',ct='1.8 ct',shape='Round',hue='pink',coll='spinel',
+  photos=['sf-207','sf-207-b','sf-207-c','sf-207-d'],views=['face-up on white paper','face-up, second view','on paper, wider view','angled'],video=None,vf=[],variety='spinel',
+  specs=_specs2('Spinel','1.8 ct (seller label)','Round, faceted','To measure','Not known'))
+SF208=dict(sku='SF-208',anchor='sf-208',no='SF-208',title='Purple-Pink Spinel, 1.97 ct',name_note='Spinel is its own gem species, long mistaken for ruby. A soft purple-pink cushion that looks very clean to the eye (no lab report).',short='Purple-Pink Spinel',ct='1.97 ct',shape='Cushion',hue='violet',coll='spinel',
+  photos=['sf-208','sf-208-b','sf-208-c','sf-208-d'],views=['face-up on white paper','face-up, second view','angled on paper','angled, closer'],video='sf-208',vf=[],variety='spinel',
+  specs=_specs2('Spinel','1.97 ct','Cushion, faceted','To measure','Not known'))
+SF209=dict(sku='SF-209',anchor='sf-209',no='SF-209',title='Mandarin Garnet, 4.15 ct',name_note="Mandarin is the trade's name for this vivid orange; known to gemologists as spessartine garnet, the manganese garnet.",short='Mandarin Garnet',ct='4.15 ct',shape='Oval',hue='orange',coll='garnet',
+  photos=['sf-209','sf-209-b','sf-209-c','sf-209-d'],views=['face-up on white paper','face-up, second view','angled on paper','angled, closer'],video='sf-209',vf=[],variety='spessartine',
+  specs=_specs2('Spessartine garnet','4.15 ct','Oval, faceted','To measure','Not known'))
+SF210=dict(sku='SF-210',anchor='sf-210',no='SF-210',title='Mali Garnet, 1.86 ct',name_note='Mali garnet is a trade name; labs call it grossular-andradite garnet, a blend of two garnet species. Yellowish orange with warm honey tones.',short='Mali Garnet',ct='1.86 ct',shape='Oval',hue='brown',coll='garnet',
+  photos=['sf-210','sf-210-b','sf-210-c','sf-210-d'],views=['face-up on white paper','face-up, second view','angled on paper','angled, closer'],video='sf-210',vf=[],variety='mali',
+  specs=_specs2('Grossular-andradite garnet','1.86 ct','Oval, faceted','To measure','Not known'))
+SF211=dict(sku='SF-211',anchor='sf-211',no='SF-211',title='Yellow Zircon Pair, 2.64 ctw',name_note='A golden yellow matched pair, ready for earrings. Zircon is a mineral in its own right, not cubic zirconia, which is man-made.',short='Yellow Zircon Pair',ct='2.64 ctw',shape='Round pair',hue='yellow',coll='other',
+  photos=['sf-211','sf-211-b','sf-211-c','sf-211-d'],views=['face-up on white paper','face-up, second view','angled on paper','angled, closer'],video='sf-211',vf=[],variety='zircon',
+  specs=_specs2('Zircon (pair)','2.64 ctw (2 stones)','Round, faceted','To measure','Not known'))
+STONES=[SF211,SF210,SF209,SF208,SF207,SF206,STONE04,STONE03,SF001,STONE02,STONE01]   # newest first; every photographed stone on the site
 # Alt text (SEO pass, Oct 17, 2026): the stone's real name, weight and shape, plus the view. No keyword stuffing.
 for _s in STONES:
     _shape=dict(_s['specs'])['Shape'].split(',')[0].lower()
@@ -118,6 +141,10 @@ CLOSE='From my personal collection. Species, weight and origin come from the ori
 VARIETY={'tsavorite':"Green grossular garnet, colored by vanadium and chromium. Campbell Bridges found it in Tanzania in 1967 and in Kenya in 1970; it was named tsavorite in 1973 and reached jewelry buyers in 1974. Rarer than red garnet, because it needs unusual rock chemistry, and most stones are small. Singly refractive, often red through a Chelsea filter, hardness 7 to 7.5. As a species it generally isn't treated; that's about the variety, not any one stone.",
  'tourmaline-green':'Not one mineral but a whole family of borosilicates; elbaite gives us most gem tourmaline, and liddicoatite is named for Richard T. Liddicoat. One of the widest color ranges of any gem: one pegmatite pocket can turn up several colors, and one crystal can grow pink at the core and green at the rim. Iron is what makes it green. Doubly refractive and strongly pleochroic, so the color shifts as you turn it. Hardness 7 to 7.5; mined worldwide, from Brazil to Namibia and Russia (GIA).',
  'tourmaline-bluegreen':'Not one mineral but a whole family of borosilicates; elbaite gives us most gem tourmaline, and liddicoatite is named for Richard T. Liddicoat. One of the widest color ranges of any gem: one pegmatite pocket can turn up several colors, and one crystal can grow pink at the core and green at the rim. Iron is what makes it blue to green. Doubly refractive and strongly pleochroic, so the color shifts as you turn it. Hardness 7 to 7.5; mined worldwide, from Brazil to Namibia and Russia (GIA).',
+ 'spinel':"Spinel is its own gem species. For centuries red and pink spinel was mistaken for ruby (the Black Prince's \"Ruby\" in the British crown is a spinel) until 1783, when it was recognized as its own mineral. Pinks come from chromium, and purple tones from iron plus chromium (GIA). Hardness 8, singly refractive.",
+ 'spessartine':'Spessartine is the manganese garnet, and manganese gives it its orange. \"Mandarin\" started with vivid orange spessartine found in Namibia in 1991 and is now the trade name for that bright orange; that history is about the variety, not this stone. Singly refractive, hardness 7 to 7.5 (GIA).',
+ 'mali':"Mali garnet is a grossular-andradite blend, first on the market in 1994 from western Mali and described by GIA's Gems & Gemology in 1995. The andradite (iron) part adds warm tones. Singly refractive, hardness about 7.",
+ 'zircon':'Zircon is its own mineral, not cubic zirconia. Zircon found in Australia is the oldest mineral on Earth, 4.4 billion years old. Very high luster, refractive index and dispersion give it brilliance and fire, and its strong double refraction can show the back facets doubled. Hardness 6 to 7.5 (GIA).',
  'tourmaline-pink':'Not one mineral but a whole family of borosilicates; elbaite gives us most gem tourmaline, and liddicoatite is named for Richard T. Liddicoat. One of the widest color ranges of any gem: one pegmatite pocket can turn up several colors, and one crystal can grow pink at the core and green at the rim. Manganese is what makes it pink. Doubly refractive and strongly pleochroic, so the color shifts as you turn it. Hardness 7 to 7.5; mined worldwide, from Brazil to Namibia and Russia (GIA).'}
 
 STORY_SHORT=("When I was three or four, my dad bought a crisp apple-green Muzo emerald from Colombia, set in a 14k gold tension ring "
@@ -204,7 +231,7 @@ def home_body():
 <div class="tag t2">Tourmaline colours<div class="dr"><i style="background:#2F6B1E"></i><i style="background:#D9487A"></i><i style="background:#3FD0C9"></i><i style="background:#2E6FB0"></i></div></div>
 <div class="tag t3"><b>Price TBD</b>From my collection</div></div></div>
 <div class="chips">{"".join(chip(c) for c in COLL)}</div></section>
-<section class="blk"><div class="sh"><div><div class="label" style="color:#B34528">Shop by gem</div><h2>Pick a colour</h2></div><p>Nine collections, nine colours. Tourmaline and garnet have real photos today; the rest fill in as each stone is photographed.</p></div><div class="cg">{cards}</div></section>
+<section class="blk"><div class="sh"><div><div class="label" style="color:#B34528">Shop by gem</div><h2>Pick a colour</h2></div><p>Nine collections, nine colours. Tourmaline, garnet, spinel and zircon have real photos today; the rest fill in as each stone is photographed.</p></div><div class="cg">{cards}</div></section>
 <section class="blk"><div class="sh"><div><div class="label" style="color:#B8476A">Just photographed</div><h2>Fresh from the collection</h2></div><a class="more" style="--uc:#B8476A" href="{{{{root}}}}shop/">View the shop →</a></div><div class="pg">{"".join(pcard(s) for s in color_order([x for x in STONES if x is not STONE01])[:4])}</div></section>
 <section class="blk"><div class="ls"><div class="crest"><picture><source type="image/webp" srcset="{A}crest-280.webp 280w, {A}crest-380.webp 380w, {A}crest-560.webp 560w, {A}crest-840.webp 840w" sizes="(max-width:820px) 190px, 270px"><img src="{A}crest-280.jpg" srcset="{A}crest-280.jpg 280w, {A}crest-380.jpg 380w, {A}crest-560.jpg 560w, {A}crest-840.jpg 840w" sizes="(max-width:820px) 190px, 270px" width="280" height="280" loading="lazy" alt="The Family Gem Shop crest: FG with an emerald above and a diamond below"></picture></div>
 <div class="txt"><div class="halo"></div><div class="label" style="color:#1C6650">Our crest</div><h2>The emerald that <em>started it all</em></h2><p>{STORY_SHORT}</p><div class="ringnote"><div class="rf"><img src="{RING_SM}400.jpg" width="400" height="250" loading="lazy" alt="My dad’s 14k gold tension ring with a green emerald"></div><span>{RING_CAP}</span></div>{LEGEND}<a class="link" href="{{{{root}}}}about/">Read Our Story →</a></div></div></section>
@@ -261,7 +288,7 @@ def _us(h):
 
 
 # ---------------------------------------------------------------- shop + inner pages (review fixes, Oct 16, 2026 7:23 PM PT)
-VNAME={'tsavorite':'tsavorite','tourmaline-green':'tourmaline','tourmaline-pink':'tourmaline','tourmaline-bluegreen':'tourmaline'}
+VNAME={'spinel':'spinel','spessartine':'mandarin garnet','mali':'Mali garnet','zircon':'zircon','tsavorite':'tsavorite','tourmaline-green':'tourmaline','tourmaline-pink':'tourmaline','tourmaline-bluegreen':'tourmaline'}
 
 def chiprow():
     return f'<div class="chips">{"".join(chip(c) for c in COLL)}</div>'
@@ -273,7 +300,7 @@ def phead(label,h1,lead,crumbs='',extra='',lc='#B8476A'):
 
 # Phase 2 per-stone layer (Joshua 7:38 PM PT): 4 photos + 1 voice-free video with licensed soft music + variety layer.
 LAYERS=json.loads((pathlib.Path(__file__).resolve().parent/'data'/'layers.json').read_text())
-LKEY={'tsavorite':('tsavorite',None),'tourmaline-green':('tourmaline','green'),'tourmaline-pink':('tourmaline','pink'),'tourmaline-bluegreen':('tourmaline','bluegreen')}
+LKEY={'spinel':('spinel',None),'spessartine':('spessartine',None),'mali':('mali',None),'zircon':('zircon',None),'tsavorite':('tsavorite',None),'tourmaline-green':('tourmaline','green'),'tourmaline-pink':('tourmaline','pink'),'tourmaline-bluegreen':('tourmaline','bluegreen')}
 def palt(s,i):
     a=f"{s['alt']}, {s['views'][i]}"
     return a+(', still frame from the video' if i in s.get('vf',[]) else '')
@@ -301,12 +328,15 @@ def layer(s):
         items=list(sec['items'])
         # color cause already sits in the approved blurb (vbox) above, so it isn't repeated here
         blocks+=f'<div class="lb"><h3>{sec["h"]}</h3><ul>'+''.join(f'<li>{x}</li>' for x in items)+'</ul></div>'
-    vid=s['video']
+    vid=s.get('video')
+    lay=f'<div class="lay"><div class="label" style="color:var(--stone-ink)">The {v} story</div><div class="lbs">{blocks}</div></div>'
+    if not vid:
+        return f'<div class="sdl" style="grid-template-columns:1fr">{lay}</div>'
     return (f'<div class="sdl"><figure class="vid"><a class="vcard" href="{{{{root}}}}video/{vid}.mp4" data-open="{s['anchor']}" aria-label="Watch the video of {s['alt']}">'
             f'<picture><source type="image/webp" srcset="{A}{vid}-poster.webp"><img src="{A}{vid}-poster.jpg" width="540" height="960" loading="lazy" decoding="async" alt=""></picture>'
             f'<span class="play big" aria-hidden="true"></span><span class="vl">Watch the video</span></a>'
             f'<figcaption>Real stone, real light. Soft piano, no voice.</figcaption></figure>'
-            f'<div class="lay"><div class="label" style="color:var(--stone-ink)">The {v} story</div><div class="lbs">{blocks}</div></div></div>')
+            f'{lay}</div>')
 
 VIEWER_JS='''<script>
 (function(){
@@ -347,7 +377,7 @@ def stone_detail(s,etsy):
 <div class="sdt"><div class="row">{chip(c)}<span class="no">{s['no'] if s['no']==s['sku'] else s['no']+' · '+s['sku']}</span></div>
 <h2>{s['title']}</h2>
 <p class="namenote">{s['name_note']}</p>
-<dl class="spec2">{rows}<dt>Price</dt><dd>Price TBD</dd></dl>
+<dl class="spec2">{rows}<dt>Price</dt><dd>Price coming soon</dd></dl>
 <p class="closenote">{CLOSE}</p>
 <div class="vbox"><h3>About {v}</h3><p>{VARIETY[s['variety']]}</p></div>
 <div class="sdcta"><span class="soonchip">Coming soon to Etsy</span><!-- ETSY LISTING SLOT ({s['sku']}): listing URL TBD. When live, add <a class="btn pri rnd" href="LISTING_URL" rel="noopener">See it on Etsy</a> --><a class="btn out rnd" href="{etsy}" rel="noopener">Favorite the shop on Etsy</a></div></div>
