@@ -148,13 +148,13 @@ VARIETY={'tsavorite':"Green grossular garnet, colored by vanadium and chromium. 
  'tourmaline-pink':'Not one mineral but a whole family of borosilicates; elbaite gives us most gem tourmaline, and liddicoatite is named for Richard T. Liddicoat. One of the widest color ranges of any gem: one pegmatite pocket can turn up several colors, and one crystal can grow pink at the core and green at the rim. Manganese is what makes it pink. Doubly refractive and strongly pleochroic, so the color shifts as you turn it. Hardness 7 to 7.5; mined worldwide, from Brazil to Namibia and Russia (GIA).'}
 
 STORY_SHORT=("When I was three or four, my dad bought a crisp apple-green Muzo emerald from Colombia, set in a 14k gold tension ring "
- "with gold nuggets down the sides. It hooked me for life. That emerald crowns our crest, and the diamond below it stands for the whole family.")
+ "with gold nuggets down the sides. It hooked me for life. That emerald sits at the heart of our crest, between two diamonds that stand for the whole family.")
 # LONG story: Joshua's exact text, APPROVED Oct 16, 2026, 5:21 PM PT (pass 8). Short story APPROVED 5:24 PM PT. Do not edit without his yes.
 STORY_LONG_P=[
  "One of my earliest memories is a jewelry shop in Napa. I sat wide-eyed as the jeweler laid out four emeralds and handed my dad a loupe. I was straining to see, so my dad passed it to me, and one emerald pulled me straight in. The light bounced around inside it, throwing a color you can’t explain. It just has to be seen. That crisp apple-green Muzo emerald from Colombia became a 14k gold tension ring with gold nuggets down the sides.",
  "Later, in Elk Grove, my dad and the local jeweler would talk about the amazing gems that had just come in: watermelon tourmaline, sapphire, alexandrite, black opal from Australia. Those talks stuck with me.",
  "Every stone in my collection has its own story of how it came to me. Now each one is moving to its new home for the next part of its journey.",
- "That emerald crowns our crest. The diamond below it stands for the whole family."]
+ "That emerald sits at the heart of our crest, between two diamonds that stand for the whole family."]
 STORY_LONG=" ".join(STORY_LONG_P)
 PULL="A color you can’t explain. It just has to be seen."
 # Personal story photo only (Joshua's dad's ring). Muzo/Colombia applies to this ring story, never to any stone for sale.
