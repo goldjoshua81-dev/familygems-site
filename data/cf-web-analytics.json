@@ -1,0 +1,6 @@
+{
+  "enabled": false,
+  "token": "",
+  "host": "thefamilygems.com",
+  "notes": "Set token from CF Web Analytics JS snippet; set enabled true when shipping."
+}
