@@ -2,13 +2,71 @@
 Ported from the approved designs-5 F mockups (front page approved Oct 16, 2026, 5:24 PM PT;
 Our Story approved 5:21 PM PT). Images live in img/, fonts in fonts/, styles in f.css.
 Links use the {{root}} token, which build.py replaces per page.
-Rules: Price TBD on stones; Muzo/Colombia only in the personal story; US spelling."""
+Rules: Prices from data/inventory.json (locked SKUs show $; draft stays Price TBD); Muzo/Colombia only in the personal story; US spelling."""
 import math, json, pathlib, itertools
 A='{{root}}img/'
 # Per-stone color (review fix M1, Joshua Oct 16, 2026 7:23 PM PT: "Full rainbow of collection").
 # Each stone has ONE `hue` word -> data/palette.json (built + AA-checked by tools/palette.py) -> CSS variables.
 # Emerald/gold/cream stay the brand frame; stone colors drive only glow, bands, tints, chips and panels.
 PAL=json.loads((pathlib.Path(__file__).resolve().parent/'data'/'palette.json').read_text())
+# Inventory: single source of truth (mirrored from /workspace/familygem/ops/inventory.json).
+# Locked SKUs show price; draft/held keep Price TBD. Etsy listing URLs stay empty until published.
+_INV_PATH=pathlib.Path(__file__).resolve().parent/'data'/'inventory.json'
+_INV=json.loads(_INV_PATH.read_text()) if _INV_PATH.exists() else {"stones":[]}
+INV={s["sku"]:s for s in _INV.get("stones",[])}
+def inv(s):
+    return INV.get(s["sku"] if isinstance(s,dict) else s, {})
+def money(n):
+    """USD display: $340 or $1,200. No cents unless needed."""
+    if n is None: return None
+    n=float(n)
+    if n==int(n): return f"${int(n):,}"
+    return f"${n:,.2f}"
+def price_chip(s):
+    """Card/detail price chip from inventory status. draft/unknown -> Coming soon · Price TBD."""
+    row=inv(s); st=(row.get("status") or "draft").lower()
+    if st=="available" and row.get("price_usd") is not None:
+        return f'<span class="soonchip pricechip">{money(row["price_usd"])}</span>'
+    if st=="on_sale" and row.get("sale_price_usd") is not None:
+        was=money(row.get("price_usd")) or ""
+        now=money(row["sale_price_usd"])
+        was_html=f'<s class="was">{was}</s> ' if was else ""
+        return f'<span class="soonchip pricechip onsale">{was_html}{now}</span>'
+    if st=="sold":
+        return '<span class="soonchip pricechip sold">Sold</span>'
+    if st=="reserved":
+        return '<span class="soonchip pricechip reserved">Reserved</span>'
+    return '<span class="soonchip">Coming soon · Price TBD</span>'
+def price_dd(s):
+    """<dd> text for the Price row on a stone detail page."""
+    row=inv(s); st=(row.get("status") or "draft").lower()
+    if st=="available" and row.get("price_usd") is not None:
+        return money(row["price_usd"])
+    if st=="on_sale" and row.get("sale_price_usd") is not None:
+        was=money(row.get("price_usd"))
+        now=money(row["sale_price_usd"])
+        return f'{now} <s class="was">{was}</s>' if was else now
+    if st=="sold": return "Sold"
+    if st=="reserved": return "Reserved"
+    return "Price coming soon"
+def cta_chip(s,etsy):
+    """Buy CTA: listing link only when etsy_url is set; else Favorite the shop / coming soon."""
+    row=inv(s); st=(row.get("status") or "draft").lower(); url=row.get("etsy_url")
+    if st in ("available","on_sale") and url:
+        return (f'<a class="btn pri rnd" href="{url}" rel="noopener">See it on Etsy</a>'
+                f'<a class="btn out rnd" href="{etsy}" rel="noopener">Favorite the shop on Etsy</a>')
+    if st=="sold":
+        return f'<span class="soonchip">Sold</span><a class="btn out rnd" href="{etsy}" rel="noopener">Favorite the shop on Etsy</a>'
+    if st=="reserved":
+        return f'<span class="soonchip">Reserved</span><a class="btn out rnd" href="{etsy}" rel="noopener">Favorite the shop on Etsy</a>'
+    if st in ("available","on_sale"):
+        # Priced on site, Etsy listing not published yet
+        return (f'<span class="soonchip">Coming soon to Etsy</span>'
+                f'<!-- ETSY LISTING SLOT ({s["sku"]}): listing URL TBD. When live, set etsy_url in inventory.json -->'
+                f'<a class="btn out rnd" href="{etsy}" rel="noopener">Favorite the shop on Etsy</a>')
+    return (f'<span class="soonchip">Coming soon to Etsy</span>'
+            f'<!-- ETSY LISTING SLOT ({s["sku"]}): listing URL TBD. When live, add <a class="btn pri rnd" href="LISTING_URL" rel="noopener">See it on Etsy</a> -->'
+            f'<a class="btn out rnd" href="{etsy}" rel="noopener">Favorite the shop on Etsy</a>')
 def svars(s):
     t=PAL[s['hue']]
     return f"--stone:{t['stone']};--stone-ink:{t['ink']};--stone-soft:{t['soft']};--stone-line:{t['line']};--stone-glow:{t['glow']}"
@@ -207,7 +265,7 @@ def pcard(s,href=None):
     vchip='<span class="vchip"><i aria-hidden="true"></i>Video</span>' if s.get('video') else ''
     pic=f'<div class="pic">{framed(s)}{vchip}</div>'
     meta=(f'<div class="row">{chip(c)}<span class="no">{s["no"]}</span></div><h3>{s["short"]}</h3><div class="sub">{s["ct"]} · {s["shape"]}</div>'
-          f'<div class="row" style="margin-top:10px"><span class="soonchip">Coming soon · Price TBD</span><span class="go" aria-hidden="true">→</span></div>')
+          f'<div class="row" style="margin-top:10px">{price_chip(s)}<span class="go" aria-hidden="true">→</span></div>')
     return f'<a class="pc" href="{href}" style="{svars(s)}"><div class="band"></div>{pic}<div class="meta">{meta}</div></a>'
 
 LEGEND='<div class="legend"><span><i class="gem-e"></i><b>Emerald</b> · where it started</span><span><i class="gem-d"></i><b>Diamond</b> · the whole family</span></div>'
@@ -377,10 +435,10 @@ def stone_detail(s,etsy):
 <div class="sdt"><div class="row">{chip(c)}<span class="no">{s['no'] if s['no']==s['sku'] else s['no']+' · '+s['sku']}</span></div>
 <h2>{s['title']}</h2>
 <p class="namenote">{s['name_note']}</p>
-<dl class="spec2">{rows}<dt>Price</dt><dd>Price coming soon</dd></dl>
+<dl class="spec2">{rows}<dt>Price</dt><dd>{price_dd(s)}</dd></dl>
 <p class="closenote">{CLOSE}</p>
 <div class="vbox"><h3>About {v}</h3><p>{VARIETY[s['variety']]}</p></div>
-<div class="sdcta"><span class="soonchip">Coming soon to Etsy</span><!-- ETSY LISTING SLOT ({s['sku']}): listing URL TBD. When live, add <a class="btn pri rnd" href="LISTING_URL" rel="noopener">See it on Etsy</a> --><a class="btn out rnd" href="{etsy}" rel="noopener">Favorite the shop on Etsy</a></div></div>
+<div class="sdcta">{cta_chip(s,etsy)}</div></div>
 {layer(s)}
 </article>'''
 

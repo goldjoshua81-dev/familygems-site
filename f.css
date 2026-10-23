@@ -429,6 +429,10 @@ main.std small{font-size:14px;color:var(--muted)}
 .ask{min-height:44px;display:inline-flex;align-items:center}
 /* stone card extras */
 .soonchip{display:inline-flex;align-items:center;gap:6px;font:600 11px Inter;letter-spacing:.06em;text-transform:uppercase;padding:6px 10px;border-radius:99px;background:var(--stone-soft,#F6F0E3);color:var(--stone-ink,#0F4A3A);border:1px solid var(--stone-line,#E8E0CF)}
+.soonchip.pricechip{letter-spacing:.02em;text-transform:none;font-variant-numeric:tabular-nums}
+.soonchip.pricechip.sold,.soonchip.pricechip.reserved{opacity:.85}
+.soonchip.pricechip .was,s.was{opacity:.65;margin-right:4px}
+
 .pc .go{font:600 18px Inter;color:var(--stone-ink,#0F4A3A);transition:transform .18s}
 .pc:hover .go{transform:translateX(3px)}
 .pg.pg5{grid-template-columns:repeat(5,1fr)}
