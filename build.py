@@ -13,6 +13,7 @@ import json, html, os, datetime, pathlib
 import fsite  # direction F (Spectrum Boutique) header/footer + home/Our Story bodies; styles in f.css
 
 ROOT = pathlib.Path(__file__).resolve().parent
+CF_ANALYTICS_PATH = ROOT / "data" / "cf-web-analytics.json"
 
 CONFIG = {
     "site_name": "The Family Gem Shop",
@@ -42,6 +43,34 @@ GEM_SVG = ('<svg class="gem" viewBox="0 0 100 92" aria-hidden="true" focusable="
 
 def jsonld(obj):
     return '<script type="application/ld+json">' + json.dumps(obj, ensure_ascii=False, separators=(",", ":")) + "</script>"
+
+def cf_beacon_script(enabled, token):
+    """Cloudflare Web Analytics beacon. Inject only when shipping a real token.
+
+    GitHub Pages is not Cloudflare-proxied, so nothing is auto-injected.
+    The token is JSON-encoded, then <, >, & and ' are unicode-escaped so the
+    value cannot break out of the single-quoted data-cf-beacon attribute.
+    """
+    token = (token or "").strip()
+    if not enabled or not token:
+        return ""
+    payload = json.dumps({"token": token}, separators=(",", ":"))
+    payload = (payload.replace("&", "\\u0026").replace("<", "\\u003c")
+               .replace(">", "\\u003e").replace("'", "\\u0027"))
+    return ('<script defer src="https://static.cloudflareinsights.com/beacon.min.js" '
+            f"data-cf-beacon='{payload}'></script>")
+
+def cf_beacon_tag():
+    """Read data/cf-web-analytics.json. Missing file or empty token => no beacon."""
+    if not CF_ANALYTICS_PATH.exists():
+        return ""
+    cfg = json.loads(CF_ANALYTICS_PATH.read_text(encoding="utf-8"))
+    if not isinstance(cfg, dict):
+        raise SystemExit("data/cf-web-analytics.json must be a JSON object")
+    enabled = cfg.get("enabled")
+    if isinstance(enabled, str):
+        enabled = enabled.strip().lower() in {"1", "true", "yes"}
+    return cf_beacon_script(bool(enabled), cfg.get("token") or "")
 
 ORG = {"@type": "Organization", "@id": CONFIG["domain"] + "/#org", "name": CONFIG["site_name"],
        "url": CONFIG["domain"] + "/", "logo": CONFIG["domain"] + "/img/logo-512.png",
@@ -204,13 +233,16 @@ def page_contact():
         body=body, ld=cld, prio="0.5", freq="monthly")
 
 def page_privacy():
+    # Oct 23, 2026: Ops + Joshua authorized $0 Cloudflare Web Analytics.
+    # Cookieless page views only. Do not claim "no analytics".
     c, cld = crumbs([("Privacy", "privacy/")])
     body = f"""<div class="wrap">
-  <!-- DRAFT: plain-English privacy notice, needs Joshua's review. Update it before adding analytics, forms or email signup. -->
-{fsite.phead("Privacy", "Privacy policy", "No cookies, no analytics, no forms. Last updated October 5, 2026.", c, lc="#6A5ACD")}
+{fsite.phead("Privacy", "Privacy policy", "Cookieless page views. No forms. Last updated October 23, 2026.", c, lc="#6A5ACD")}
 <div class="sheet prose">
   <h2>The short version</h2>
-  <p>This website does not use cookies, analytics or advertising trackers, and it has no forms. We do not collect personal information on this site.</p>
+  <p>We count page views with Cloudflare Web Analytics. That count uses no cookies and doesn't track you across other sites. This site has no forms and no advertising trackers.</p>
+  <h2>Analytics</h2>
+  <p>This site uses Cloudflare Web Analytics, which counts page views without cookies and doesn't track you across other sites.</p>
   <h2>Hosting</h2>
   <p>This site is hosted on GitHub Pages. Like most web hosts, GitHub may log technical information such as visitors' IP addresses for security and to keep the service running. See GitHub's privacy statement for details.</p>
   <h2>Purchases and messages</h2>
@@ -218,14 +250,14 @@ def page_privacy():
   <h2>Links to other sites</h2>
   <p>Links to Etsy and other websites are governed by those sites' own policies.</p>
   <h2>Changes</h2>
-  <p>If we add analytics, an email list or a contact form, we will update this page first.</p>
+  <p>If we add an email list or a contact form, we will update this page first.</p>
   <h2>Contact</h2>
   <p>Questions about privacy? Message us through <a href="{E}" rel="noopener">our Etsy shop</a>.</p>
 </div>
 </div>
 """
-    return dict(path="privacy/", nav="", title="Privacy Policy: No Cookies or Tracking | The Family Gem Shop",
-        desc="Privacy policy for thefamilygems.com: no cookies, analytics, ad trackers or forms on this site. Purchases and messages happen on Etsy, where its policy applies.",
+    return dict(path="privacy/", nav="", title="Privacy Policy | The Family Gem Shop",
+        desc="Privacy policy for thefamilygems.com. Cloudflare Web Analytics counts page views without cookies and does not track you across other sites. Purchases and messages happen on Etsy.",
         body=body, ld=cld, prio="0.3", freq="yearly")
 
 GUIDES = [("tsavorite-garnet-buying-guide/", "Tsavorite garnet buying guide",
@@ -339,6 +371,8 @@ def render(p):
     og_alt = html.escape(p.get("ogalt", "The Family Gem Shop crest with loose gemstones from the collection on a cream background"))
     site_ld = "" if p.get("noindex") else jsonld({"@context": "https://schema.org", "@graph": [ORG, WEBSITE]})
     t, d = html.escape(p["title"]), html.escape(p["desc"])
+    beacon = cf_beacon_tag()
+    beacon_html = (beacon + "\n") if beacon else ""
     robots = '<meta name="robots" content="noindex">' if p.get("noindex") else '<meta name="robots" content="index,follow,max-image-preview:large">'
     canon = "" if p.get("noindex") else f'<link rel="canonical" href="{canonical}">'
     doc = f"""<!doctype html>
@@ -374,7 +408,7 @@ def render(p):
 <link rel="preload" href="{{{{root}}}}fonts/cormorant-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{{{{root}}}}f.css">
 {site_ld}{p['ld']}
-</head>
+{beacon_html}</head>
 <body>
 {fsite.header(p.get("nav", ""))}
 <main id="main" class="{p.get('main', 'std')}">
