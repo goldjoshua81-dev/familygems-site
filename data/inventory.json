@@ -1,9 +1,9 @@
 {
   "version": 1,
   "currency": "USD",
-  "updated_at": "2026-10-22T18:24:00-07:00",
-  "updated_by": "Family Gem (Joshua locked prices Oct 22)",
-  "notes": "Single source of truth for thefamilygems.com ↔ TheFamilyGemShop. Locked prices: Joshua yes Oct 22. SF-203 and SF-209 remain draft / Price TBD. Etsy listing ids empty until published. Do not push site or flip vacation without Joshua yes.",
+  "updated_at": "2026-10-22T18:30:00-07:00",
+  "updated_by": "Family Gem (Joshua locked SF-203/SF-209 Oct 22)",
+  "notes": "Single source of truth for thefamilygems.com \u2194 TheFamilyGemShop. Locked prices: Joshua yes Oct 22. SF-203 and SF-209 remain draft / Price TBD. Etsy listing ids empty until published. Do not push site or flip vacation without Joshua yes.",
   "stones": [
     {
       "sku": "SF-001",
@@ -17,7 +17,10 @@
       "etsy_listing_id": null,
       "etsy_url": null,
       "site_visible": true,
-      "channels": ["site", "etsy"],
+      "channels": [
+        "site",
+        "etsy"
+      ],
       "notes": "Locked Oct 22, 2026 ~6:18 PM PT. mm TBD.",
       "updated_at": "2026-10-22T18:18:00-07:00"
     },
@@ -33,7 +36,10 @@
       "etsy_listing_id": null,
       "etsy_url": null,
       "site_visible": true,
-      "channels": ["site", "etsy"],
+      "channels": [
+        "site",
+        "etsy"
+      ],
       "notes": "Locked Oct 22, 2026 ~6:19 PM PT.",
       "updated_at": "2026-10-22T18:19:00-07:00"
     },
@@ -41,17 +47,20 @@
       "sku": "SF-203",
       "slug": "sf-203",
       "title": "Pink Tourmaline, 1.42 ct cushion",
-      "status": "draft",
-      "price_usd": null,
+      "status": "available",
+      "price_usd": 185,
       "sale_price_usd": null,
       "sale_ends": null,
       "qty": 1,
       "etsy_listing_id": null,
       "etsy_url": null,
       "site_visible": true,
-      "channels": ["site", "etsy"],
-      "notes": "Skipped Oct 22 — Price TBD. Joshua reviewing picks/video.",
-      "updated_at": "2026-10-22T18:20:00-07:00"
+      "channels": [
+        "site",
+        "etsy"
+      ],
+      "notes": "Locked Oct 22 at $185 (Joshua yes after picks/video review).",
+      "updated_at": "2026-10-22T18:30:00-07:00"
     },
     {
       "sku": "SF-204",
@@ -65,7 +74,10 @@
       "etsy_listing_id": null,
       "etsy_url": null,
       "site_visible": true,
-      "channels": ["site", "etsy"],
+      "channels": [
+        "site",
+        "etsy"
+      ],
       "notes": "Locked Oct 22 at $140 (Joshua override of $110 ask).",
       "updated_at": "2026-10-22T18:20:00-07:00"
     },
@@ -81,8 +93,11 @@
       "etsy_listing_id": null,
       "etsy_url": null,
       "site_visible": true,
-      "channels": ["site", "etsy"],
-      "notes": "Locked Oct 22 at $165 — Joshua expects mint to climb.",
+      "channels": [
+        "site",
+        "etsy"
+      ],
+      "notes": "Locked Oct 22 at $165 \u2014 Joshua expects mint to climb.",
       "updated_at": "2026-10-22T18:21:00-07:00"
     },
     {
@@ -97,8 +112,11 @@
       "etsy_listing_id": null,
       "etsy_url": null,
       "site_visible": true,
-      "channels": ["site", "etsy"],
-      "notes": "Locked Oct 22 at $1200. mm 9.63×7.72×5.28 from box label.",
+      "channels": [
+        "site",
+        "etsy"
+      ],
+      "notes": "Locked Oct 22 at $1200. mm 9.63\u00d77.72\u00d75.28 from box label.",
       "updated_at": "2026-10-22T18:21:00-07:00"
     },
     {
@@ -113,7 +131,10 @@
       "etsy_listing_id": null,
       "etsy_url": null,
       "site_visible": true,
-      "channels": ["site", "etsy"],
+      "channels": [
+        "site",
+        "etsy"
+      ],
       "notes": "Locked Oct 22 at $320 (Joshua override of $280 ask). Edge spot disclosed.",
       "updated_at": "2026-10-22T18:21:00-07:00"
     },
@@ -129,7 +150,10 @@
       "etsy_listing_id": null,
       "etsy_url": null,
       "site_visible": true,
-      "channels": ["site", "etsy"],
+      "channels": [
+        "site",
+        "etsy"
+      ],
       "notes": "Locked Oct 22 at $340.",
       "updated_at": "2026-10-22T18:22:00-07:00"
     },
@@ -137,17 +161,20 @@
       "sku": "SF-209",
       "slug": "sf-209",
       "title": "Mandarin Garnet, 4.15 ct oval",
-      "status": "draft",
-      "price_usd": null,
+      "status": "available",
+      "price_usd": 725,
       "sale_price_usd": null,
       "sale_ends": null,
       "qty": 1,
       "etsy_listing_id": null,
       "etsy_url": null,
       "site_visible": true,
-      "channels": ["site", "etsy"],
-      "notes": "Skipped Oct 22 — Price TBD. Joshua reviewing picks/video.",
-      "updated_at": "2026-10-22T18:22:00-07:00"
+      "channels": [
+        "site",
+        "etsy"
+      ],
+      "notes": "Locked Oct 22 at $725 (Joshua yes after picks/video review).",
+      "updated_at": "2026-10-22T18:30:00-07:00"
     },
     {
       "sku": "SF-210",
@@ -161,7 +188,10 @@
       "etsy_listing_id": null,
       "etsy_url": null,
       "site_visible": true,
-      "channels": ["site", "etsy"],
+      "channels": [
+        "site",
+        "etsy"
+      ],
       "notes": "Locked Oct 22 at $190 (Joshua override of $160 ask).",
       "updated_at": "2026-10-22T18:22:00-07:00"
     },
@@ -177,7 +207,10 @@
       "etsy_listing_id": null,
       "etsy_url": null,
       "site_visible": true,
-      "channels": ["site", "etsy"],
+      "channels": [
+        "site",
+        "etsy"
+      ],
       "notes": "Locked Oct 22 at $125 for the pair.",
       "updated_at": "2026-10-22T18:23:00-07:00"
     }
