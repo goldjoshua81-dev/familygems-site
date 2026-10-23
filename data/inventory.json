@@ -1,0 +1,218 @@
+{
+  "version": 1,
+  "currency": "USD",
+  "updated_at": "2026-10-22T18:30:00-07:00",
+  "updated_by": "Family Gem (Joshua locked SF-203/SF-209 Oct 22)",
+  "notes": "Single source of truth for thefamilygems.com \u2194 TheFamilyGemShop. Locked prices: Joshua yes Oct 22. SF-203 and SF-209 remain draft / Price TBD. Etsy listing ids empty until published. Do not push site or flip vacation without Joshua yes.",
+  "stones": [
+    {
+      "sku": "SF-001",
+      "slug": "sf-001",
+      "title": "Tsavorite Garnet, 1.19 ct heart",
+      "status": "available",
+      "price_usd": 340,
+      "sale_price_usd": null,
+      "sale_ends": null,
+      "qty": 1,
+      "etsy_listing_id": null,
+      "etsy_url": null,
+      "site_visible": true,
+      "channels": [
+        "site",
+        "etsy"
+      ],
+      "notes": "Locked Oct 22, 2026 ~6:18 PM PT. mm TBD.",
+      "updated_at": "2026-10-22T18:18:00-07:00"
+    },
+    {
+      "sku": "SF-202",
+      "slug": "sf-202",
+      "title": "Green Tourmaline, 5.04 ct cushion",
+      "status": "available",
+      "price_usd": 260,
+      "sale_price_usd": null,
+      "sale_ends": null,
+      "qty": 1,
+      "etsy_listing_id": null,
+      "etsy_url": null,
+      "site_visible": true,
+      "channels": [
+        "site",
+        "etsy"
+      ],
+      "notes": "Locked Oct 22, 2026 ~6:19 PM PT.",
+      "updated_at": "2026-10-22T18:19:00-07:00"
+    },
+    {
+      "sku": "SF-203",
+      "slug": "sf-203",
+      "title": "Pink Tourmaline, 1.42 ct cushion",
+      "status": "available",
+      "price_usd": 185,
+      "sale_price_usd": null,
+      "sale_ends": null,
+      "qty": 1,
+      "etsy_listing_id": null,
+      "etsy_url": null,
+      "site_visible": true,
+      "channels": [
+        "site",
+        "etsy"
+      ],
+      "notes": "Locked Oct 22 at $185 (Joshua yes after picks/video review).",
+      "updated_at": "2026-10-22T18:30:00-07:00"
+    },
+    {
+      "sku": "SF-204",
+      "slug": "sf-204",
+      "title": "Green Tourmaline, 1.26 ct elongated cushion",
+      "status": "available",
+      "price_usd": 140,
+      "sale_price_usd": null,
+      "sale_ends": null,
+      "qty": 1,
+      "etsy_listing_id": null,
+      "etsy_url": null,
+      "site_visible": true,
+      "channels": [
+        "site",
+        "etsy"
+      ],
+      "notes": "Locked Oct 22 at $140 (Joshua override of $110 ask).",
+      "updated_at": "2026-10-22T18:20:00-07:00"
+    },
+    {
+      "sku": "SF-205",
+      "slug": "sf-205",
+      "title": "Mint Green Tourmaline, 1.02 ct emerald cut",
+      "status": "available",
+      "price_usd": 165,
+      "sale_price_usd": null,
+      "sale_ends": null,
+      "qty": 1,
+      "etsy_listing_id": null,
+      "etsy_url": null,
+      "site_visible": true,
+      "channels": [
+        "site",
+        "etsy"
+      ],
+      "notes": "Locked Oct 22 at $165 \u2014 Joshua expects mint to climb.",
+      "updated_at": "2026-10-22T18:21:00-07:00"
+    },
+    {
+      "sku": "SF-206",
+      "slug": "sf-206",
+      "title": "Tsavorite Garnet, 3.06 ct oval",
+      "status": "available",
+      "price_usd": 1200,
+      "sale_price_usd": null,
+      "sale_ends": null,
+      "qty": 1,
+      "etsy_listing_id": null,
+      "etsy_url": null,
+      "site_visible": true,
+      "channels": [
+        "site",
+        "etsy"
+      ],
+      "notes": "Locked Oct 22 at $1200. mm 9.63\u00d77.72\u00d75.28 from box label.",
+      "updated_at": "2026-10-22T18:21:00-07:00"
+    },
+    {
+      "sku": "SF-207",
+      "slug": "sf-207",
+      "title": "Pink-Purple Spinel, 1.8 ct round",
+      "status": "available",
+      "price_usd": 320,
+      "sale_price_usd": null,
+      "sale_ends": null,
+      "qty": 1,
+      "etsy_listing_id": null,
+      "etsy_url": null,
+      "site_visible": true,
+      "channels": [
+        "site",
+        "etsy"
+      ],
+      "notes": "Locked Oct 22 at $320 (Joshua override of $280 ask). Edge spot disclosed.",
+      "updated_at": "2026-10-22T18:21:00-07:00"
+    },
+    {
+      "sku": "SF-208",
+      "slug": "sf-208",
+      "title": "Purple-Pink Spinel, 1.97 ct cushion",
+      "status": "available",
+      "price_usd": 340,
+      "sale_price_usd": null,
+      "sale_ends": null,
+      "qty": 1,
+      "etsy_listing_id": null,
+      "etsy_url": null,
+      "site_visible": true,
+      "channels": [
+        "site",
+        "etsy"
+      ],
+      "notes": "Locked Oct 22 at $340.",
+      "updated_at": "2026-10-22T18:22:00-07:00"
+    },
+    {
+      "sku": "SF-209",
+      "slug": "sf-209",
+      "title": "Mandarin Garnet, 4.15 ct oval",
+      "status": "available",
+      "price_usd": 725,
+      "sale_price_usd": null,
+      "sale_ends": null,
+      "qty": 1,
+      "etsy_listing_id": null,
+      "etsy_url": null,
+      "site_visible": true,
+      "channels": [
+        "site",
+        "etsy"
+      ],
+      "notes": "Locked Oct 22 at $725 (Joshua yes after picks/video review).",
+      "updated_at": "2026-10-22T18:30:00-07:00"
+    },
+    {
+      "sku": "SF-210",
+      "slug": "sf-210",
+      "title": "Mali Garnet, 1.86 ct oval",
+      "status": "available",
+      "price_usd": 190,
+      "sale_price_usd": null,
+      "sale_ends": null,
+      "qty": 1,
+      "etsy_listing_id": null,
+      "etsy_url": null,
+      "site_visible": true,
+      "channels": [
+        "site",
+        "etsy"
+      ],
+      "notes": "Locked Oct 22 at $190 (Joshua override of $160 ask).",
+      "updated_at": "2026-10-22T18:22:00-07:00"
+    },
+    {
+      "sku": "SF-211",
+      "slug": "sf-211",
+      "title": "Yellow Zircon Pair, 2.64 ctw",
+      "status": "available",
+      "price_usd": 125,
+      "sale_price_usd": null,
+      "sale_ends": null,
+      "qty": 1,
+      "etsy_listing_id": null,
+      "etsy_url": null,
+      "site_visible": true,
+      "channels": [
+        "site",
+        "etsy"
+      ],
+      "notes": "Locked Oct 22 at $125 for the pair.",
+      "updated_at": "2026-10-22T18:23:00-07:00"
+    }
+  ]
+}

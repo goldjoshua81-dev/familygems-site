@@ -65,20 +65,45 @@ def crumbs(items):
 
 def product_ld():
     """Product JSON-LD for each stone on /shop/. Honest fields only (Joshua, Oct 17):
-    NO offers/price (prices unconfirmed), NO review/aggregateRating, origin only 'per the original seller'."""
+    Offer only when inventory status is available/on_sale with a real price_usd.
+    NO review/aggregateRating, origin only 'per the original seller'."""
     d = CONFIG["domain"]
     items = []
     for s in fsite.STONES:
         sp = dict(s["specs"])
         name = s["title"].split(",")[0]
         shape = sp["Shape"].split(",")[0].lower()
-        items.append({"@type": "Product", "@id": f"{d}/shop/#{s['anchor']}", "url": f"{d}/shop/#{s['anchor']}",
+        row = fsite.inv(s)
+        st = (row.get("status") or "draft").lower()
+        priced = st in ("available", "on_sale") and row.get("price_usd") is not None
+        if st == "on_sale" and row.get("sale_price_usd") is not None:
+            amount = row["sale_price_usd"]
+        elif priced:
+            amount = row["price_usd"]
+        else:
+            amount = None
+        if st == "sold":
+            desc_tail = "Sold."
+        elif priced:
+            desc_tail = "Listed from my personal collection."
+        else:
+            desc_tail = "Coming soon to Etsy."
+        item = {"@type": "Product", "@id": f"{d}/shop/#{s['anchor']}", "url": f"{d}/shop/#{s['anchor']}",
             "name": f"{name}, {s['ct']} {shape} loose gemstone", "sku": s["sku"],
             "image": [f"{d}/img/{n}-800.jpg" for n in s["photos"]],
             "description": (f"{name} loose gemstone, {s['ct']}, {sp['Shape'].lower()}. "
-                            f"Origin: {sp['Origin']}. " + ("Shown in four unretouched photos and a short video. " if s.get("video") else "Shown in four unretouched photos. ") + "Coming soon to Etsy."),
+                            f"Origin: {sp['Origin']}. " + ("Shown in four unretouched photos and a short video. " if s.get("video") else "Shown in four unretouched photos. ") + desc_tail),
             "brand": {"@type": "Brand", "name": CONFIG["site_name"]},
-            "category": "Loose gemstones"})
+            "category": "Loose gemstones"}
+        if amount is not None:
+            avail = "https://schema.org/InStock" if st in ("available", "on_sale") else "https://schema.org/SoldOut"
+            offer = {"@type": "Offer", "priceCurrency": "USD", "price": f"{float(amount):.2f}",
+                     "availability": avail, "url": row.get("etsy_url") or f"{d}/shop/#{s['anchor']}"}
+            item["offers"] = offer
+        elif st == "sold":
+            item["offers"] = {"@type": "Offer", "availability": "https://schema.org/SoldOut",
+                              "url": f"{d}/shop/#{s['anchor']}"}
+        items.append(item)
     return jsonld({"@context": "https://schema.org", "@graph": items})
 
 # ---------------------------------------------------------------- FAQ data
