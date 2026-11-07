@@ -65,6 +65,51 @@ class SiteAuditTests(unittest.TestCase):
         self.assertIn("725", notes)
         self.assertIn("not a live Etsy identity check", notes)
 
+    def test_featured_gem_box_links_to_its_stone(self):
+        self.assertIn('<a class="hcard glow" href="./shop/#sf-202"', self.home)
+        self.assertIn('id="sf-202"', self.shop)
+
+    def test_wheel_is_static_not_a_spinner(self):
+        self.assertEqual(self.home.count('<div class="dot"'), 9)
+        self.assertNotIn("data-spin", self.home)
+        self.assertNotIn("wheel-reset", self.home)
+        self.assertNotIn("<a class=\"dot\"", self.home)
+
+    def test_no_family_lab_link(self):
+        blob = "\n".join(self.pages).lower()
+        self.assertNotIn("family lab", blob)
+        self.assertNotIn("familylab", blob)
+
+    def test_gallery_thumbs_keep_nojs_hrefs(self):
+        self.assertIn('href="../img/stone-01-800.jpg"', self.shop)
+        self.assertIn('href="../video/stone-01.mp4"', self.shop)
+        self.assertIn('id="sf-207"', self.shop)
+        self.assertNotIn("video/sf-207", self.shop)
+
+    def test_specimen_provenance_strings_unchanged(self):
+        # Locks the current specimen wording. It does not prove those seller statements.
+        import fsite
+        expect = {
+            "SF-202": ("Madagascar, per the original seller", "No heat, per the original seller"),
+            "SF-203": ("Afghanistan, per the original seller", "No heat, per the original seller"),
+            "SF-204": ("Afghanistan, per the original seller", "No heat, per the original seller"),
+            "SF-205": ("Afghanistan, per the original seller", "No heat, per the original seller"),
+            "SF-001": ("Not known (seller label says Kenya)", "Not known"),
+            "SF-206": ("Not known (seller label says Kenya)", "Not known"),
+            "SF-207": ("Not known", "Not known"),
+            "SF-208": ("Not known", "Not known"),
+            "SF-209": ("Not known", "Not known"),
+            "SF-210": ("Not known", "Not known"),
+            "SF-211": ("Not known", "Not known"),
+        }
+        by = {s["sku"]: dict(s["specs"]) for s in fsite.STONES}
+        for sku, (origin, treat) in expect.items():
+            self.assertEqual(by[sku]["Origin"], origin, sku)
+            self.assertEqual(by[sku]["Treatment"], treat, sku)
+            if sku != "SF-206":
+                self.assertEqual(by[sku]["Measurements"], "To measure", sku)
+        self.assertEqual(by["SF-206"]["Measurements"], "9.63 × 7.72 × 5.28 mm (from the box label)")
+
     def test_hero_uses_locked_inventory_price(self):
         self.assertIn('<div class="tag t3"><b>$260</b>From my collection</div>', self.home)
         self.assertNotIn("Price TBD", self.home)

@@ -323,7 +323,7 @@ def home_body():
 <div class="ctas"><a class="btn pri rnd" href="{{{{root}}}}shop/">Shop the collection</a><a class="btn out rnd" href="{{{{root}}}}contact/">Put me on the hunt</a></div>
 <div class="minitrust"><span>Personal collection</span><span>Inclusions shown</span><span>Never retouched</span></div></div>
 <div class="wheel"><div class="ring"></div><div class="ring2"></div>{dots()}
-<div class="hcard glow" style="{svars(s1)}"><div class="photo">{pic('stone-01','(max-width:820px) 176px, 300px',s1['alt']+', face-up','fetchpriority="high" decoding="async" ')}</div><div class="lab"><span class="nm2">Green Tourmaline</span>{chip(CD['tourmaline'],'Stone 01')}<b class="hprice">{hero_price_label(s1)}</b></div></div>
+<a class="hcard glow" href="{{{{root}}}}shop/#sf-202" style="{svars(s1)}"><div class="photo">{pic('stone-01','(max-width:820px) 176px, 300px',s1['alt']+', face-up','fetchpriority="high" decoding="async" ')}</div><div class="lab"><span class="nm2">Green Tourmaline</span>{chip(CD['tourmaline'],'Stone 01')}<b class="hprice">{hero_price_label(s1)}</b></div></a>
 <div class="tag t1"><b>5.04 ct</b>Cushion · faceted</div>
 <div class="tag t2">Tourmaline colours<div class="dr"><i style="background:#2F6B1E"></i><i style="background:#D9487A"></i><i style="background:#3FD0C9"></i><i style="background:#2E6FB0"></i></div></div>
 <div class="tag t3"><b>{hero_price_label(s1)}</b>From my collection</div></div></div>
