@@ -104,6 +104,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:18p
 .hcard .photo{border-radius:15px}
 .hcard .lab{display:flex;justify-content:space-between;align-items:center;padding:11px 4px 12px}
 .hcard .lab .nm2{font:600 20px/1.1 Cormorant;color:var(--emd)}
+.hcard .hprice{display:none;font:600 18px/1 Cormorant;color:var(--emd)}
 .tag{position:absolute;z-index:3;background:#fff;border-radius:16px;padding:10px 14px;box-shadow:0 14px 34px rgba(30,42,36,.16);font:500 12.5px Inter;color:var(--muted);line-height:1.35}
 .tag b{display:block;font:600 21px/1.1 Cormorant;color:var(--emd)}
 .tag .dr{display:flex;gap:5px;margin-top:6px}.tag .dr i{width:13px;height:13px;border-radius:50%}
@@ -120,6 +121,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:18p
 /* gem cards = D saturated cards + B paint-chip stripes */
 .cg{display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:236px;gap:14px}
 .cc{border-radius:24px;padding:20px 20px 0;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;color:#fff;box-shadow:0 10px 24px -14px var(--sh)}
+a.cc{text-decoration:none;color:#fff}
 .cc.hero2{grid-column:span 2;grid-row:span 2;padding:26px 26px 0}
 .cc.w2{grid-column:span 2}
 .cc .gemico{width:34px;height:34px;opacity:.95}
@@ -333,7 +335,7 @@ footer p{color:#B9C6BF;font-size:14.5px;margin-top:14px;max-width:380px}
  .hero h1{font-size:46px;margin:16px 0 14px}.hero p.lede{font-size:16px}.ctas .btn{flex:1;padding:14px 12px}
  .minitrust{flex-wrap:wrap;gap:8px 14px;margin-top:18px;font-size:12px}
  .wheel{width:350px;height:350px;margin:10px -12px 0}.ring{width:330px;height:330px}.ring2{width:262px;height:262px}
- .hcard{width:176px;padding:7px 7px 0;border-radius:18px}.hcard .photo{border-radius:11px}.hcard .lab{padding:7px 2px 8px}.hcard .lab .nm2{font-size:14px}.hcard .lab .chip{display:none}
+ .hcard{width:176px;padding:7px 7px 0;border-radius:18px}.hcard .photo{border-radius:11px}.hcard .lab{flex-wrap:wrap;padding:7px 2px 8px}.hcard .lab .nm2{font-size:14px}.hcard .lab .chip{display:none}.hcard .hprice{display:block;flex:1 0 100%;font-size:16px;white-space:nowrap}
  .dot{width:15px;height:15px;border-width:2px}.dot span{display:none}
  .tag{padding:7px 10px;font-size:10.5px;border-radius:12px}.tag b{font-size:16px}
  .t1{left:-4px;top:22px}.t2{right:-6px;top:auto;bottom:-2px}.t3{display:none}
@@ -427,6 +429,7 @@ main.std small{font-size:14px;color:var(--muted)}
 .sh a.more,.link{display:inline-flex;align-items:center;min-height:44px;padding-bottom:0;border-bottom:0;background:linear-gradient(var(--uc,var(--gold)),var(--uc,var(--gold))) 0 calc(100% - 9px)/100% 2px no-repeat}
 .mnav summary{min-height:44px}
 .ask{min-height:44px;display:inline-flex;align-items:center}
+@media (max-width:1180px){.ask{display:none}}
 /* stone card extras */
 .soonchip{display:inline-flex;align-items:center;gap:6px;font:600 11px Inter;letter-spacing:.06em;text-transform:uppercase;padding:6px 10px;border-radius:99px;background:var(--stone-soft,#F6F0E3);color:var(--stone-ink,#0F4A3A);border:1px solid var(--stone-line,#E8E0CF)}
 .soonchip.pricechip{letter-spacing:.02em;text-transform:none;font-variant-numeric:tabular-nums}
@@ -495,7 +498,7 @@ main.std .huntc .btn.white{background:#fff;color:var(--emd);box-shadow:none}
 .vbox h3{font-size:26px;color:var(--stone-ink);font-weight:600;margin:0 0 6px}
 .vbox p{font-size:15px;color:#2E3A34}
 .sdcta{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:20px}
-.sdcta .btn{padding:12px 22px}
+.sdcta .btn{min-height:44px;padding:12px 22px}
 main.f.inner .crumbs a{color:var(--emh)}
 @media (max-width:1180px) and (min-width:821px){.pg.pg5{grid-template-columns:repeat(3,1fr)}.sd{grid-template-columns:320px 1fr;gap:28px;padding:32px}.duo2{grid-template-columns:1fr}}
 @media (max-width:820px){

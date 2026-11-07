@@ -23,8 +23,8 @@ CONFIG = {
     "etsy": "https://www.etsy.com/shop/TheFamilyGemShop",
     "email": "",            # PLACEHOLDER: business email once it exists (shown on /contact/ when set)
     "updated": "2026-11-07",   # audit fixes (prices and gem facts unchanged; sitemap lastmod follows this)
-    # sameAs placeholder: stays OFF until Joshua confirms the Etsy shop is live. Flip to True to add the shop URL to Organization.sameAs.
-    "etsy_live": False,
+    # Shop URL in Organization.sameAs. On after the parent browser confirmed the live shop and all 11 listings (Nov 7, 2026).
+    "etsy_live": True,
     "theme": "#0F4A3A",
 }
 E = CONFIG["etsy"]
@@ -111,7 +111,7 @@ FAQS = [
     ("Where do I buy your gemstones?",
      f'All purchases happen through our Etsy shop, <a href="{E}" rel="noopener">TheFamilyGemShop</a>. Etsy handles checkout and payment, so you can pay with the methods Etsy supports.'),
     ("Is the shop open yet?",
-     f"Almost. {len(fsite.STONES)} stones are photographed and being listed one at a time. Favorite the shop on Etsy to see each stone the day it goes live."),
+     f"Yes. The Etsy shop is open, and all {len(fsite.STONES)} photographed stones have their own listings. On a stone, choose See it on Etsy. Checkout and payment stay on Etsy."),
     ("What is a loose gemstone?",
      "A loose gemstone is a cut and polished stone that is not set in jewelry yet. You or your jeweler choose the setting, metal and design, which makes loose stones popular for custom engagement rings, pendants and heirloom pieces."),
     ("What is tsavorite?",
@@ -156,7 +156,7 @@ def page_shop():
     c, cld = crumbs([("Shop", "shop/")])
     return dict(path="shop/", nav="shop/", main="f inner",
         title="Shop Loose Tourmaline, Garnet, Spinel & Zircon | The Family Gem Shop",
-        desc="Shop 11 loose gemstones: tourmaline, tsavorite, mandarin and Mali garnet, spinel and a yellow zircon pair. Plain specs, real photos and video. Etsy soon.",
+        desc="Shop 11 loose gemstones: tourmaline, tsavorite, mandarin and Mali garnet, spinel and a yellow zircon pair. Plain specs, real photos and video. Each stone links to its own Etsy listing.",
         og="shop", ogalt="Loose tourmaline and tsavorite gemstones from The Family Gem Shop in a row on cream",
         body=fsite.shop_body(c, E), ld=cld + product_ld(), prio="0.9", freq="weekly")
 
@@ -304,7 +304,7 @@ def page_tsavorite():
   <h2>Caring for tsavorite</h2>
   <p>At about 7 to 7.5 on the Mohs scale, tsavorite is suitable for everyday jewelry with reasonable care. Clean it with warm soapy water and a soft brush, and skip ultrasonic or steam cleaners unless your jeweler confirms the stone has no fractures.</p>
 
-  <div class="note"><p><strong>Looking for a tsavorite?</strong> See the <a href="{{{{root}}}}shop/#sf-001">1.19 ct tsavorite heart</a> in the shop, or <a href="{E}" rel="noopener">favorite us on Etsy</a> to see it when it goes live.</p></div>
+  <div class="note"><p><strong>Looking for a tsavorite?</strong> See the <a href="{{{{root}}}}shop/#sf-001">1.19 ct tsavorite heart</a> in the shop, or <a href="{fsite.listing_url(fsite.inv(fsite.SF001)) or E}" rel="noopener">see that stone on Etsy</a>.</p></div>
 </article>
 </div>
 """

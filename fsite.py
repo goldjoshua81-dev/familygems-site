@@ -270,6 +270,18 @@ def framed(s,cls='fr',i=0,sizes='(max-width:820px) 45vw, 300px',eager=False):
     at='fetchpriority="high" decoding="async" ' if eager else 'loading="lazy" decoding="async" '
     return f'<div class="glow" style="{svars(s)}"><div class="{cls}"><div class="photo">{pic(s["photos"][i],sizes,alt,at)}</div></div></div>'
 
+def coll_shop_href(key):
+    """Where a homepage collection tile goes. None when that family has no photographed stone.
+    Tourmaline uses Stone 01 because that tile shows it. Other families use the newest stone of that family.
+    The whole-collection tile goes to the shop. Coming-soon families stay non-links."""
+    if key=='collection':
+        return '{{root}}shop/'
+    hits=[s for s in STONES if s['coll']==key]
+    if not hits:
+        return None
+    if any(s is STONE01 for s in hits):
+        return '{{root}}shop/#sf-202'
+    return '{{root}}shop/#'+hits[0]['anchor']
 def cc(c,cls=''):
     k,n,b,acc,txt,lab,dark,st=c
     light=k in('tourmaline','topaz','other')
@@ -279,8 +291,10 @@ def cc(c,cls=''):
         extra=(f'<div class="ph2"><div>{framed(STONE01)}<small>Stone 01 · <em>5.04 ct</em></small></div>'
                f'<div>{framed(STONE02)}<small>Stone 02 · <em>1.42 ct</em></small></div></div>')
     strip=f'<div class="chipstrip"><i style="background:{acc}"></i><i style="background:{b}"></i><i style="background:{dark}"></i></div>'
-    return (f'<div class="cc {cls}" style="{bg}"><div style="display:flex;justify-content:space-between;align-items:start">{gem_svg()}</div>'
-            f'{gem_svg(cls="gemico wm",sw=4)}<div>{extra if cls=="hero2" else ""}<h3 style="margin-top:{18 if cls=="hero2" else 0}px">{n}</h3><span class="cnt{" soon" if st=="Coming soon" else ""}">{st}</span>{strip}</div></div>')
+    href=coll_shop_href(k)
+    tag, attrs = ('a', f' href="{href}"') if href else ('div', '')
+    return (f'<{tag} class="cc {cls}"{attrs} style="{bg}"><div style="display:flex;justify-content:space-between;align-items:start">{gem_svg()}</div>'
+            f'{gem_svg(cls="gemico wm",sw=4)}<div>{extra if cls=="hero2" else ""}<h3 style="margin-top:{18 if cls=="hero2" else 0}px">{n}</h3><span class="cnt{" soon" if st=="Coming soon" else ""}">{st}</span>{strip}</div></{tag}>')
 
 def pcard(s,href=None):
     """Stone card. Color = the stone's own palette family (CSS vars); chip = its collection.
@@ -309,7 +323,7 @@ def home_body():
 <div class="ctas"><a class="btn pri rnd" href="{{{{root}}}}shop/">Shop the collection</a><a class="btn out rnd" href="{{{{root}}}}contact/">Put me on the hunt</a></div>
 <div class="minitrust"><span>Personal collection</span><span>Inclusions shown</span><span>Never retouched</span></div></div>
 <div class="wheel"><div class="ring"></div><div class="ring2"></div>{dots()}
-<div class="hcard glow" style="{svars(s1)}"><div class="photo">{pic('stone-01','(max-width:820px) 176px, 300px',s1['alt']+', face-up','fetchpriority="high" decoding="async" ')}</div><div class="lab"><span class="nm2">Green Tourmaline</span>{chip(CD['tourmaline'],'Stone 01')}</div></div>
+<div class="hcard glow" style="{svars(s1)}"><div class="photo">{pic('stone-01','(max-width:820px) 176px, 300px',s1['alt']+', face-up','fetchpriority="high" decoding="async" ')}</div><div class="lab"><span class="nm2">Green Tourmaline</span>{chip(CD['tourmaline'],'Stone 01')}<b class="hprice">{hero_price_label(s1)}</b></div></div>
 <div class="tag t1"><b>5.04 ct</b>Cushion · faceted</div>
 <div class="tag t2">Tourmaline colours<div class="dr"><i style="background:#2F6B1E"></i><i style="background:#D9487A"></i><i style="background:#3FD0C9"></i><i style="background:#2E6FB0"></i></div></div>
 <div class="tag t3"><b>{hero_price_label(s1)}</b>From my collection</div></div></div>
@@ -470,21 +484,21 @@ def stone_detail(s,etsy):
 def shop_body(crumbs,etsy):
     order=color_order(STONES)
     lead=('Every stone here is from my personal collection, photographed honestly and never retouched. '
-          'They list on Etsy one at a time, where checkout, payment and tracking are handled for you.')
+          'Each one links to its own Etsy listing, where checkout, payment and tracking are handled.')
     extra=(f'<div class="ctas"><a class="btn pri rnd" href="{etsy}" rel="noopener">Favorite the shop on Etsy</a>'
            f'<a class="btn out rnd" href="{{{{root}}}}contact/">Put me on the hunt</a></div>{chiprow()}')
     cards=''.join(pcard(s,href=f'#{s["anchor"]}') for s in order)
     details=''.join(stone_detail(s,etsy) for s in order)
-    steps=[('Find your stone','Check the photos, weight, shape and specs. Measurements in mm come before each listing goes live.','#2E6FB0'),
+    steps=[('Find your stone','Check the photos, weight, shape and specs. If millimeters still say To measure, that size is not known yet.','#2E6FB0'),
            ('Ask anything','Message me on Etsy before you buy: more photos, a video, exact size.','#D9487A'),
-           ('Check out on Etsy','Etsy handles payment. Shipping and returns are shown on each listing.','#D08A2E'),
+           ('Check out on Etsy','Choose See it on Etsy for that stone. Etsy handles payment. Shipping and returns are on the listing.','#D08A2E'),
            ('Set it or keep it','Take it to your jeweler, or keep it in your collection.','#6A5ACD')]
     how=''.join(f'<div class="tc" style="--bg:{c}14;--c:{c}"><div class="ic">{gem_svg()}</div><h3>{h}</h3><p>{p}</p></div>' for h,p,c in steps)
     body=f'''<div class="wrap">
 {phead('The shop','Shop loose gemstones',lead,crumbs,extra)}
 <section class="blk"><div class="sh"><div><div class="label" style="color:#2E6FB0">{len(STONES)} stones photographed</div><h2>The collection so far</h2></div><p>Each card jumps to that stone’s specs and story. New colors are added as each stone is photographed.</p></div><div class="pg pg5">{cards}</div></section>
 <section class="blk sds" aria-label="Stone details">{details}</section>{VIEWER_JS}
-<section class="blk"><div class="sh"><div><div class="label" style="color:#A95719">How buying works</div><h2>Four easy steps</h2></div><p>Favorite the shop on Etsy to see each stone the day it lists.</p></div><div class="tg">{how}</div></section>
+<section class="blk"><div class="sh"><div><div class="label" style="color:#A95719">How buying works</div><h2>Four easy steps</h2></div><p>Each stone has its own Etsy listing. Checkout stays on Etsy.</p></div><div class="tg">{how}</div></section>
 </div>'''
     return _us(body)
 

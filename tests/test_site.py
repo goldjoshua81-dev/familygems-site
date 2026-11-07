@@ -66,19 +66,70 @@ class SiteAuditTests(unittest.TestCase):
         self.assertNotIn("Price TBD", self.home)
         self.assertIn("$260", self.shop)
 
+    # Parent-verified Nov 7 2026. SKU-less rows matched by unique variety + carat + locked price.
+    LISTINGS = {
+        "SF-001": "https://www.etsy.com/listing/4601364223",
+        "SF-202": "https://www.etsy.com/listing/4601390856",
+        "SF-203": "https://www.etsy.com/listing/4601365197",
+        "SF-204": "https://www.etsy.com/listing/4601391538",
+        "SF-205": "https://www.etsy.com/listing/4601365891",
+        "SF-206": "https://www.etsy.com/listing/4601392166",
+        "SF-207": "https://www.etsy.com/listing/4601366409",
+        "SF-208": "https://www.etsy.com/listing/4601392802",
+        "SF-209": "https://www.etsy.com/listing/4601393102",
+        "SF-210": "https://www.etsy.com/listing/4601393384",
+        "SF-211": "https://www.etsy.com/listing/4601367587",
+    }
+
     def test_no_invented_etsy_listing_links(self):
-        for stone in self.inv["stones"]:
-            self.assertIsNone(stone["etsy_url"], stone["sku"])
-            self.assertIsNone(stone["etsy_listing_id"], stone["sku"])
+        got = {s["sku"]: s["etsy_url"] for s in self.inv["stones"]}
+        self.assertEqual(got, self.LISTINGS)
+        ids = {s["sku"]: s["etsy_listing_id"] for s in self.inv["stones"]}
+        self.assertEqual(ids, {sku: int(url.rsplit("/", 1)[-1]) for sku, url in self.LISTINGS.items()})
         blob = "\n".join(self.pages)
-        self.assertNotIn("etsy.com/listing", blob)
         self.assertNotIn("cloudflareinsights", blob)
         self.assertNotIn("googletagmanager", blob)
-        self.assertEqual(blob.count("Coming soon to Etsy"), 11)
+        self.assertNotIn("Coming soon to Etsy", blob)
+        self.assertNotIn("when it goes live", blob.lower())
+        self.assertNotIn(">Almost.", (ROOT / "faq" / "index.html").read_text())
+        for sku, url in self.LISTINGS.items():
+            anchor = sku.lower()
+            start = self.shop.find(f'id="{anchor}"')
+            self.assertGreater(start, -1, sku)
+            nxt = self.shop.find("<article ", start + 10)
+            chunk = self.shop[start:nxt if nxt > 0 else None]
+            self.assertIn(f'href="{url}" rel="noopener">See it on Etsy</a>', chunk, sku)
+            self.assertIn(f'"url":"{url}"', self.shop)
+        self.assertEqual(self.shop.count(">See it on Etsy</a>"), 11)
+
+    def test_buying_paths_and_tiles(self):
+        faq = (ROOT / "faq" / "index.html").read_text()
+        self.assertIn("The Etsy shop is open", faq)
+        self.assertIn("Checkout and payment stay on Etsy", faq)
+        guide = (ROOT / "guides" / "tsavorite-garnet-buying-guide" / "index.html").read_text()
+        self.assertIn(self.LISTINGS["SF-001"], guide)
+        self.assertNotIn("Etsy soon", self.shop)
+        # Photographed families and the whole collection are links. Coming-soon families are not.
+        self.assertEqual(self.home.count("<a class=\"cc"), 5)
+        self.assertEqual(self.home.count("<div class=\"cc"), 4)
+        self.assertIn('href="./shop/#sf-202"', self.home)
+        self.assertIn('href="./shop/"', self.home)
+        def opener(heading):
+            idx = self.home.find(f">{heading}</h3>")
+            self.assertGreater(idx, -1, heading)
+            open_at = self.home.rfind('class="cc', 0, idx)
+            tag = self.home.rfind("<", 0, open_at)
+            return self.home[tag:tag + 4]
+        self.assertEqual(opener("Tourmaline"), "<a c")
+        self.assertEqual(opener("Sapphire"), "<div")
+        self.assertEqual(opener("The Collection"), "<a c")
+
+    def test_mobile_hero_price_is_in_the_card(self):
+        self.assertIn('<b class="hprice">$260</b>', self.home)
+        self.assertIn(".hcard .hprice{display:none", self.css)
+        self.assertIn(".hcard .hprice{display:block", self.css)
 
     def test_unknown_facts_stay_unknown(self):
-        for sku in ("SF-207", "SF-208", "SF-209", "SF-210", "SF-211"):
-            self.assertIn(f"ETSY LISTING SLOT ({sku})", self.shop)
         self.assertIn(">Not known</dd>", self.shop)
         self.assertIn('class="unk">Not known (seller label says Kenya)</dd>', self.shop)
         self.assertNotIn("Muzo", self.shop)
