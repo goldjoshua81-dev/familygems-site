@@ -49,9 +49,34 @@ def price_dd(s):
     if st=="sold": return "Sold"
     if st=="reserved": return "Reserved"
     return "Price coming soon"
+def hero_price_label(s):
+    """Homepage wheel tag. Reads the same locked inventory as the shop. Does not invent a price."""
+    row=inv(s); st=(row.get("status") or "draft").lower()
+    if st=="available" and row.get("price_usd") is not None:
+        return money(row["price_usd"])
+    if st=="on_sale" and row.get("sale_price_usd") is not None:
+        return money(row["sale_price_usd"])
+    if st=="sold": return "Sold"
+    if st=="reserved": return "Reserved"
+    return "Price TBD"
+def _unk_attr(v):
+    """Italic 'unknown' styling. Keeps the words; only the class changes."""
+    t=str(v).strip()
+    if t in ("To measure", "Not known") or t.startswith("Not known"):
+        return ' class="unk"'
+    return ""
+def listing_url(row_or_url):
+    """A per-stone buy link only when inventory holds a real Etsy listing URL. Never invent one."""
+    url=row_or_url.get("etsy_url") if isinstance(row_or_url, dict) else row_or_url
+    if not isinstance(url, str):
+        return None
+    u=url.strip()
+    if u.startswith("https://www.etsy.com/listing/") and not any(c in u for c in ' "\'<>'):
+        return u
+    return None
 def cta_chip(s,etsy):
-    """Buy CTA: listing link only when etsy_url is set; else Favorite the shop / coming soon."""
-    row=inv(s); st=(row.get("status") or "draft").lower(); url=row.get("etsy_url")
+    """Buy CTA: listing link only when etsy_url is a real Etsy listing; else Favorite the shop / coming soon."""
+    row=inv(s); st=(row.get("status") or "draft").lower(); url=listing_url(row)
     if st in ("available","on_sale") and url:
         return (f'<a class="btn pri rnd" href="{url}" rel="noopener">See it on Etsy</a>'
                 f'<a class="btn out rnd" href="{etsy}" rel="noopener">Favorite the shop on Etsy</a>')
@@ -231,13 +256,50 @@ SPEC='linear-gradient(90deg,#0F4A3A,#3FD0C9,#23708A,#1F3A7A,#4B4A9E,#A99BD1,#B84
 def chip(c,txt=None):
     return f'<span class="chip" style="--bg:{c[2]}1c;--fg:{c[4]}"><i style="background:{c[2]}"></i>{txt or c[1]}</span>'
 
+# Wheel copy is site structure plus short sentences already published in VARIETY.
+# Sentences that name GIA or another outside source are not copied here.
+# The flag points at that limit. It does not add a citation.
+_NO_NOTE='No variety note for {name} is published on this site.'
+_FLAG_CITE='The longer note on the linked page names an outside source. That source file is not in this site repository, so the citation is not repeated here as a checked fact.'
+WHEEL_INFO={
+ 'showcase':dict(href='{{root}}guides/',link='Browse the buying guides',
+   info=_NO_NOTE.format(name='Showcase'),
+   flag='This is not a stock check and not a checkout.'),
+ 'collection':dict(href='{{root}}shop/',link='Open the shop',
+   info='The Collection is the photographed set gathered on the shop page.',
+   flag='Opening the shop does not say that a stone can be bought right now.'),
+ 'spinel':dict(href='{{root}}shop/#notes-spinel',link='Read the spinel variety notes',
+   info='Spinel is its own gem species.',
+   flag=_FLAG_CITE),
+ 'sapphire':dict(href='{{root}}guides/',link='Browse the buying guides',
+   info=_NO_NOTE.format(name='Sapphire'),
+   flag='This is not a stock check and not a checkout.'),
+ 'garnet':dict(href='{{root}}guides/tsavorite-garnet-buying-guide/',link='Read the tsavorite garnet buying guide',
+   info='Garnet on this site is more than one variety. The published guide is about tsavorite, not every garnet. Mandarin and Mali notes are separate.',
+   flag='Outside source files for those notes are not in this repository.'),
+ 'tourmaline':dict(href='{{root}}guides/#notes-tourmaline',link='Read the tourmaline variety notes',
+   info='Not one mineral but a whole family of borosilicates; elbaite gives us most gem tourmaline.',
+   flag=_FLAG_CITE),
+ 'aquamarine':dict(href='{{root}}guides/',link='Browse the buying guides',
+   info=_NO_NOTE.format(name='Aquamarine'),
+   flag='This is not a stock check and not a checkout.'),
+ 'topaz':dict(href='{{root}}guides/',link='Browse the buying guides',
+   info=_NO_NOTE.format(name='Topaz'),
+   flag='This is not a stock check and not a checkout.'),
+ 'other':dict(href='{{root}}shop/#notes-zircon',link='Read the zircon variety notes',
+   info='Zircon is its own mineral, not cubic zirconia.',
+   flag=_FLAG_CITE),
+}
 def dots():
     out=''
     for i,c in enumerate(COLL):
         ang=math.radians(-90+i*40); r=45.5
         x=50+r*math.cos(ang); y=50+r*math.sin(ang)
         side='left:28px' if math.cos(ang)>=0.01 else ('right:28px' if math.cos(ang)<-0.01 else 'left:28px')
-        out+=f'<div class="dot" style="left:calc({x:.2f}% - 12px);top:calc({y:.2f}% - 12px);background:{c[2]}"><span style="{side};color:{c[4]}">{c[1]}</span></div>'
+        meta=WHEEL_INFO[c[0]]
+        out+=(f'<a class="dot" href="{meta["href"]}" data-wheel="{c[0]}" '
+              f'style="left:calc({x:.2f}% - 12px);top:calc({y:.2f}% - 12px);background:{c[2]}">'
+              f'<span style="{side};color:{c[4]}">{c[1]}</span></a>')
     return out
 
 def framed(s,cls='fr',i=0,sizes='(max-width:820px) 45vw, 300px',eager=False):
@@ -245,6 +307,18 @@ def framed(s,cls='fr',i=0,sizes='(max-width:820px) 45vw, 300px',eager=False):
     at='fetchpriority="high" decoding="async" ' if eager else 'loading="lazy" decoding="async" '
     return f'<div class="glow" style="{svars(s)}"><div class="{cls}"><div class="photo">{pic(s["photos"][i],sizes,alt,at)}</div></div></div>'
 
+def coll_shop_href(key):
+    """Where a homepage collection tile goes. None when that family has no photographed stone.
+    Tourmaline uses Stone 01 because that tile shows it. Other families use the newest stone of that family.
+    The whole-collection tile goes to the shop. Coming-soon families stay non-links."""
+    if key=='collection':
+        return '{{root}}shop/'
+    hits=[s for s in STONES if s['coll']==key]
+    if not hits:
+        return None
+    if any(s is STONE01 for s in hits):
+        return '{{root}}shop/#sf-202'
+    return '{{root}}shop/#'+hits[0]['anchor']
 def cc(c,cls=''):
     k,n,b,acc,txt,lab,dark,st=c
     light=k in('tourmaline','topaz','other')
@@ -254,8 +328,10 @@ def cc(c,cls=''):
         extra=(f'<div class="ph2"><div>{framed(STONE01)}<small>Stone 01 · <em>5.04 ct</em></small></div>'
                f'<div>{framed(STONE02)}<small>Stone 02 · <em>1.42 ct</em></small></div></div>')
     strip=f'<div class="chipstrip"><i style="background:{acc}"></i><i style="background:{b}"></i><i style="background:{dark}"></i></div>'
-    return (f'<div class="cc {cls}" style="{bg}"><div style="display:flex;justify-content:space-between;align-items:start">{gem_svg()}</div>'
-            f'{gem_svg(cls="gemico wm",sw=4)}<div>{extra if cls=="hero2" else ""}<h3 style="margin-top:{18 if cls=="hero2" else 0}px">{n}</h3><span class="cnt{" soon" if st=="Coming soon" else ""}">{st}</span>{strip}</div></div>')
+    href=coll_shop_href(k)
+    tag, attrs = ('a', f' href="{href}"') if href else ('div', '')
+    return (f'<{tag} class="cc {cls}"{attrs} style="{bg}"><div style="display:flex;justify-content:space-between;align-items:start">{gem_svg()}</div>'
+            f'{gem_svg(cls="gemico wm",sw=4)}<div>{extra if cls=="hero2" else ""}<h3 style="margin-top:{18 if cls=="hero2" else 0}px">{n}</h3><span class="cnt{" soon" if st=="Coming soon" else ""}">{st}</span>{strip}</div></{tag}>')
 
 def pcard(s,href=None):
     """Stone card. Color = the stone's own palette family (CSS vars); chip = its collection.
@@ -271,6 +347,123 @@ def pcard(s,href=None):
 LEGEND='<div class="legend"><span><i class="gem-e"></i><b>Emerald</b> · where it started</span><span><i class="gem-d"></i><b>Diamond</b> · the whole family</span></div>'
 
 
+def wheel_segments():
+    out=[]
+    for c in COLL:
+        meta=WHEEL_INFO[c[0]]
+        out.append(dict(id=c[0],name=c[1],href=meta['href'],link=meta['link'],info=meta['info'],flag=meta['flag']))
+    return out
+def wheel_ui():
+    segs=wheel_segments()
+    links=''.join(f'<li><a href="{s["href"]}">{s["link"]}</a></li>' for s in segs)
+    data=json.dumps(segs,ensure_ascii=False).replace('<','\\u003c')
+    return f'''<div class="wheeltools"><button type="button" class="wbtn" id="wheel-spin">Spin</button><button type="button" class="wbtn" id="wheel-reset">Reset</button></div>
+<div id="wheel-result" class="wheelresult" aria-live="polite"><p id="wheel-result-text">Choose a gem on the wheel, or spin. This is not a giveaway and not a checkout.</p></div>
+<p class="wheelneedjs" id="wheel-needjs">Spin and Reset need JavaScript. The gem links below work either way.</p>
+<ul class="wheellinks">{links}</ul>
+<script type="application/json" id="wheel-data">{data}</script>
+{WHEEL_JS}'''
+WHEEL_JS=r'''<script>
+(function(){
+  var wheel=document.getElementById('gem-wheel');
+  var dataEl=document.getElementById('wheel-data');
+  var result=document.getElementById('wheel-result-text');
+  var spinBtn=document.getElementById('wheel-spin');
+  var resetBtn=document.getElementById('wheel-reset');
+  var need=document.getElementById('wheel-needjs');
+  if(!wheel||!dataEl||!result||!spinBtn||!resetBtn) return;
+  if(need) need.hidden=true;
+  var segs=JSON.parse(dataEl.textContent);
+  var byId={};
+  segs.forEach(function(s){byId[s.id]=s;});
+  var dots=[].slice.call(wheel.querySelectorAll('a.dot'));
+  var timer=null;
+  var empty='Choose a gem on the wheel, or spin. This is not a giveaway and not a checkout.';
+  function reduceMotion(){
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+  function paint(id){
+    dots.forEach(function(d){
+      var on=d.getAttribute('data-wheel')===id;
+      d.classList.toggle('on',on);
+      if(on) d.setAttribute('aria-current','true');
+      else d.removeAttribute('aria-current');
+    });
+  }
+  function show(seg,how){
+    paint(seg.id);
+    result.textContent=seg.name+'. '+seg.info+' '+seg.flag;
+    var link=document.getElementById('wheel-more');
+    if(!link){
+      link=document.createElement('a');
+      link.id='wheel-more';
+      link.className='wheelmore';
+      result.parentNode.appendChild(link);
+    }
+    link.href=seg.href;
+    link.textContent=seg.link;
+    result.dataset.motion=how||'';
+    result.dataset.gem=seg.id;
+  }
+  function select(id,how){
+    if(!byId[id]) return;
+    show(byId[id],how);
+  }
+  function clearSpin(){
+    if(timer){clearInterval(timer);timer=null;}
+  }
+  function reset(){
+    clearSpin();
+    paint(null);
+    result.textContent=empty;
+    result.dataset.gem='';
+    result.dataset.motion='';
+    var link=document.getElementById('wheel-more');
+    if(link) link.remove();
+  }
+  dots.forEach(function(d){
+    d.addEventListener('click',function(e){
+      if(e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||e.button) return;
+      e.preventDefault();
+      clearSpin();
+      select(d.getAttribute('data-wheel'),'select');
+    });
+  });
+  wheel.addEventListener('keydown',function(e){
+    var i=dots.indexOf(document.activeElement);
+    if(i<0) return;
+    var next=null;
+    if(e.key==='ArrowRight'||e.key==='ArrowDown') next=(i+1)%dots.length;
+    else if(e.key==='ArrowLeft'||e.key==='ArrowUp') next=(i-1+dots.length)%dots.length;
+    else if(e.key==='Home') next=0;
+    else if(e.key==='End') next=dots.length-1;
+    else return;
+    e.preventDefault();
+    dots[next].focus();
+    clearSpin();
+    select(dots[next].getAttribute('data-wheel'),'keyboard');
+  });
+  spinBtn.addEventListener('click',function(){
+    clearSpin();
+    var pick=Math.floor(Math.random()*dots.length);
+    if(reduceMotion()){
+      select(dots[pick].getAttribute('data-wheel'),'reduce');
+      return;
+    }
+    var step=0;
+    var total=dots.length+pick;
+    timer=setInterval(function(){
+      paint(dots[step%dots.length].getAttribute('data-wheel'));
+      step++;
+      if(step>total){
+        clearSpin();
+        select(dots[pick].getAttribute('data-wheel'),'spin');
+      }
+    },80);
+  });
+  resetBtn.addEventListener('click',reset);
+})();
+</script>'''
 def home_body():
     s1=STONE01
     order=[('tourmaline','hero2'),('sapphire',''),('spinel',''),('garnet',''),('aquamarine',''),('topaz',''),('other',''),('showcase',''),('collection','')]
@@ -283,11 +476,12 @@ def home_body():
 <p class="lede">Hand-picked loose gemstones from my personal collection, sorted by colour. Each one is photographed honestly, never retouched, and described in plain words.</p>
 <div class="ctas"><a class="btn pri rnd" href="{{{{root}}}}shop/">Shop the collection</a><a class="btn out rnd" href="{{{{root}}}}contact/">Put me on the hunt</a></div>
 <div class="minitrust"><span>Personal collection</span><span>Inclusions shown</span><span>Never retouched</span></div></div>
-<div class="wheel"><div class="ring"></div><div class="ring2"></div>{dots()}
-<div class="hcard glow" style="{svars(s1)}"><div class="photo">{pic('stone-01','(max-width:820px) 176px, 300px',s1['alt']+', face-up','fetchpriority="high" decoding="async" ')}</div><div class="lab"><span class="nm2">Green Tourmaline</span>{chip(CD['tourmaline'],'Stone 01')}</div></div>
+<div class="wheel" id="gem-wheel"><div class="ring"></div><div class="ring2"></div>{dots()}
+<a class="hcard glow" href="{{{{root}}}}shop/#sf-202" style="{svars(s1)}"><div class="photo">{pic('stone-01','(max-width:820px) 176px, 300px',s1['alt']+', face-up','fetchpriority="high" decoding="async" ')}</div><div class="lab"><span class="nm2">Green Tourmaline</span>{chip(CD['tourmaline'],'Stone 01')}<b class="hprice">{hero_price_label(s1)}</b></div></a>
 <div class="tag t1"><b>5.04 ct</b>Cushion · faceted</div>
 <div class="tag t2">Tourmaline colours<div class="dr"><i style="background:#2F6B1E"></i><i style="background:#D9487A"></i><i style="background:#3FD0C9"></i><i style="background:#2E6FB0"></i></div></div>
-<div class="tag t3"><b>Price TBD</b>From my collection</div></div></div>
+<div class="tag t3"><b>{hero_price_label(s1)}</b>From my collection</div></div></div>
+{wheel_ui()}
 <div class="chips">{"".join(chip(c) for c in COLL)}</div></section>
 <section class="blk"><div class="sh"><div><div class="label" style="color:#B34528">Shop by gem</div><h2>Pick a colour</h2></div><p>Nine collections, nine colours. Tourmaline, garnet, spinel and zircon have real photos today; the rest fill in as each stone is photographed.</p></div><div class="cg">{cards}</div></section>
 <section class="blk"><div class="sh"><div><div class="label" style="color:#B8476A">Just photographed</div><h2>Fresh from the collection</h2></div><a class="more" style="--uc:#B8476A" href="{{{{root}}}}shop/">View the shop →</a></div><div class="pg">{"".join(pcard(s) for s in color_order([x for x in STONES if x is not STONE01])[:4])}</div></section>
@@ -316,7 +510,7 @@ def story_body():
     return _us(body)
 
 
-ANN='<div class="ann" role="note">'+''.join(f'<span style="--c:{c}">{w}</span>' for w,c in zip(TRUST_LINE,('#D9487A','#D9BE87','#3FD0C9')))+'</div>'
+ANN='<div class="ann" role="region" aria-label="How we describe stones">'+''.join(f'<span style="--c:{c}">{w}</span>' for w,c in zip(TRUST_LINE,('#D9487A','#D9BE87','#3FD0C9')))+'</div>'
 NAV=[('shop/','Shop'),('guides/','Guides'),('about/','Our Story'),('faq/','FAQ'),('contact/','Contact')]
 ABOUT_SHORT='The Family Gem Shop: personal-collection gems, listed one stone at a time. Put me on the hunt when you need what no one else can find.'
 
@@ -404,7 +598,15 @@ VIEWER_JS='''<script>
     t.setAttribute('aria-current','true');
     if(t.dataset.video){
       if(!v){v=document.createElement('video');v.controls=true;v.playsInline=true;v.setAttribute('playsinline','');
-        v.preload='auto';v.poster=t.dataset.poster;v.setAttribute('aria-label',t.dataset.label);v.src=t.dataset.video;ph.appendChild(v);}
+        v.preload='auto';v.poster=t.dataset.poster;v.setAttribute('aria-label',t.dataset.label);v.src=t.dataset.video;
+        v.addEventListener('error',function(){
+          v.pause();v.hidden=true;ph.classList.remove('isvid');img.hidden=false;
+          var note=ph.querySelector('.mediaerr');
+          if(!note){note=document.createElement('p');note.className='mediaerr';ph.appendChild(note);}
+          note.textContent='This video did not load. The still photo is shown.';
+        });
+        ph.appendChild(v);}
+      var old=ph.querySelector('.mediaerr');if(old)old.remove();
       ph.classList.add('isvid');img.hidden=true;v.hidden=false;
       var p=v.play();if(p&&p.catch)p.catch(function(){});
     }else{
@@ -426,10 +628,16 @@ VIEWER_JS='''<script>
 })();
 </script>'''
 
+_NOTE_IDS=set()
 def stone_detail(s,etsy):
     c=CD[s['coll']]
-    rows=''.join(f'<dt>{k}</dt><dd{" class=unk" if v in ("To measure","Not known") else ""}>{v}</dd>' for k,v in s['specs'])
+    rows=''.join(f'<dt>{k}</dt><dd{_unk_attr(v)}>{v}</dd>' for k,v in s['specs'])
     v=VNAME[s['variety']]
+    slug=v.lower().replace(' ','-')
+    if slug not in _NOTE_IDS:
+        _NOTE_IDS.add(slug); nid=f' id="notes-{slug}"'
+    else:
+        nid=''
     return f'''<article class="sd" id="{s['anchor']}" style="{svars(s)}">
 <div class="sdp">{framed(s,'fr',0,'(max-width:820px) 88vw, 400px',s is STONES[0])}{thumbs(s)}</div>
 <div class="sdt"><div class="row">{chip(c)}<span class="no">{s['no'] if s['no']==s['sku'] else s['no']+' · '+s['sku']}</span></div>
@@ -437,33 +645,36 @@ def stone_detail(s,etsy):
 <p class="namenote">{s['name_note']}</p>
 <dl class="spec2">{rows}<dt>Price</dt><dd>{price_dd(s)}</dd></dl>
 <p class="closenote">{CLOSE}</p>
-<div class="vbox"><h3>About {v}</h3><p>{VARIETY[s['variety']]}</p></div>
+<div class="vbox"{nid}><h3>About {v}</h3><p>{VARIETY[s['variety']]}</p></div>
 <div class="sdcta">{cta_chip(s,etsy)}</div></div>
 {layer(s)}
 </article>'''
 
 def shop_body(crumbs,etsy):
+    _NOTE_IDS.clear()
     order=color_order(STONES)
     lead=('Every stone here is from my personal collection, photographed honestly and never retouched. '
-          'They list on Etsy one at a time, where checkout, payment and tracking are handled for you.')
+          'Each one links to its own Etsy listing, where checkout, payment and tracking are handled.')
     extra=(f'<div class="ctas"><a class="btn pri rnd" href="{etsy}" rel="noopener">Favorite the shop on Etsy</a>'
            f'<a class="btn out rnd" href="{{{{root}}}}contact/">Put me on the hunt</a></div>{chiprow()}')
     cards=''.join(pcard(s,href=f'#{s["anchor"]}') for s in order)
     details=''.join(stone_detail(s,etsy) for s in order)
-    steps=[('Find your stone','Check the photos, weight, shape and specs. Measurements in mm come before each listing goes live.','#2E6FB0'),
+    steps=[('Find your stone','Check the photos, weight, shape and specs. If millimeters still say To measure, that size is not known yet.','#2E6FB0'),
            ('Ask anything','Message me on Etsy before you buy: more photos, a video, exact size.','#D9487A'),
-           ('Check out on Etsy','Etsy handles payment. Shipping and returns are shown on each listing.','#D08A2E'),
+           ('Check out on Etsy','Choose See it on Etsy for that stone. Etsy handles payment. Shipping and returns are on the listing.','#D08A2E'),
            ('Set it or keep it','Take it to your jeweler, or keep it in your collection.','#6A5ACD')]
     how=''.join(f'<div class="tc" style="--bg:{c}14;--c:{c}"><div class="ic">{gem_svg()}</div><h3>{h}</h3><p>{p}</p></div>' for h,p,c in steps)
     body=f'''<div class="wrap">
 {phead('The shop','Shop loose gemstones',lead,crumbs,extra)}
 <section class="blk"><div class="sh"><div><div class="label" style="color:#2E6FB0">{len(STONES)} stones photographed</div><h2>The collection so far</h2></div><p>Each card jumps to that stone’s specs and story. New colors are added as each stone is photographed.</p></div><div class="pg pg5">{cards}</div></section>
 <section class="blk sds" aria-label="Stone details">{details}</section>{VIEWER_JS}
-<section class="blk"><div class="sh"><div><div class="label" style="color:#A95719">How buying works</div><h2>Four easy steps</h2></div><p>Favorite the shop on Etsy to see each stone the day it lists.</p></div><div class="tg">{how}</div></section>
+<section class="blk"><div class="sh"><div><div class="label" style="color:#A95719">How buying works</div><h2>Four easy steps</h2></div><p>Each stone has its own Etsy listing. Checkout stays on Etsy.</p></div><div class="tg">{how}</div></section>
 </div>'''
     return _us(body)
 
 def guides_extra():
     """Variety notes for /guides/ (same KB-cited text as the stone sections)."""
     cards=[(SF001,'Tsavorite','tsavorite'),(STONE02,'Tourmaline','tourmaline-pink')]
-    return ''.join(f'<div class="vcard" style="{svars(s)}"><div class="label" style="color:var(--stone-ink)">Variety notes</div><h3>About {n.lower()}</h3><p>{VARIETY[k]}</p></div>' for s,n,k in cards)
+    # vnote, not vcard: vcard is the 9:16 shop video poster. Sharing the class stretched these notes into empty portrait cards.
+    ids={'tsavorite':'notes-tsavorite','tourmaline-pink':'notes-tourmaline'}
+    return ''.join(f'<div class="vnote" id="{ids[k]}" style="{svars(s)}"><div class="label" style="color:var(--stone-ink)">Variety notes</div><h3>About {n.lower()}</h3><p>{VARIETY[k]}</p></div>' for s,n,k in cards)

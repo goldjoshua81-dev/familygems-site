@@ -22,9 +22,10 @@ CONFIG = {
     "base_path": os.environ.get("FG_BASE", "/"),
     "etsy": "https://www.etsy.com/shop/TheFamilyGemShop",
     "email": "",            # PLACEHOLDER: business email once it exists (shown on /contact/ when set)
-    "updated": "2026-10-21",   # batch 06-11 added (SEO pass was 2026-10-17)
-    # sameAs placeholder: stays OFF until Joshua confirms the Etsy shop is live. Flip to True to add the shop URL to Organization.sameAs.
-    "etsy_live": False,
+    "updated": "2026-11-07",   # audit fixes (prices and gem facts unchanged; sitemap lastmod follows this)
+    # Shop URL in Organization.sameAs. A signed-in owner view showed the shop page and 11 listings.
+    # Logged-out availability and checkout were not established, so public pages must not promise either.
+    "etsy_live": True,
     "theme": "#0F4A3A",
 }
 E = CONFIG["etsy"]
@@ -98,7 +99,7 @@ def product_ld():
         if amount is not None:
             avail = "https://schema.org/InStock" if st in ("available", "on_sale") else "https://schema.org/SoldOut"
             offer = {"@type": "Offer", "priceCurrency": "USD", "price": f"{float(amount):.2f}",
-                     "availability": avail, "url": row.get("etsy_url") or f"{d}/shop/#{s['anchor']}"}
+                     "availability": avail, "url": fsite.listing_url(row) or f"{d}/shop/#{s['anchor']}"}
             item["offers"] = offer
         elif st == "sold":
             item["offers"] = {"@type": "Offer", "availability": "https://schema.org/SoldOut",
@@ -111,7 +112,7 @@ FAQS = [
     ("Where do I buy your gemstones?",
      f'All purchases happen through our Etsy shop, <a href="{E}" rel="noopener">TheFamilyGemShop</a>. Etsy handles checkout and payment, so you can pay with the methods Etsy supports.'),
     ("Is the shop open yet?",
-     f"Almost. {len(fsite.STONES)} stones are photographed and being listed one at a time. Favorite the shop on Etsy to see each stone the day it goes live."),
+     f'Browse our gemstone listings on Etsy: <a href="{E}" rel="noopener">TheFamilyGemShop</a>.'),
     ("What is a loose gemstone?",
      "A loose gemstone is a cut and polished stone that is not set in jewelry yet. You or your jeweler choose the setting, metal and design, which makes loose stones popular for custom engagement rings, pendants and heirloom pieces."),
     ("What is tsavorite?",
@@ -156,7 +157,7 @@ def page_shop():
     c, cld = crumbs([("Shop", "shop/")])
     return dict(path="shop/", nav="shop/", main="f inner",
         title="Shop Loose Tourmaline, Garnet, Spinel & Zircon | The Family Gem Shop",
-        desc="Shop 11 loose gemstones: tourmaline, tsavorite, mandarin and Mali garnet, spinel and a yellow zircon pair. Plain specs, real photos and video. Etsy soon.",
+        desc="Shop 11 loose gemstones: tourmaline, tsavorite, mandarin and Mali garnet, spinel and a yellow zircon pair. Plain specs, real photos and video. Each stone links to its own Etsy listing.",
         og="shop", ogalt="Loose tourmaline and tsavorite gemstones from The Family Gem Shop in a row on cream",
         body=fsite.shop_body(c, E), ld=cld + product_ld(), prio="0.9", freq="weekly")
 
@@ -245,7 +246,7 @@ def page_guides():
 </div>
 """
     return dict(path="guides/", nav="guides/", title="Gemstone Buying Guides & Variety Notes | The Family Gem Shop",
-        desc="Plain-English guides to buying loose gemstones: Tsavorite Garnet color, clarity and heart shapes, plus variety notes on pink, green and mint green tourmaline.",
+        desc="Plain-English guides to buying loose gemstones: a Tsavorite Garnet buying guide, plus the variety notes shown here for tsavorite and pink tourmaline.",
         og="guides", ogalt="A heart-shaped Tsavorite Garnet and tourmalines on cream, for The Family Gem Shop buying guides",
         body=body, ld=cld, prio="0.7", freq="weekly")
 
@@ -304,7 +305,7 @@ def page_tsavorite():
   <h2>Caring for tsavorite</h2>
   <p>At about 7 to 7.5 on the Mohs scale, tsavorite is suitable for everyday jewelry with reasonable care. Clean it with warm soapy water and a soft brush, and skip ultrasonic or steam cleaners unless your jeweler confirms the stone has no fractures.</p>
 
-  <div class="note"><p><strong>Looking for a tsavorite?</strong> See the <a href="{{{{root}}}}shop/#sf-001">1.19 ct tsavorite heart</a> in the shop, or <a href="{E}" rel="noopener">favorite us on Etsy</a> to see it when it goes live.</p></div>
+  <div class="note"><p><strong>Looking for a tsavorite?</strong> See the <a href="{{{{root}}}}shop/#sf-001">1.19 ct tsavorite heart</a> in the shop, or <a href="{fsite.listing_url(fsite.inv(fsite.SF001)) or E}" rel="noopener">see that stone on Etsy</a>.</p></div>
 </article>
 </div>
 """

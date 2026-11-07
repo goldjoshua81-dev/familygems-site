@@ -3,7 +3,7 @@
   "currency": "USD",
   "updated_at": "2026-10-22T18:30:00-07:00",
   "updated_by": "Family Gem (Joshua locked SF-203/SF-209 Oct 22)",
-  "notes": "Single source of truth for thefamilygems.com \u2194 TheFamilyGemShop. Locked prices: Joshua yes Oct 22. SF-203 and SF-209 remain draft / Price TBD. Etsy listing ids empty until published. Do not push site or flip vacation without Joshua yes.",
+  "notes": "Single source of truth for thefamilygems.com ↔ TheFamilyGemShop. price_usd values were not changed when etsy_url and etsy_listing_id were filled. Those numbers remain the existing records, including SF-203 at 185 and SF-209 at 725. The listing ids and URLs were copied on Nov 7 2026 from a supplied map. This note is not a live Etsy identity check. Do not edit price_usd in an audit. Do not push site or flip vacation without Joshua yes.",
   "stones": [
     {
       "sku": "SF-001",
@@ -14,8 +14,8 @@
       "sale_price_usd": null,
       "sale_ends": null,
       "qty": 1,
-      "etsy_listing_id": null,
-      "etsy_url": null,
+      "etsy_listing_id": 4601364223,
+      "etsy_url": "https://www.etsy.com/listing/4601364223",
       "site_visible": true,
       "channels": [
         "site",
@@ -33,8 +33,8 @@
       "sale_price_usd": null,
       "sale_ends": null,
       "qty": 1,
-      "etsy_listing_id": null,
-      "etsy_url": null,
+      "etsy_listing_id": 4601390856,
+      "etsy_url": "https://www.etsy.com/listing/4601390856",
       "site_visible": true,
       "channels": [
         "site",
@@ -52,8 +52,8 @@
       "sale_price_usd": null,
       "sale_ends": null,
       "qty": 1,
-      "etsy_listing_id": null,
-      "etsy_url": null,
+      "etsy_listing_id": 4601365197,
+      "etsy_url": "https://www.etsy.com/listing/4601365197",
       "site_visible": true,
       "channels": [
         "site",
@@ -71,8 +71,8 @@
       "sale_price_usd": null,
       "sale_ends": null,
       "qty": 1,
-      "etsy_listing_id": null,
-      "etsy_url": null,
+      "etsy_listing_id": 4601391538,
+      "etsy_url": "https://www.etsy.com/listing/4601391538",
       "site_visible": true,
       "channels": [
         "site",
@@ -90,14 +90,14 @@
       "sale_price_usd": null,
       "sale_ends": null,
       "qty": 1,
-      "etsy_listing_id": null,
-      "etsy_url": null,
+      "etsy_listing_id": 4601365891,
+      "etsy_url": "https://www.etsy.com/listing/4601365891",
       "site_visible": true,
       "channels": [
         "site",
         "etsy"
       ],
-      "notes": "Locked Oct 22 at $165 \u2014 Joshua expects mint to climb.",
+      "notes": "Locked Oct 22 at $165 — Joshua expects mint to climb.",
       "updated_at": "2026-10-22T18:21:00-07:00"
     },
     {
@@ -109,14 +109,14 @@
       "sale_price_usd": null,
       "sale_ends": null,
       "qty": 1,
-      "etsy_listing_id": null,
-      "etsy_url": null,
+      "etsy_listing_id": 4601392166,
+      "etsy_url": "https://www.etsy.com/listing/4601392166",
       "site_visible": true,
       "channels": [
         "site",
         "etsy"
       ],
-      "notes": "Locked Oct 22 at $1200. mm 9.63\u00d77.72\u00d75.28 from box label.",
+      "notes": "Locked Oct 22 at $1200. mm 9.63×7.72×5.28 from box label.",
       "updated_at": "2026-10-22T18:21:00-07:00"
     },
     {
@@ -128,8 +128,8 @@
       "sale_price_usd": null,
       "sale_ends": null,
       "qty": 1,
-      "etsy_listing_id": null,
-      "etsy_url": null,
+      "etsy_listing_id": 4601366409,
+      "etsy_url": "https://www.etsy.com/listing/4601366409",
       "site_visible": true,
       "channels": [
         "site",
@@ -147,8 +147,8 @@
       "sale_price_usd": null,
       "sale_ends": null,
       "qty": 1,
-      "etsy_listing_id": null,
-      "etsy_url": null,
+      "etsy_listing_id": 4601392802,
+      "etsy_url": "https://www.etsy.com/listing/4601392802",
       "site_visible": true,
       "channels": [
         "site",
@@ -166,8 +166,8 @@
       "sale_price_usd": null,
       "sale_ends": null,
       "qty": 1,
-      "etsy_listing_id": null,
-      "etsy_url": null,
+      "etsy_listing_id": 4601393102,
+      "etsy_url": "https://www.etsy.com/listing/4601393102",
       "site_visible": true,
       "channels": [
         "site",
@@ -185,8 +185,8 @@
       "sale_price_usd": null,
       "sale_ends": null,
       "qty": 1,
-      "etsy_listing_id": null,
-      "etsy_url": null,
+      "etsy_listing_id": 4601393384,
+      "etsy_url": "https://www.etsy.com/listing/4601393384",
       "site_visible": true,
       "channels": [
         "site",
@@ -204,8 +204,8 @@
       "sale_price_usd": null,
       "sale_ends": null,
       "qty": 1,
-      "etsy_listing_id": null,
-      "etsy_url": null,
+      "etsy_listing_id": 4601367587,
+      "etsy_url": "https://www.etsy.com/listing/4601367587",
       "site_visible": true,
       "channels": [
         "site",
