@@ -91,6 +91,15 @@ class SiteAuditTests(unittest.TestCase):
         self.assertIn("https://www.gia.edu/garnet", self.home)
         self.assertNotIn("most gem tourmaline", low)
         self.assertIn("This video did not load. The still photo is shown.", self.shop)
+        self.assertIn('"sku": "SF-208"', self.home)
+        self.assertIn("sf-208-400.jpg", self.home)
+        self.assertIn('"sku": "SF-001"', self.home)
+        self.assertIn("sf-001-400.jpg", self.home)
+        self.assertIn('"sku": "SF-211"', self.home)
+        self.assertIn('"sku": "SF-202"', self.home)
+        self.assertIn("No sapphire photo is on this site.", self.home)
+        self.assertIn("not one gemstone", self.home)
+        self.assertIn("my!==token", self.home)
 
     def test_no_family_lab_link(self):
         blob = "\n".join(self.pages).lower()

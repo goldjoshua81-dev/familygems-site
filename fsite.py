@@ -264,30 +264,39 @@ _NO_NOTE='No variety note for {name} is published on this site.'
 _NOT_A_CERT='This is about the mineral in general, not a certificate for any stone in the shop.'
 WHEEL_INFO={
  'showcase':dict(href='{{root}}guides/',link='Browse the buying guides',
+   nophoto='No Showcase gemstone photo is on this site.',
    info=_NO_NOTE.format(name='Showcase'),
    flag='This is not a stock check and not a checkout.'),
  'collection':dict(href='{{root}}shop/',link='Open the shop',
+   nophoto='The Collection is the whole photographed set, not one gemstone.',
    info='The Collection is the photographed set gathered on the shop page.',
    flag='Opening the shop does not say that a stone can be bought right now.'),
  'spinel':dict(href='{{root}}shop/#notes-spinel',link='Read the spinel variety notes',
+   center='SF-208',
    info="GIA's spinel overview lists spinel as its own mineral, different from ruby, and says the Black Prince's Ruby in the British Imperial Crown is a red spinel. https://www.gia.edu/spinel",
    flag=_NOT_A_CERT),
  'sapphire':dict(href='{{root}}guides/',link='Browse the buying guides',
+   nophoto='No sapphire photo is on this site.',
    info=_NO_NOTE.format(name='Sapphire'),
    flag='This is not a stock check and not a checkout.'),
  'garnet':dict(href='{{root}}guides/tsavorite-garnet-buying-guide/',link='Read the tsavorite garnet buying guide',
+   center='SF-001',
    info="GIA describes garnets as a group of closely related minerals, and names tsavorite as a green garnet. https://www.gia.edu/garnet This site's published garnet guide is about tsavorite, not every garnet. Mandarin and Mali notes are separate.",
    flag='The link below is this site\'s tsavorite guide. It is not a certificate for any stone.'),
  'tourmaline':dict(href='{{root}}guides/#notes-tourmaline',link='Read the tourmaline variety notes',
+   center='SF-202',
    info="GIA's tourmaline overview lists elbaite, dravite, and liddicoatite among its minerals, and says tourmaline has one of the widest color ranges of any gem. https://www.gia.edu/tourmaline",
    flag=_NOT_A_CERT),
  'aquamarine':dict(href='{{root}}guides/',link='Browse the buying guides',
+   nophoto='No aquamarine photo is on this site.',
    info=_NO_NOTE.format(name='Aquamarine'),
    flag='This is not a stock check and not a checkout.'),
  'topaz':dict(href='{{root}}guides/',link='Browse the buying guides',
+   nophoto='No topaz photo is on this site.',
    info=_NO_NOTE.format(name='Topaz'),
    flag='This is not a stock check and not a checkout.'),
  'other':dict(href='{{root}}shop/#notes-zircon',link='Read the zircon variety notes',
+   center='SF-211',
    info='GIA describes zircon as a gem often confused with cubic zirconia, lists the mineral as zircon, and says zircon found in Australia is the oldest mineral on Earth, about 4.4 billion years old. https://www.gia.edu/zircon',
    flag=_NOT_A_CERT),
 }
@@ -348,11 +357,29 @@ def pcard(s,href=None):
 LEGEND='<div class="legend"><span><i class="gem-e"></i><b>Emerald</b> · where it started</span><span><i class="gem-d"></i><b>Diamond</b> · the whole family</span></div>'
 
 
+def _wheel_center(coll_id, sku):
+    """Photo, label, price, and shop link for one real stone of this wheel family. None if that family has no photo."""
+    if not sku:
+        return None
+    s=next(x for x in STONES if x['sku']==sku)
+    if s['coll']!=coll_id:
+        raise AssertionError(f'{sku} is {s["coll"]}, not {coll_id}')
+    photo=s['photos'][0]
+    price=hero_price_label(s)
+    return dict(sku=sku,label=s['short'],chip=s['sku'],ct=s['ct'],shape=s['shape'],
+        alt=f"{s['alt']}, {s['views'][0]}",
+        href='{{root}}shop/#'+s['anchor'],
+        src='{{root}}img/'+photo+'-400.jpg',
+        srcset=webp_set(photo, ext='jpg'),
+        webp=webp_set(photo),
+        price=price if str(price).startswith('$') else None)
 def wheel_segments():
     out=[]
     for c in COLL:
         meta=WHEEL_INFO[c[0]]
-        out.append(dict(id=c[0],name=c[1],href=meta['href'],link=meta['link'],info=meta['info'],flag=meta['flag']))
+        out.append(dict(id=c[0],name=c[1],href=meta['href'],link=meta['link'],info=meta['info'],flag=meta['flag'],
+            nophoto=meta.get('nophoto') or '',
+            center=_wheel_center(c[0], meta.get('center'))))
     return out
 def wheel_ui():
     segs=wheel_segments()
@@ -379,7 +406,103 @@ WHEEL_JS=r'''<script>
   segs.forEach(function(s){byId[s.id]=s;});
   var dots=[].slice.call(wheel.querySelectorAll('a.dot'));
   var timer=null;
+  var token=0;
   var empty='Choose a gem on the wheel, or spin. This is not a giveaway and not a checkout.';
+  var card=wheel.querySelector('a.hcard');
+  var img=card.querySelector('img');
+  var source=card.querySelector('source');
+  var nameEl=card.querySelector('.nm2');
+  var chipEl=card.querySelector('.chip');
+  var priceEl=card.querySelector('.hprice');
+  var noneEl=card.querySelector('.wnone');
+  var t1=wheel.querySelector('.tag.t1');
+  var t1b=t1.querySelector('b');
+  var t1s=t1.querySelector('.wshape');
+  var t2=wheel.querySelector('.tag.t2');
+  var t3=wheel.querySelector('.tag.t3');
+  var t3b=t3.querySelector('b');
+  function setChip(text){
+    var mark=chipEl.querySelector('i');
+    chipEl.textContent='';
+    if(mark) chipEl.appendChild(mark);
+    chipEl.appendChild(document.createTextNode(text));
+  }
+  function applyCenter(seg){
+    var c=seg&&seg.center;
+    if(!c){
+      card.classList.add('is-nophoto');
+      wheel.classList.add('is-nophoto');
+      card.setAttribute('href', seg?seg.href:'#');
+      noneEl.hidden=false;
+      noneEl.textContent=seg&&seg.nophoto?seg.nophoto:('No photo of '+(seg?seg.name:'this gem')+' is on this site.');
+      img.alt=noneEl.textContent;
+      img.removeAttribute('src');
+      img.removeAttribute('srcset');
+      if(source) source.removeAttribute('srcset');
+      nameEl.textContent=seg?seg.name:'';
+      setChip('No photo');
+      priceEl.hidden=true;
+      priceEl.textContent='';
+      t1.hidden=true;
+      t2.hidden=true;
+      t3.hidden=true;
+      t3b.textContent='';
+      return;
+    }
+    card.classList.remove('is-nophoto');
+    wheel.classList.remove('is-nophoto');
+    noneEl.hidden=true;
+    card.setAttribute('href', c.href);
+    if(source) source.srcset=c.webp;
+    img.srcset=c.srcset;
+    img.src=c.src;
+    img.alt=c.alt;
+    nameEl.textContent=c.label;
+    setChip(c.chip);
+    t1.hidden=false;
+    t1b.textContent=c.ct;
+    t1s.textContent=c.shape;
+    t2.hidden=seg.id!=='tourmaline';
+    if(c.price){
+      priceEl.hidden=false;
+      priceEl.textContent=c.price;
+      t3.hidden=false;
+      t3b.textContent=c.price;
+    }else{
+      priceEl.hidden=true;
+      t3.hidden=true;
+    }
+  }
+  function restoreOrigin(){
+    card.classList.remove('is-nophoto');
+    wheel.classList.remove('is-nophoto');
+    noneEl.hidden=true;
+    card.setAttribute('href', card.dataset.originHref);
+    if(source) source.srcset=card.dataset.originWebp;
+    img.srcset=card.dataset.originSrcset;
+    img.src=card.dataset.originSrc;
+    img.alt=card.dataset.originAlt;
+    nameEl.textContent=card.dataset.originName;
+    setChip(card.dataset.originChip);
+    priceEl.hidden=false;
+    priceEl.textContent=card.dataset.originPrice;
+    t1.hidden=false;
+    t1b.textContent=card.dataset.originCt;
+    t1s.textContent=card.dataset.originShape;
+    t2.hidden=false;
+    t3.hidden=false;
+    t3b.textContent=card.dataset.originPrice;
+  }
+  card.dataset.originHref=card.getAttribute('href');
+  card.dataset.originWebp=source?source.getAttribute('srcset'):'';
+  card.dataset.originSrcset=img.getAttribute('srcset');
+  card.dataset.originSrc=img.getAttribute('src');
+  card.dataset.originAlt=img.getAttribute('alt');
+  card.dataset.originName=nameEl.textContent;
+  card.dataset.originChip=(chipEl.textContent||'').trim();
+  card.dataset.originPrice=priceEl.textContent;
+  card.dataset.originCt=t1b.textContent;
+  card.dataset.originShape=(t1s.textContent||'').trim();
   function reduceMotion(){
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
@@ -393,6 +516,7 @@ WHEEL_JS=r'''<script>
   }
   function show(seg,how){
     paint(seg.id);
+    applyCenter(seg);
     result.textContent=seg.name+'. '+seg.info+' '+seg.flag;
     var link=document.getElementById('wheel-more');
     if(!link){
@@ -413,9 +537,15 @@ WHEEL_JS=r'''<script>
   function clearSpin(){
     if(timer){clearInterval(timer);timer=null;}
   }
-  function reset(){
+  function invalidate(){
+    token++;
     clearSpin();
+    return token;
+  }
+  function reset(){
+    invalidate();
     paint(null);
+    restoreOrigin();
     result.textContent=empty;
     result.dataset.gem='';
     result.dataset.motion='';
@@ -426,7 +556,7 @@ WHEEL_JS=r'''<script>
     d.addEventListener('click',function(e){
       if(e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||e.button) return;
       e.preventDefault();
-      clearSpin();
+      invalidate();
       select(d.getAttribute('data-wheel'),'select');
     });
   });
@@ -441,23 +571,26 @@ WHEEL_JS=r'''<script>
     else return;
     e.preventDefault();
     dots[next].focus();
-    clearSpin();
+    invalidate();
     select(dots[next].getAttribute('data-wheel'),'keyboard');
   });
   spinBtn.addEventListener('click',function(){
-    clearSpin();
+    var my=invalidate();
     var pick=Math.floor(Math.random()*dots.length);
     if(reduceMotion()){
+      if(my!==token) return;
       select(dots[pick].getAttribute('data-wheel'),'reduce');
       return;
     }
     var step=0;
     var total=dots.length+pick;
     timer=setInterval(function(){
+      if(my!==token){clearInterval(timer);return;}
       paint(dots[step%dots.length].getAttribute('data-wheel'));
       step++;
       if(step>total){
         clearSpin();
+        if(my!==token) return;
         select(dots[pick].getAttribute('data-wheel'),'spin');
       }
     },80);
@@ -478,8 +611,8 @@ def home_body():
 <div class="ctas"><a class="btn pri rnd" href="{{{{root}}}}shop/">Shop the collection</a><a class="btn out rnd" href="{{{{root}}}}contact/">Put me on the hunt</a></div>
 <div class="minitrust"><span>Personal collection</span><span>Inclusions shown</span><span>Never retouched</span></div></div>
 <div class="wheel" id="gem-wheel"><div class="ring"></div><div class="ring2"></div>{dots()}
-<a class="hcard glow" href="{{{{root}}}}shop/#sf-202" style="{svars(s1)}"><div class="photo">{pic('stone-01','(max-width:820px) 176px, 300px',s1['alt']+', face-up','fetchpriority="high" decoding="async" ')}</div><div class="lab"><span class="nm2">Green Tourmaline</span>{chip(CD['tourmaline'],'Stone 01')}<b class="hprice">{hero_price_label(s1)}</b></div></a>
-<div class="tag t1"><b>5.04 ct</b>Cushion · faceted</div>
+<a class="hcard glow" href="{{{{root}}}}shop/#sf-202" style="{svars(s1)}"><div class="photo">{pic('stone-01','(max-width:820px) 176px, 300px',s1['alt']+', face-up','fetchpriority="high" decoding="async" ')}<p class="wnone" hidden></p></div><div class="lab"><span class="nm2">Green Tourmaline</span>{chip(CD['tourmaline'],'SF-202')}<b class="hprice">{hero_price_label(s1)}</b></div></a>
+<div class="tag t1"><b>5.04 ct</b><span class="wshape">Cushion</span></div>
 <div class="tag t2">Tourmaline colours<div class="dr"><i style="background:#2F6B1E"></i><i style="background:#D9487A"></i><i style="background:#3FD0C9"></i><i style="background:#2E6FB0"></i></div></div>
 <div class="tag t3"><b>{hero_price_label(s1)}</b>From my collection</div></div></div>
 {wheel_ui()}
@@ -635,10 +768,11 @@ def stone_detail(s,etsy):
     rows=''.join(f'<dt>{k}</dt><dd{_unk_attr(v)}>{v}</dd>' for k,v in s['specs'])
     v=VNAME[s['variety']]
     slug=v.lower().replace(' ','-')
-    if slug not in _NOTE_IDS:
-        _NOTE_IDS.add(slug); nid=f' id="notes-{slug}"'
-    else:
+    pin={'spinel':'SF-208','zircon':'SF-211','tsavorite':'SF-001'}
+    if slug in _NOTE_IDS or (slug in pin and s['sku']!=pin[slug]):
         nid=''
+    else:
+        _NOTE_IDS.add(slug); nid=f' id="notes-{slug}"'
     return f'''<article class="sd" id="{s['anchor']}" style="{svars(s)}">
 <div class="sdp">{framed(s,'fr',0,'(max-width:820px) 88vw, 400px',s is STONES[0])}{thumbs(s)}</div>
 <div class="sdt"><div class="row">{chip(c)}<span class="no">{s['no'] if s['no']==s['sku'] else s['no']+' · '+s['sku']}</span></div>
