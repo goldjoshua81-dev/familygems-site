@@ -83,8 +83,13 @@ class SiteAuditTests(unittest.TestCase):
         self.assertIn('id="notes-spinel"', self.shop)
         self.assertIn('id="notes-zircon"', self.shop)
         low = self.home.lower()
-        for banned in ("you won", "in stock", "available now", "prize"):
+        for banned in ("you won", "in stock", "available now", "prize", "repository", "source file"):
             self.assertNotIn(banned, low)
+        self.assertIn("https://www.gia.edu/spinel", self.home)
+        self.assertIn("https://www.gia.edu/tourmaline", self.home)
+        self.assertIn("https://www.gia.edu/zircon", self.home)
+        self.assertIn("https://www.gia.edu/garnet", self.home)
+        self.assertNotIn("most gem tourmaline", low)
         self.assertIn("This video did not load. The still photo is shown.", self.shop)
 
     def test_no_family_lab_link(self):

@@ -256,11 +256,12 @@ SPEC='linear-gradient(90deg,#0F4A3A,#3FD0C9,#23708A,#1F3A7A,#4B4A9E,#A99BD1,#B84
 def chip(c,txt=None):
     return f'<span class="chip" style="--bg:{c[2]}1c;--fg:{c[4]}"><i style="background:{c[2]}"></i>{txt or c[1]}</span>'
 
-# Wheel copy is site structure plus short sentences already published in VARIETY.
-# Sentences that name GIA or another outside source are not copied here.
-# The flag points at that limit. It does not add a citation.
+# Wheel sentences below are limited to claims read from the named public page on Nov 7, 2026.
+# They describe the mineral in general. They are not a certificate for any stone in the shop.
+# "Most gem tourmaline is elbaite" is not used: the GIA tourmaline overview lists elbaite
+# but does not say it supplies most gem tourmaline.
 _NO_NOTE='No variety note for {name} is published on this site.'
-_FLAG_CITE='The longer note on the linked page names an outside source. That source file is not in this site repository, so the citation is not repeated here as a checked fact.'
+_NOT_A_CERT='This is about the mineral in general, not a certificate for any stone in the shop.'
 WHEEL_INFO={
  'showcase':dict(href='{{root}}guides/',link='Browse the buying guides',
    info=_NO_NOTE.format(name='Showcase'),
@@ -269,17 +270,17 @@ WHEEL_INFO={
    info='The Collection is the photographed set gathered on the shop page.',
    flag='Opening the shop does not say that a stone can be bought right now.'),
  'spinel':dict(href='{{root}}shop/#notes-spinel',link='Read the spinel variety notes',
-   info='Spinel is its own gem species.',
-   flag=_FLAG_CITE),
+   info="GIA's spinel overview lists spinel as its own mineral, different from ruby, and says the Black Prince's Ruby in the British Imperial Crown is a red spinel. https://www.gia.edu/spinel",
+   flag=_NOT_A_CERT),
  'sapphire':dict(href='{{root}}guides/',link='Browse the buying guides',
    info=_NO_NOTE.format(name='Sapphire'),
    flag='This is not a stock check and not a checkout.'),
  'garnet':dict(href='{{root}}guides/tsavorite-garnet-buying-guide/',link='Read the tsavorite garnet buying guide',
-   info='Garnet on this site is more than one variety. The published guide is about tsavorite, not every garnet. Mandarin and Mali notes are separate.',
-   flag='Outside source files for those notes are not in this repository.'),
+   info="GIA describes garnets as a group of closely related minerals, and names tsavorite as a green garnet. https://www.gia.edu/garnet This site's published garnet guide is about tsavorite, not every garnet. Mandarin and Mali notes are separate.",
+   flag='The link below is this site\'s tsavorite guide. It is not a certificate for any stone.'),
  'tourmaline':dict(href='{{root}}guides/#notes-tourmaline',link='Read the tourmaline variety notes',
-   info='Not one mineral but a whole family of borosilicates; elbaite gives us most gem tourmaline.',
-   flag=_FLAG_CITE),
+   info="GIA's tourmaline overview lists elbaite, dravite, and liddicoatite among its minerals, and says tourmaline has one of the widest color ranges of any gem. https://www.gia.edu/tourmaline",
+   flag=_NOT_A_CERT),
  'aquamarine':dict(href='{{root}}guides/',link='Browse the buying guides',
    info=_NO_NOTE.format(name='Aquamarine'),
    flag='This is not a stock check and not a checkout.'),
@@ -287,8 +288,8 @@ WHEEL_INFO={
    info=_NO_NOTE.format(name='Topaz'),
    flag='This is not a stock check and not a checkout.'),
  'other':dict(href='{{root}}shop/#notes-zircon',link='Read the zircon variety notes',
-   info='Zircon is its own mineral, not cubic zirconia.',
-   flag=_FLAG_CITE),
+   info='GIA describes zircon as a gem often confused with cubic zirconia, lists the mineral as zircon, and says zircon found in Australia is the oldest mineral on Earth, about 4.4 billion years old. https://www.gia.edu/zircon',
+   flag=_NOT_A_CERT),
 }
 def dots():
     out=''
