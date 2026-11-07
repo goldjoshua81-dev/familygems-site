@@ -69,11 +69,23 @@ class SiteAuditTests(unittest.TestCase):
         self.assertIn('<a class="hcard glow" href="./shop/#sf-202"', self.home)
         self.assertIn('id="sf-202"', self.shop)
 
-    def test_wheel_is_static_not_a_spinner(self):
-        self.assertEqual(self.home.count('<div class="dot"'), 9)
-        self.assertNotIn("data-spin", self.home)
-        self.assertNotIn("wheel-reset", self.home)
-        self.assertNotIn("<a class=\"dot\"", self.home)
+    def test_wheel_selection_spin_and_fallback(self):
+        self.assertEqual(self.home.count('<a class="dot"'), 9)
+        self.assertIn('id="wheel-spin"', self.home)
+        self.assertIn('id="wheel-reset"', self.home)
+        self.assertIn("prefers-reduced-motion", self.home)
+        self.assertIn("This is not a giveaway and not a checkout.", self.home)
+        self.assertIn('href="./guides/#notes-tourmaline"', self.home)
+        self.assertIn('href="./shop/#notes-spinel"', self.home)
+        self.assertIn('href="./shop/#notes-zircon"', self.home)
+        self.assertIn('href="./guides/tsavorite-garnet-buying-guide/"', self.home)
+        self.assertIn('id="notes-tourmaline"', (ROOT / "guides" / "index.html").read_text())
+        self.assertIn('id="notes-spinel"', self.shop)
+        self.assertIn('id="notes-zircon"', self.shop)
+        low = self.home.lower()
+        for banned in ("you won", "in stock", "available now", "prize"):
+            self.assertNotIn(banned, low)
+        self.assertIn("This video did not load. The still photo is shown.", self.shop)
 
     def test_no_family_lab_link(self):
         blob = "\n".join(self.pages).lower()
@@ -85,6 +97,8 @@ class SiteAuditTests(unittest.TestCase):
         self.assertIn('href="../video/stone-01.mp4"', self.shop)
         self.assertIn('id="sf-207"', self.shop)
         self.assertNotIn("video/sf-207", self.shop)
+        self.assertEqual(self.shop.count('class="th"'), 44)
+        self.assertEqual(self.shop.count('class="th thv"'), 10)
 
     def test_specimen_provenance_strings_unchanged(self):
         # Locks the current specimen wording. It does not prove those seller statements.
