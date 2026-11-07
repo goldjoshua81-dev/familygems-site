@@ -49,9 +49,34 @@ def price_dd(s):
     if st=="sold": return "Sold"
     if st=="reserved": return "Reserved"
     return "Price coming soon"
+def hero_price_label(s):
+    """Homepage wheel tag. Reads the same locked inventory as the shop. Does not invent a price."""
+    row=inv(s); st=(row.get("status") or "draft").lower()
+    if st=="available" and row.get("price_usd") is not None:
+        return money(row["price_usd"])
+    if st=="on_sale" and row.get("sale_price_usd") is not None:
+        return money(row["sale_price_usd"])
+    if st=="sold": return "Sold"
+    if st=="reserved": return "Reserved"
+    return "Price TBD"
+def _unk_attr(v):
+    """Italic 'unknown' styling. Keeps the words; only the class changes."""
+    t=str(v).strip()
+    if t in ("To measure", "Not known") or t.startswith("Not known"):
+        return ' class="unk"'
+    return ""
+def listing_url(row_or_url):
+    """A per-stone buy link only when inventory holds a real Etsy listing URL. Never invent one."""
+    url=row_or_url.get("etsy_url") if isinstance(row_or_url, dict) else row_or_url
+    if not isinstance(url, str):
+        return None
+    u=url.strip()
+    if u.startswith("https://www.etsy.com/listing/") and not any(c in u for c in ' "\'<>'):
+        return u
+    return None
 def cta_chip(s,etsy):
-    """Buy CTA: listing link only when etsy_url is set; else Favorite the shop / coming soon."""
-    row=inv(s); st=(row.get("status") or "draft").lower(); url=row.get("etsy_url")
+    """Buy CTA: listing link only when etsy_url is a real Etsy listing; else Favorite the shop / coming soon."""
+    row=inv(s); st=(row.get("status") or "draft").lower(); url=listing_url(row)
     if st in ("available","on_sale") and url:
         return (f'<a class="btn pri rnd" href="{url}" rel="noopener">See it on Etsy</a>'
                 f'<a class="btn out rnd" href="{etsy}" rel="noopener">Favorite the shop on Etsy</a>')
@@ -287,7 +312,7 @@ def home_body():
 <div class="hcard glow" style="{svars(s1)}"><div class="photo">{pic('stone-01','(max-width:820px) 176px, 300px',s1['alt']+', face-up','fetchpriority="high" decoding="async" ')}</div><div class="lab"><span class="nm2">Green Tourmaline</span>{chip(CD['tourmaline'],'Stone 01')}</div></div>
 <div class="tag t1"><b>5.04 ct</b>Cushion · faceted</div>
 <div class="tag t2">Tourmaline colours<div class="dr"><i style="background:#2F6B1E"></i><i style="background:#D9487A"></i><i style="background:#3FD0C9"></i><i style="background:#2E6FB0"></i></div></div>
-<div class="tag t3"><b>Price TBD</b>From my collection</div></div></div>
+<div class="tag t3"><b>{hero_price_label(s1)}</b>From my collection</div></div></div>
 <div class="chips">{"".join(chip(c) for c in COLL)}</div></section>
 <section class="blk"><div class="sh"><div><div class="label" style="color:#B34528">Shop by gem</div><h2>Pick a colour</h2></div><p>Nine collections, nine colours. Tourmaline, garnet, spinel and zircon have real photos today; the rest fill in as each stone is photographed.</p></div><div class="cg">{cards}</div></section>
 <section class="blk"><div class="sh"><div><div class="label" style="color:#B8476A">Just photographed</div><h2>Fresh from the collection</h2></div><a class="more" style="--uc:#B8476A" href="{{{{root}}}}shop/">View the shop →</a></div><div class="pg">{"".join(pcard(s) for s in color_order([x for x in STONES if x is not STONE01])[:4])}</div></section>
@@ -316,7 +341,7 @@ def story_body():
     return _us(body)
 
 
-ANN='<div class="ann" role="note">'+''.join(f'<span style="--c:{c}">{w}</span>' for w,c in zip(TRUST_LINE,('#D9487A','#D9BE87','#3FD0C9')))+'</div>'
+ANN='<div class="ann" role="region" aria-label="How we describe stones">'+''.join(f'<span style="--c:{c}">{w}</span>' for w,c in zip(TRUST_LINE,('#D9487A','#D9BE87','#3FD0C9')))+'</div>'
 NAV=[('shop/','Shop'),('guides/','Guides'),('about/','Our Story'),('faq/','FAQ'),('contact/','Contact')]
 ABOUT_SHORT='The Family Gem Shop: personal-collection gems, listed one stone at a time. Put me on the hunt when you need what no one else can find.'
 
@@ -428,7 +453,7 @@ VIEWER_JS='''<script>
 
 def stone_detail(s,etsy):
     c=CD[s['coll']]
-    rows=''.join(f'<dt>{k}</dt><dd{" class=unk" if v in ("To measure","Not known") else ""}>{v}</dd>' for k,v in s['specs'])
+    rows=''.join(f'<dt>{k}</dt><dd{_unk_attr(v)}>{v}</dd>' for k,v in s['specs'])
     v=VNAME[s['variety']]
     return f'''<article class="sd" id="{s['anchor']}" style="{svars(s)}">
 <div class="sdp">{framed(s,'fr',0,'(max-width:820px) 88vw, 400px',s is STONES[0])}{thumbs(s)}</div>
@@ -466,4 +491,5 @@ def shop_body(crumbs,etsy):
 def guides_extra():
     """Variety notes for /guides/ (same KB-cited text as the stone sections)."""
     cards=[(SF001,'Tsavorite','tsavorite'),(STONE02,'Tourmaline','tourmaline-pink')]
-    return ''.join(f'<div class="vcard" style="{svars(s)}"><div class="label" style="color:var(--stone-ink)">Variety notes</div><h3>About {n.lower()}</h3><p>{VARIETY[k]}</p></div>' for s,n,k in cards)
+    # vnote, not vcard: vcard is the 9:16 shop video poster. Sharing the class stretched these notes into empty portrait cards.
+    return ''.join(f'<div class="vnote" style="{svars(s)}"><div class="label" style="color:var(--stone-ink)">Variety notes</div><h3>About {n.lower()}</h3><p>{VARIETY[k]}</p></div>' for s,n,k in cards)

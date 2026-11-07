@@ -371,7 +371,7 @@ a:focus-visible,summary:focus-visible{outline:2px solid #3FD0C9;outline-offset:3
 .mnav summary::-webkit-details-marker{display:none}
 .mnav summary b{display:block;width:20px;height:2px;background:currentColor;box-shadow:0 6px 0 currentColor,0 -6px 0 currentColor;margin:0 4px}
 .mnav nav{position:absolute;right:0;top:calc(100% + 6px);z-index:40;display:flex;flex-direction:column;min-width:210px;background:#fff;border:1px solid #EFE8D9;border-radius:18px;padding:8px;box-shadow:0 18px 40px rgba(30,42,36,.18)}
-.mnav nav a{padding:12px 14px;border-radius:12px;font:500 15px Inter;color:#2D3832}
+.mnav nav a{min-height:44px;display:flex;align-items:center;padding:12px 14px;border-radius:12px;font:500 15px Inter;color:#2D3832}
 .mnav nav a.on{background:#EEF6F2;color:var(--emd)}
 .btn.white{background:#fff;color:var(--emd)}
 @media (max-width:1180px) and (min-width:821px){
@@ -472,9 +472,9 @@ main.std .huntc .btn.white{background:#fff;color:var(--emd);box-shadow:none}
 .gcard p{color:#3A453F}
 .gcard .link{--uc:var(--stone)}
 .vgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.vcard{border-radius:24px;padding:28px 30px;background:var(--stone-soft);border-top:6px solid var(--stone);position:relative}
-.vcard h3{font-size:30px!important;color:var(--emd);margin:6px 0 8px!important}
-.vcard p{font-size:15.5px;color:#2E3A34;margin:0!important}
+.vnote{border-radius:24px;padding:28px 30px;background:var(--stone-soft);border-top:6px solid var(--stone);position:relative}
+.vnote h3{font-size:30px!important;color:var(--emd);margin:6px 0 8px!important}
+.vnote p{font-size:15.5px;color:#2E3A34;margin:0!important}
 /* shop: per-stone sections in the stone's own color */
 .sds{display:grid;gap:22px}
 .sd{display:grid;grid-template-columns:420px 1fr;gap:48px;align-items:start;border-radius:32px;padding:44px;border:1px solid var(--stone-line);scroll-margin-top:20px;
@@ -641,13 +641,13 @@ details{background:#FFFDF7}
 .sdp .photo.isvid{background:#0E1512;display:flex;justify-content:center}
 .sdp .photo video{display:block;width:min(100%,calc(min(72vh,620px)*9/16));height:auto;aspect-ratio:9/16;object-fit:contain;background:#0E1512}
 .sdp .photo img[hidden],.sdp .photo video[hidden]{display:none}
-.vcard{position:relative;display:block;border-radius:20px;overflow:hidden;aspect-ratio:9/16;background:var(--stone-soft);box-shadow:0 0 0 1px rgba(184,149,90,.55),0 22px 48px -24px rgba(30,42,36,.45)}
-.vcard img{display:block;width:100%;height:100%;object-fit:cover}
+a.vcard{position:relative;display:block;border-radius:20px;overflow:hidden;aspect-ratio:9/16;padding:0;border-top:0;background:var(--stone-soft);box-shadow:0 0 0 1px rgba(184,149,90,.55),0 22px 48px -24px rgba(30,42,36,.45)}
+a.vcard img{display:block;width:100%;height:100%;object-fit:cover}
 .play.big{top:46%;width:72px;height:72px;background:rgba(8,20,16,.58);box-shadow:0 0 0 3px rgba(255,255,255,.92),0 10px 30px rgba(0,0,0,.4);transition:transform .15s}
 .play.big:after{border-width:14px 0 14px 22px}
-.vcard:hover .play.big{transform:translate(-50%,-50%) scale(1.06)}
-.vcard .vl{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);white-space:nowrap;padding:8px 14px;border-radius:99px;font:600 13px/1 Inter;color:#fff;background:rgba(8,20,16,.66)}
-.vcard:focus-visible,.ths .th:focus-visible{outline:2px solid var(--stone-ink);outline-offset:3px}
+a.vcard:hover .play.big{transform:translate(-50%,-50%) scale(1.06)}
+a.vcard .vl{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);white-space:nowrap;padding:8px 14px;border-radius:99px;font:600 13px/1 Inter;color:#fff;background:rgba(8,20,16,.66)}
+a.vcard:focus-visible,.ths .th:focus-visible{outline:2px solid var(--stone-ink);outline-offset:3px}
 .pc .pic{position:relative}
 .vchip{position:absolute;left:22px;top:22px;z-index:2;display:inline-flex;align-items:center;gap:5px;padding:4px 9px 4px 7px;border-radius:99px;font:600 10.5px/1 Inter;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:rgba(8,20,16,.72)}
 .vchip i{width:0;height:0;border-style:solid;border-width:4px 0 4px 7px;border-color:transparent transparent transparent #fff}
@@ -656,6 +656,6 @@ details{background:#FFFDF7}
 .ths .thv .play{left:6px;top:6px;transform:none;width:22px;height:22px}
 .ths .thv .play:after{border-width:5px 0 5px 8px}
 .ths .vl{background:rgba(8,20,16,.82)}
-.vcard img{position:absolute;inset:0;width:100%!important;height:100%!important;max-width:none;object-fit:cover}
+a.vcard img{position:absolute;inset:0;width:100%!important;height:100%!important;max-width:none;object-fit:cover}
 /* SEO pass (Oct 17, 2026): <picture> wrappers keep the original img layout */
-.photo picture,.ths picture,.vcard picture{display:contents}
+.photo picture,.ths picture,a.vcard picture{display:contents}

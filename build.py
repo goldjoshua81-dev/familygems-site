@@ -22,7 +22,7 @@ CONFIG = {
     "base_path": os.environ.get("FG_BASE", "/"),
     "etsy": "https://www.etsy.com/shop/TheFamilyGemShop",
     "email": "",            # PLACEHOLDER: business email once it exists (shown on /contact/ when set)
-    "updated": "2026-10-21",   # batch 06-11 added (SEO pass was 2026-10-17)
+    "updated": "2026-11-07",   # audit fixes (prices and gem facts unchanged; sitemap lastmod follows this)
     # sameAs placeholder: stays OFF until Joshua confirms the Etsy shop is live. Flip to True to add the shop URL to Organization.sameAs.
     "etsy_live": False,
     "theme": "#0F4A3A",
@@ -98,7 +98,7 @@ def product_ld():
         if amount is not None:
             avail = "https://schema.org/InStock" if st in ("available", "on_sale") else "https://schema.org/SoldOut"
             offer = {"@type": "Offer", "priceCurrency": "USD", "price": f"{float(amount):.2f}",
-                     "availability": avail, "url": row.get("etsy_url") or f"{d}/shop/#{s['anchor']}"}
+                     "availability": avail, "url": fsite.listing_url(row) or f"{d}/shop/#{s['anchor']}"}
             item["offers"] = offer
         elif st == "sold":
             item["offers"] = {"@type": "Offer", "availability": "https://schema.org/SoldOut",
@@ -245,7 +245,7 @@ def page_guides():
 </div>
 """
     return dict(path="guides/", nav="guides/", title="Gemstone Buying Guides & Variety Notes | The Family Gem Shop",
-        desc="Plain-English guides to buying loose gemstones: Tsavorite Garnet color, clarity and heart shapes, plus variety notes on pink, green and mint green tourmaline.",
+        desc="Plain-English guides to buying loose gemstones: a Tsavorite Garnet buying guide, plus the variety notes shown here for tsavorite and pink tourmaline.",
         og="guides", ogalt="A heart-shaped Tsavorite Garnet and tourmalines on cream, for The Family Gem Shop buying guides",
         body=body, ld=cld, prio="0.7", freq="weekly")
 
