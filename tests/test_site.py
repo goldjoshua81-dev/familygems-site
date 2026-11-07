@@ -58,15 +58,24 @@ class SiteAuditTests(unittest.TestCase):
         notes = self.inv["notes"]
         self.assertNotIn("remain draft", notes)
         self.assertNotIn("Price TBD", notes)
+        self.assertNotIn("Joshua yes Oct 22", notes)
+        self.assertNotIn("Joshua locked", notes)
+        self.assertNotIn("parent-verified", notes)
         self.assertIn("185", notes)
         self.assertIn("725", notes)
+        self.assertIn("not a live Etsy identity check", notes)
 
     def test_hero_uses_locked_inventory_price(self):
         self.assertIn('<div class="tag t3"><b>$260</b>From my collection</div>', self.home)
         self.assertNotIn("Price TBD", self.home)
         self.assertIn("$260", self.shop)
 
-    # Parent-verified Nov 7 2026. SKU-less rows matched by unique variety + carat + locked price.
+    # Hardcoded regression fixture. A pass does not open Etsy and is not a live identity check.
+    # A signed-in owner reread reconfirmed title, species, carat, and price on all 11,
+    # with Add to cart and no sold or unavailable state, shop text "All 11", and no vacation text.
+    # That was not a logged-out session. Logged-out availability and checkout are not established.
+    # Public SKUs were visible only on SF-204, SF-205, SF-206, and SF-210.
+    # The other seven stay mapped by unique variety, carat, and price_usd, not as SKU-certified.
     LISTINGS = {
         "SF-001": "https://www.etsy.com/listing/4601364223",
         "SF-202": "https://www.etsy.com/listing/4601390856",
@@ -104,8 +113,13 @@ class SiteAuditTests(unittest.TestCase):
 
     def test_buying_paths_and_tiles(self):
         faq = (ROOT / "faq" / "index.html").read_text()
-        self.assertIn("The Etsy shop is open", faq)
-        self.assertIn("Checkout and payment stay on Etsy", faq)
+        self.assertIn("Browse our gemstone listings on Etsy", faq)
+        self.assertIn('href="https://www.etsy.com/shop/TheFamilyGemShop" rel="noopener">TheFamilyGemShop</a>', faq)
+        self.assertNotIn("The Etsy shop is open", faq)
+        self.assertNotIn("all 11 photographed", faq)
+        open_answer = faq.split("Is the shop open yet?", 1)[1].split("</details>", 1)[0]
+        self.assertNotIn("Checkout", open_answer)
+        self.assertNotIn("all 11", open_answer.lower())
         guide = (ROOT / "guides" / "tsavorite-garnet-buying-guide" / "index.html").read_text()
         self.assertIn(self.LISTINGS["SF-001"], guide)
         self.assertNotIn("Etsy soon", self.shop)

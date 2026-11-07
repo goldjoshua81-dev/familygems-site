@@ -23,7 +23,8 @@ CONFIG = {
     "etsy": "https://www.etsy.com/shop/TheFamilyGemShop",
     "email": "",            # PLACEHOLDER: business email once it exists (shown on /contact/ when set)
     "updated": "2026-11-07",   # audit fixes (prices and gem facts unchanged; sitemap lastmod follows this)
-    # Shop URL in Organization.sameAs. On after the parent browser confirmed the live shop and all 11 listings (Nov 7, 2026).
+    # Shop URL in Organization.sameAs. A signed-in owner view showed the shop page and 11 listings.
+    # Logged-out availability and checkout were not established, so public pages must not promise either.
     "etsy_live": True,
     "theme": "#0F4A3A",
 }
@@ -111,7 +112,7 @@ FAQS = [
     ("Where do I buy your gemstones?",
      f'All purchases happen through our Etsy shop, <a href="{E}" rel="noopener">TheFamilyGemShop</a>. Etsy handles checkout and payment, so you can pay with the methods Etsy supports.'),
     ("Is the shop open yet?",
-     f"Yes. The Etsy shop is open, and all {len(fsite.STONES)} photographed stones have their own listings. On a stone, choose See it on Etsy. Checkout and payment stay on Etsy."),
+     f'Browse our gemstone listings on Etsy: <a href="{E}" rel="noopener">TheFamilyGemShop</a>.'),
     ("What is a loose gemstone?",
      "A loose gemstone is a cut and polished stone that is not set in jewelry yet. You or your jeweler choose the setting, metal and design, which makes loose stones popular for custom engagement rings, pendants and heirloom pieces."),
     ("What is tsavorite?",

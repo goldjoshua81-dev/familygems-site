@@ -3,7 +3,7 @@
   "currency": "USD",
   "updated_at": "2026-10-22T18:30:00-07:00",
   "updated_by": "Family Gem (Joshua locked SF-203/SF-209 Oct 22)",
-  "notes": "Single source of truth for thefamilygems.com ↔ TheFamilyGemShop. Locked prices: Joshua yes Oct 22, including SF-203 at 185 and SF-209 at 725. Do not edit price_usd in an audit. Etsy listing URLs recorded Nov 7 2026 from parent-verified live listings; four observations omitted the SKU and were matched by unique variety, carat and the existing price. Do not push site or flip vacation without Joshua yes.",
+  "notes": "Single source of truth for thefamilygems.com ↔ TheFamilyGemShop. price_usd values were not changed when etsy_url and etsy_listing_id were filled. Those numbers remain the existing records, including SF-203 at 185 and SF-209 at 725. The listing ids and URLs were copied on Nov 7 2026 from a supplied map. This note is not a live Etsy identity check. Do not edit price_usd in an audit. Do not push site or flip vacation without Joshua yes.",
   "stones": [
     {
       "sku": "SF-001",
